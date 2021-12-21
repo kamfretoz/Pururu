@@ -3,14 +3,19 @@ from datetime import datetime
 import hikari
 import lightbulb
 
-info_plugin = lightbulb.Plugin("Info")
+user_plugin = lightbulb.Plugin("User")
 
+@user_plugin.command
+@lightbulb.command("info", "All the info lookup commands you'll ever need")
+@lightbulb.implements(lightbulb.SlashCommandGroup, lightbulb.PrefixCommandGroup)
+async def user_group(ctx: lightbulb.Context) -> None:
+    pass  # as slash commands cannot have their top-level command ran, we simply pass here
 
-@info_plugin.command
+@user_group.child
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
 @lightbulb.command("user", "Get info on a server member.")
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def userinfo(ctx: lightbulb.Context) -> None:
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+async def user_info(ctx: lightbulb.Context) -> None:
     target = ctx.get_guild().get_member(ctx.options.target or ctx.user)
 
     if not target:
@@ -58,5 +63,32 @@ async def userinfo(ctx: lightbulb.Context) -> None:
 
     await ctx.respond(embed)
 
+@user_group.child  #WIP
+@lightbulb.option("target", "The member to get the banner.", hikari.User, required=False)
+@lightbulb.command("banner", "Get a member's banner.")
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+async def user_banner(ctx: lightbulb.Context):
+    """Show the banner of a user, if any"""
+    user = ctx.get_guild().get_member(ctx.options.target or ctx.user)
+
+    if not user:
+        await ctx.respond("That user is not in the server.")
+        return
+    
+    banner = user.banner_url
+    # If statement because the user may not have a banner
+    if banner:
+        bnr = hikari.Embed(
+                description=f"**{user.mention}**'s Banner",
+                title="Banner Viewer",
+                color=user.colour,
+                timestamp=datetime.utcnow(),
+            )
+        bnr.set_image(banner)
+        bnr.set_footer(text=f"User: {user} ({user.id})")
+        await ctx.respond(embed=bnr)
+    else:
+        await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
+
 def load(bot: lightbulb.BotApp) -> None:
-    bot.add_plugin(info_plugin)
+    bot.add_plugin(user_plugin)
