@@ -64,31 +64,32 @@ async def user_info(ctx: lightbulb.Context) -> None:
     await ctx.respond(embed)
 
 @user_group.child  #WIP
-@lightbulb.option("target", "The member to get the banner.", hikari.User, required=False)
+@lightbulb.option("target", "The member to get the banner.", hikari.User, required=True)
 @lightbulb.command("banner", "Get a member's banner.")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def user_banner(ctx: lightbulb.Context):
     """Show the banner of a user, if any"""
-    user = ctx.get_guild().get_member(ctx.options.target or ctx.user)
+    target = ctx.get_guild().get_member(ctx.options.target or ctx.user)
 
-    if not user:
+    if not target:
         await ctx.respond("That user is not in the server.")
         return
     
-    banner = user.banner_url
+    banner = target.banner_url 
     # If statement because the user may not have a banner
     if banner:
         bnr = hikari.Embed(
-                description=f"**{user.mention}**'s Banner",
+                description=f"**{target.mention}**'s Banner",
                 title="Banner Viewer",
-                color=user.colour,
-                timestamp=datetime.utcnow(),
+                color=target.colour,
+                timestamp=datetime.now().astimezone(),
             )
         bnr.set_image(banner)
-        bnr.set_footer(text=f"User: {user} ({user.id})")
         await ctx.respond(embed=bnr)
     else:
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
+        
+
 
 def load(bot: lightbulb.BotApp) -> None:
     bot.add_plugin(user_plugin)
