@@ -1,3 +1,4 @@
+from logging import debug
 import os
 
 import aiohttp
@@ -13,6 +14,15 @@ bot = lightbulb.BotApp(
     banner=None,
     intents=hikari.Intents.ALL,
     default_enabled_guilds=(875986914367385600),
+    logs={
+        "version": 1,
+        "incremental": True,
+        "loggers": {
+            "hikari": {"level": "INFO"},
+            "hikari.ratelimits": {"level": "TRACE_HIKARI"},
+            "lightbulb": {"level": "DEBUG"},
+        },
+    },
 )
 
 @bot.listen()
