@@ -16,7 +16,7 @@ async def user_group(ctx: lightbulb.Context) -> None:
 @lightbulb.command("user", "Get info on a server member.")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def user_info(ctx: lightbulb.Context) -> None:
-    target = ctx.options.target or ctx.user
+    target = ctx.get_guild().get_member(ctx.options.target or ctx.user)
 
     if not target:
         await ctx.respond("That user is not in the server.")
@@ -26,7 +26,6 @@ async def user_info(ctx: lightbulb.Context) -> None:
     joined_at = int(target.joined_at.timestamp())
 
     roles = (await target.fetch_roles())[1:]  # All but @everyone
-
     embed = (
         hikari.Embed(
             title=f"User Info - {target.display_name}",
@@ -64,7 +63,7 @@ async def user_info(ctx: lightbulb.Context) -> None:
     await ctx.respond(embed)
 
 @user_group.child
-@lightbulb.option("target", "The member to get the banner.", hikari.User, required=True)
+@lightbulb.option("target", "The member to get the banner.", hikari.Member, required=True)
 @lightbulb.command("banner", "Get a member's banner.")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def user_banner(ctx: lightbulb.Context):
@@ -89,7 +88,35 @@ async def user_banner(ctx: lightbulb.Context):
     else:
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
         
+@user_group.child
+@lightbulb.option("server", "Get the server avatar instead?", hikari.OptionType.BOOLEAN)
+@lightbulb.option("target", "The member to get the avatar.", hikari.Member, required=True)
+@lightbulb.command("avatar", "Get a member's avatar.")
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+async def user_avatar(ctx: lightbulb.Context):
+    """Show the banner of a user, if any"""
+    target = ctx.options.target or ctx.user
 
+    if not target:
+        await ctx.respond("That user is not in the server.")
+        return
+    
+    if ctx.options.server:
+        pfp = target.guild_avatar_url or target.avatar_url
+    else:
+        pfp = target.avatar_url or target.default_avatar_url
+    # If statement because the user may not have a custom avatar
+    if pfp:
+        ava = hikari.Embed(
+                description=f"**{target.mention}**'s Avatar",
+                title="Avatar Viewer",
+                color=target.accent_colour,
+                timestamp=datetime.now().astimezone(),
+            )
+        ava.set_image(pfp)
+        await ctx.respond(embed=ava)
+    else:
+        await ctx.respond(embed=hikari.Embed(description="This User has no avatar set."))
 
 def load(bot) -> None:
     bot.add_plugin(user_plugin)
