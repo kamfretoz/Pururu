@@ -90,5 +90,8 @@ async def stats(ctx: lightbulb.Context) -> None:
     )
     await ctx.respond(em)
     
-def load(bot: lightbulb.BotApp) -> None:
+def load(bot) -> None:
     bot.add_plugin(stats_plugin)
+
+def unload(bot) -> None:
+    bot.remove_plugin(stats_plugin)

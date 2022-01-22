@@ -36,3 +36,6 @@ async def purge_messages(ctx: lightbulb.Context) -> None:
 
 def load(bot: lightbulb.BotApp) -> None:
     bot.add_plugin(purge_plugin)
+
+def unload(bot: lightbulb.BotApp) -> None:
+    bot.remove_plugin(purge_plugin)
