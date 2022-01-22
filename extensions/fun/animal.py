@@ -14,7 +14,7 @@ ANIMALS = {
     "Kangaroo": "🦘",
 }
 
-animal_plugin = lightbulb.Plugin("Animal")
+animal_plugin = lightbulb.Plugin("animal")
 
 @animal_plugin.command()
 @lightbulb.command("animal", "Get a fact + picture of a cute animal :3")

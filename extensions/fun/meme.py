@@ -1,7 +1,7 @@
 import hikari
 import lightbulb
 
-meme_plugin = lightbulb.Plugin("Meme")
+meme_plugin = lightbulb.Plugin("meme")
 
 @meme_plugin.command()
 @lightbulb.command("meme", "Get a funni meme")

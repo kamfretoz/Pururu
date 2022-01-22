@@ -4,7 +4,7 @@ import psutil
 import platform
 from datetime import datetime
 
-stats_plugin = lightbulb.Plugin("Stats")
+stats_plugin = lightbulb.Plugin("stats")
 
 counter = datetime.now()
 

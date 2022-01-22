@@ -2,9 +2,8 @@ import asyncio
 
 import hikari
 import lightbulb
-from lightbulb import errors
 
-purge_plugin = lightbulb.Plugin("Mod")
+purge_plugin = lightbulb.Plugin("purge")
 
 
 @purge_plugin.command

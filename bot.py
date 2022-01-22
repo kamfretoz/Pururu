@@ -1,4 +1,3 @@
-from logging import debug
 import os
 
 import aiohttp
@@ -11,7 +10,6 @@ dotenv.load_dotenv()
 bot = lightbulb.BotApp(
     os.environ["BOT_TOKEN"],
     prefix="x!",
-    banner=None,
     intents=hikari.Intents.ALL,
     default_enabled_guilds=(875986914367385600),
     logs={
@@ -35,6 +33,7 @@ async def on_stopping(event: hikari.StoppingEvent) -> None:
 
 
 bot.load_extensions_from("./extensions/", must_exist=True, recursive=True)
+bot.load_extensions_from("./meta/", must_exist=True, recursive=True)
 
 
 if __name__ == "__main__":
