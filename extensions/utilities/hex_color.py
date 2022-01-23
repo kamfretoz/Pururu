@@ -13,8 +13,6 @@ hex_color_plugin = lightbulb.Plugin("hex_color")
 async def color(ctx: lightbulb.Context):
     colour_codes = ctx.options.color_code
     colour_codes = colour_codes.split()
-    hex_regex = '^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$'
-    hex_match = match(hex_regex, str(colour_codes))
     size = (60, 80) if len(colour_codes) > 1 else (200, 200)
     for colour_code in colour_codes:
         hex_regex = '^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$'
