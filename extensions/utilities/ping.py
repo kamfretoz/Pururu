@@ -1,6 +1,5 @@
 import lightbulb
 import hikari
-import time
 import datetime
 
 ping_plugin = lightbulb.Plugin("ping")
@@ -9,9 +8,6 @@ ping_plugin = lightbulb.Plugin("ping")
 @lightbulb.command("ping", "measure the ping of the bot", ephemeral = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def ping(ctx: lightbulb.Context) -> None:
-    start = time.monotonic()
-        
-    millis = (time.monotonic() - start) * 1000
     heartbeat = ctx.bot.heartbeat_latency * 1000
     
     if heartbeat > 1000:
