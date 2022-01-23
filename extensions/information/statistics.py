@@ -50,7 +50,7 @@ async def stats(ctx: lightbulb.Context) -> None:
     em = hikari.Embed(title="System Status", color=0x32441C)
     em.add_field(
         name=":desktop: CPU Usage",
-        value=f"{psutil.cpu_percent():.2f}% ({psutil.cpu_count(logical=False)} Cores) \nload avg: {psutil.getloadavg()}",
+        value=f"{psutil.cpu_percent():.2f}% ({psutil.cpu_count(logical=False)} Cores / {psutil.cpu_count(logical=True)} Threads) \nload avg: {psutil.getloadavg()}",
         inline=False,
     )
     em.add_field(
@@ -60,7 +60,7 @@ async def stats(ctx: lightbulb.Context) -> None:
     )
     em.add_field(
         name=":dna: Kernel Version",
-        value=f"{platform.platform()} {platform.version()}",
+        value=f"{platform.platform(aliased=True, terse=True)}",
         inline=False,
     )
     em.add_field(

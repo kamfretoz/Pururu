@@ -1,9 +1,10 @@
 import lightbulb
+import hikari
 
 echo_plugin = lightbulb.Plugin("echo")
 
 @echo_plugin.command()
-@lightbulb.option("text", "The text you want to repeat", type=str, required=True)
+@lightbulb.option("text", "The text you want to repeat", hikari.OptionType.STRING, required=True)
 @lightbulb.command("echo", "Repeats the text that you have given", aliases=["say"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def echo(ctx: lightbulb.Context) -> None:

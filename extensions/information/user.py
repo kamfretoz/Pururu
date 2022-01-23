@@ -90,7 +90,7 @@ async def user_banner(ctx: lightbulb.Context):
         
 @user_group.child
 @lightbulb.option("server", "Get the server avatar instead?", hikari.OptionType.BOOLEAN)
-@lightbulb.option("target", "The member to get the avatar.", hikari.Member, required=True)
+@lightbulb.option("target", "The member to get the avatar.", hikari.OptionType.USER, required=True)
 @lightbulb.command("avatar", "Get a member's avatar.")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def user_avatar(ctx: lightbulb.Context):

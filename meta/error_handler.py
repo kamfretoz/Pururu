@@ -21,9 +21,9 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
     if isinstance(event.exception, lightbulb.CommandInvocationError):
         print(f"Ignoring exception in command {event.context.command.name}")
         
-        errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", description=f"`{random.choice(error_quotes)}`" ,color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
+        errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
         errormsg.set_image("https://http.cat/500.jpg")
-        await event.context.respond(embed=errormsg)
+        await event.context.respond(embed=errormsg, content=random.choice(error_quotes))
         await event.context.respond(f"📜 **__Error Log:__**:\n```py\n{event.exception.__cause__}```")
         raise event.exception
 
