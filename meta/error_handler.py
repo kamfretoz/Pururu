@@ -14,7 +14,8 @@ error_message = {
             "ConversionError": "Converter failed for `{}`.",
             "NoPrivateMessage": "This command cannot be used in DMs!",
             "NSFWChannelRequired": "You can only use this command on channels that are marked as NSFW.",
-            "CheckFailure": "Command Check Failure, You are not authorized to use this command!"
+            "CheckFailure": "Command Check Failure, You are not authorized to use this command!",
+            "ForbiddenError": "I'm not allowed to do that!"
         }
 
 async def on_error(event: lightbulb.CommandErrorEvent) -> None:
@@ -59,6 +60,8 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         await send_embed("NSFWChannelRequired", 423)
     elif isinstance(exception, lightbulb.errors.CheckFailure):
         await send_embed("CheckFailure", 401)
+    elif isinstance(exception, hikari.errors.ForbiddenError):
+        await send_embed("ForbiddenError", 403)
     
 def load(bot):
     bot.subscribe(lightbulb.CommandErrorEvent, on_error)
