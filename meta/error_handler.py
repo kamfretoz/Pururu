@@ -23,8 +23,8 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         
         errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
         errormsg.set_image("https://http.cat/500.jpg")
+        errormsg.add_field(name="📜 **__Error Log__**:", value=f"```py\n{event.exception.__cause__}```")
         await event.context.respond(embed=errormsg, content=random.choice(error_quotes))
-        await event.context.respond(f"📜 **__Error Log:__**:\n```py\n{event.exception.__cause__}```")
         raise event.exception
 
     # Unwrap the exception to get the original cause

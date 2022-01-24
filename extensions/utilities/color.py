@@ -24,8 +24,8 @@ async def color(ctx: lightbulb.Context):
             with io.BytesIO() as file:
                 image.save(file, "PNG")
                 file.seek(0)
-                await ctx.respond(f"Colour with hex code `{colour_code}`:")
-                await ctx.edit_last_response(f"`{colour_code}`", attachment=file)
+                await ctx.respond(f"Loading...")
+                await ctx.edit_last_response(f"Colour with hex code: `{colour_code}`", attachment=file)
         else:
             await ctx.respond(f"Invalid Color Code: `{colour_codes}`")
 def load(bot) -> None:

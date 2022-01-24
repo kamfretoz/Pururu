@@ -1,3 +1,4 @@
+aiohttp[speedups]
 hikari[speedups]
 hikari-lightbulb
 lightbulb-ext-filament
@@ -5,3 +6,5 @@ python-dotenv
 uvloop; sys_platform != "win32"
 psutil
 pillow
+pytemperature
+qrcode[pil]
