@@ -94,7 +94,7 @@ async def user_banner(ctx: lightbulb.Context):
 @lightbulb.command("avatar", "Get a member's avatar.")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def user_avatar(ctx: lightbulb.Context):
-    """Show the banner of a user, if any"""
+    """Show avatar of a user, if any"""
     target = ctx.options.target or ctx.user
 
     if not target:
