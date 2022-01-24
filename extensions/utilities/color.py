@@ -3,7 +3,7 @@ import io
 from re import match
 from PIL import Image
 
-hex_color_plugin = lightbulb.Plugin("hex_color")
+hex_color_plugin = lightbulb.Plugin("color")
 
 @hex_color_plugin.command()
 @lightbulb.add_cooldown(3, 1, lightbulb.cooldowns.UserBucket)

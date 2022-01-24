@@ -6,14 +6,8 @@ import lightbulb
 user_plugin = lightbulb.Plugin("user")
 
 @user_plugin.command
-@lightbulb.command("info", "All the info lookup commands you'll ever need")
-@lightbulb.implements(lightbulb.SlashCommandGroup, lightbulb.PrefixCommandGroup)
-async def user_group(ctx: lightbulb.Context) -> None:
-    pass  # as slash commands cannot have their top-level command ran, we simply pass here
-
-@user_group.child
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("user", "Get info on a server member.")
+@lightbulb.command("userinfo", "Get info on a server member.")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def user_info(ctx: lightbulb.Context) -> None:
     target = ctx.get_guild().get_member(ctx.options.target or ctx.user)
@@ -62,10 +56,10 @@ async def user_info(ctx: lightbulb.Context) -> None:
 
     await ctx.respond(embed)
 
-@user_group.child
+@user_plugin.command
 @lightbulb.option("target", "The member to get the banner.", hikari.Member, required=True)
 @lightbulb.command("banner", "Get a member's banner.")
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_banner(ctx: lightbulb.Context):
     """Show the banner of a user, if any"""
     target = await ctx.bot.rest.fetch_user(user = ctx.options.target or ctx.user)
@@ -88,11 +82,11 @@ async def user_banner(ctx: lightbulb.Context):
     else:
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
         
-@user_group.child
+@user_plugin.command
 @lightbulb.option("server", "Get the server avatar instead?", hikari.OptionType.BOOLEAN)
 @lightbulb.option("target", "The member to get the avatar.", hikari.OptionType.USER, required=True)
 @lightbulb.command("avatar", "Get a member's avatar.")
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_avatar(ctx: lightbulb.Context):
     """Show avatar of a user, if any"""
     target = ctx.options.target or ctx.user
