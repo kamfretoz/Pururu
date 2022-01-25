@@ -36,6 +36,7 @@ async def stats(ctx: lightbulb.Context) -> None:
     hours, rem = divmod(int(uptime.total_seconds()), 3600)
     minutes, seconds = divmod(rem, 60)
     days, hours = divmod(hours, 24)
+    guilds = await ctx.bot.rest.fetch_my_guilds()
     
     if days:
         time = "%s days, %s hours, %s minutes, and %s seconds" % (
@@ -86,6 +87,11 @@ async def stats(ctx: lightbulb.Context) -> None:
     em.add_field(
         name="⏲️ Last System Boot Time",
         value=sysboot,
+        inline=False
+    )
+    em.add_field(
+        name="\u2694 Servers (Guilds)",
+        value=str(len(guilds)),
         inline=False
     )
     await ctx.respond(em)
