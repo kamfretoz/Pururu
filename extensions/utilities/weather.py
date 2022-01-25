@@ -146,7 +146,7 @@ async def weather(ctx: lightbulb.Context) -> None:
     calculated_sunset = datetime.fromtimestamp(sunset + timezone_offset)
     embed = hikari.Embed(title="Weather Information",timestamp=datetime.now().astimezone(), color=colours)
     embed.set_thumbnail(icon)
-    embed.set_footer("Data provided by: OpenWeatherMap.org")
+    embed.set_footer("Data provided by: OpenWeatherMap.org", icon="https://upload.wikimedia.org/wikipedia/commons/1/15/OpenWeatherMap_logo.png")
     embed.add_field(name="🏙 City", value=cityname, inline=False)
     embed.add_field(name="🏳 Country",value=f"{countryid} {country_flags}", inline=False)
     embed.add_field(name="🌻 Weather", value=status, inline=False)
