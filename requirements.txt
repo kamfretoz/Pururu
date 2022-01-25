@@ -2,6 +2,7 @@ aiohttp[speedups]
 hikari[speedups]
 hikari-lightbulb
 lightbulb-ext-filament
+ciso8601
 python-dotenv
 uvloop; sys_platform != "win32"
 psutil

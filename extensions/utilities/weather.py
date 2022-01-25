@@ -91,14 +91,11 @@ async def weather(ctx: lightbulb.Context) -> None:
         if code != 200:
             msg = data.message
             if code == 404:
-                await ctx.respond(embed=hikari.Embed(description="City cannot be found!"))
-                return
+                raise ValueError("City cannot be found!")
             elif code == 401:
-                await ctx.respond(embed=hikari.Embed(description="Invalid API Key!"))
-                return
+                raise ValueError("Invalid API Key!")
             else:
-                await ctx.respond(embed=hikari.Embed(description=f"An Error Occured! `{msg.capitalize()}` (Code: `{code}`)"))
-                return
+                raise ValueError(f"An Error Occured! `{msg.capitalize()}` (Code: `{code}`)")
 
         cityname = data["name"]
         countryid = data["sys"]["country"]
@@ -127,11 +124,9 @@ async def weather(ctx: lightbulb.Context) -> None:
         wind_direction = degToCompass(wind_degree)
         icon = f"http://openweathermap.org/img/wn/{data['weather'][0]['icon']}@2x.png"
     except IndexError:
-        await ctx.respond(embed=hikari.Embed(description="⚠ An Error Occured while parsing the data."))
-        return
+        raise ValueError("⚠ An Error Occured while parsing the data.")
     except KeyError:
-        await ctx.respond(embed=hikari.Embed(description="⚠ An Error Occured while parsing the data."))
-        return
+        raise ValueError("⚠ An Error Occured while parsing the data.")
     colours = ""
     if temp_c > 36:
         colours = hikari.Colour(0xFF0000)
