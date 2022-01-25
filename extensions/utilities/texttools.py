@@ -70,6 +70,14 @@ async def reverse(ctx: lightbulb.Context):
             await ctx.respond(f"**{ctx.author.mention} The output too was too large, so I sent it to your DMs! :mailbox_with_mail:**")
         except Exception:
             await ctx.respond(f"**{ctx.author.mention} There was a problem, and I could not send the output. It may be too large or malformed**")
+            
+@texttools.child
+@lightbulb.option("text", "the text to be put in codeblock", hikari.OptionType.STRING, required=True)
+@lightbulb.command("codeblock", "wrap a text inside a codeblock", aliases=["cb"])
+async def codeblock(ctx: lightbulb.Context):
+    """Write text in code format."""
+    msg = ctx.options.text
+    await ctx.respond("```" + msg.replace("`", "") + "```")
 
 def load(bot):
     bot.add_plugin(text_plugin)
