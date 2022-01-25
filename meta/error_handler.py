@@ -67,4 +67,4 @@ def load(bot):
     bot.subscribe(lightbulb.CommandErrorEvent, on_error)
     
 def unload(bot):
-    bot.unsubscribe()
+    bot.unsubscribe(lightbulb.CommandErrorEvent, on_error)
