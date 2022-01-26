@@ -1,20 +1,19 @@
 import lightbulb
-import hikari
 from PIL import Image, ImageFont, ImageDraw
 from textwrap import fill
 from io import BytesIO
 from pathlib import Path
 
-faces = []
+oneshot_plugin = lightbulb.Plugin("oneshot", "OneShot TextBox Generator", include_datastore=True)
+
+oneshot_plugin.d.faces = []
 
 for path in Path("./res/oneshot/faces/").glob("*.png"):
-    faces.append(path.name[:-4])
-
-oneshot_plugin = lightbulb.Plugin("oneshot", "OneShot TextBox Generator")
+    oneshot_plugin.d.faces.append(path.name[:-4])
 
 @oneshot_plugin.command()
 @lightbulb.option("text", "The text you want to write", str, required=True)
-@lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=faces)
+@lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=oneshot_plugin.d.faces)
 @lightbulb.command("oneshot", "Generate a custom OneShot Textbox")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def oneshotgen(ctx: lightbulb.Context) -> None:

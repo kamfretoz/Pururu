@@ -1,9 +1,9 @@
 import lightbulb
 from io import BytesIO
 
-undertale_plugin = lightbulb.Plugin("undertale", "Generates custom undertale textbox!")
+undertale_plugin = lightbulb.Plugin("undertale", "Generates custom undertale textbox!", include_datastore=True)
 
-chars = [
+undertale_plugin.d.chars = [
     "frisk",
     "flowey",
     "toriel",
@@ -33,7 +33,7 @@ chars = [
 
 @undertale_plugin.command()
 @lightbulb.option("text", "The text you want to write", str, required=True)
-@lightbulb.option("character", "The character you want to pick", str, required=True, choices = chars)
+@lightbulb.option("character", "The character you want to pick", str, required=True, choices = undertale_plugin.d.chars)
 @lightbulb.command("undertale", "Allows you to create Undertale Textbox")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def undertale(ctx: lightbulb.Context) -> None:
