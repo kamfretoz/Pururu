@@ -1,4 +1,3 @@
-from email.policy import default
 import lightbulb
 import hikari
 from lightbulb.utils import pag, nav
@@ -10,8 +9,8 @@ ban_plugin.add_checks(
     )
 
 @ban_plugin.command()
+@lightbulb.option("reason", "the reason for banning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", hikari.OptionType.INTEGER, min_value = 0, max_value = 7, default = 0 ,required=False)
-@lightbulb.option("reason", "the reason for banning the member", hikari.OptionType.STRING, required=False)
 @lightbulb.option("user", "the user you want to ban", hikari.OptionType.USER, required=True)
 @lightbulb.command("ban", "ban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
@@ -24,7 +23,7 @@ async def ban(ctx: lightbulb.Context):
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
     
 @ban_plugin.command()
-@lightbulb.option("reason", "the reason for unbanning the member", hikari.OptionType.STRING, required=False)
+@lightbulb.option("reason", "the reason for unbanning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to unban", hikari.OptionType.MENTIONABLE, required=True)
 @lightbulb.command("unban", "unban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
@@ -44,7 +43,9 @@ async def banlist(ctx: lightbulb.Context):
     
     @lst.embed_factory()
     def build_embed(page_index,page_content):
-        return hikari.Embed(title="List of Banned Members", description=page_content)
+        emb = hikari.Embed(title="List of Banned Members", description=page_content)
+        emb.set_footer(f"{len(bans)} Members in total.")
+        return emb
     
     for users in bans:
             lst.add_line(str(users.user))

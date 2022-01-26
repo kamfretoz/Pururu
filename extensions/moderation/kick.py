@@ -5,10 +5,10 @@ kick_plugin = lightbulb.Plugin("kick")
 kick_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.KICK_MEMBERS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.KICK_MEMBERS)
-    )
+)
 
 @kick_plugin.command()
-@lightbulb.option("reason", "the reason for kicking the member", hikari.OptionType.STRING, required=False)
+@lightbulb.option("reason", "the reason for kicking the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to kick", hikari.OptionType.USER, required=True)
 @lightbulb.command("kick", "kick a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
