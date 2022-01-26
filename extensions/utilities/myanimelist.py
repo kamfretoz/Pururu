@@ -18,6 +18,7 @@ async def myanimelist(ctx: lightbulb.Context) -> None:
     pass
 
 @myanimelist.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("name", "The anime you want to lookup", hikari.OptionType.STRING, required=True)
 @lightbulb.command("anime", "Find the information of an Anime", aliases=["ani"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
@@ -101,6 +102,7 @@ async def myanimelist_anime(ctx: lightbulb.Context) -> None:
     await ctx.respond(embed=emb)
     
 @myanimelist.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("name", "The manga you want to lookup", hikari.OptionType.STRING, required=True)
 @lightbulb.command("manga", "Find the information of an manga", aliases=["man"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
@@ -164,6 +166,7 @@ async def myanimelist_manga(ctx: lightbulb.Context):
     await ctx.respond(embed=emb)
 
 @myanimelist.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("name", "The character name you want to lookup", hikari.OptionType.STRING, required=True)
 @lightbulb.command("character", "Find the information of an anime character", aliases=["chara"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)

@@ -9,6 +9,7 @@ ban_plugin.add_checks(
     )
 
 @ban_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("reason", "the reason for banning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", hikari.OptionType.INTEGER, min_value = 0, max_value = 7, default = 0 ,required=False)
 @lightbulb.option("user", "the user you want to ban", hikari.OptionType.USER, required=True)
@@ -23,6 +24,7 @@ async def ban(ctx: lightbulb.Context):
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
     
 @ban_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("reason", "the reason for unbanning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to unban", hikari.OptionType.MENTIONABLE, required=True)
 @lightbulb.command("unban", "unban a member")
@@ -35,6 +37,7 @@ async def unban(ctx: lightbulb.Context):
     await ctx.edit_last_response(f"Succesfully unbanned `{user}` for `{res}`!")
     
 @ban_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.command("bans", "see the list of banned members in this server")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def banlist(ctx: lightbulb.Context):

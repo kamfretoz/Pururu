@@ -10,6 +10,7 @@ async def hex_tool(ctx: lightbulb.Context) -> None:
     pass
 
 @hex_tool.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("value", "the value to decode", hikari.OptionType.STRING, required = True)
 @lightbulb.command("decode", "convert hex to ascii")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
@@ -30,6 +31,7 @@ async def hex_decode(ctx:lightbulb.Context):
             await ctx.respond(f"**{ctx.author.mention} There was a problem, and I could not send the output. It may be too large or malformed**")
             
 @hex_tool.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("value", "the value to decode", hikari.OptionType.STRING, required = True)
 @lightbulb.command("encode", "convert ascii to hex")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)

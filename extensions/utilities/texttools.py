@@ -1,3 +1,4 @@
+from pydoc import text
 import lightbulb
 import hikari
 import random

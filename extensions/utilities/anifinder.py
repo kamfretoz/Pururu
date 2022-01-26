@@ -6,6 +6,7 @@ from extras.time import format_seconds
 anifinder_plugin = lightbulb.Plugin("animefinder")
 
 @anifinder_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.command("anifinder", "Find anime by screenshot", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def anifinder(ctx: lightbulb.Context) -> None:

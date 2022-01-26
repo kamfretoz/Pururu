@@ -10,6 +10,7 @@ async def bin_tool(ctx: lightbulb.Context) -> None:
     pass
 
 @bin_tool.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("value", "the value to decode", hikari.OptionType.STRING, required = True)
 @lightbulb.command("decode", "convert binary to ascii")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
@@ -31,6 +32,7 @@ async def bin_decode(ctx:lightbulb.Context):
             
             
 @bin_tool.child
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("value", "the value to encode", hikari.OptionType.STRING, required = True)
 @lightbulb.command("encode", "convert ASCII to binary")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)

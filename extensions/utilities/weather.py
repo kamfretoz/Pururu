@@ -10,6 +10,7 @@ from math import trunc
 weather_plugin = lightbulb.Plugin("weather")
 
 @weather_plugin.command()
+@lightbulb.add_cooldown(3, 2, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("city", "the city you want to check", hikari.OptionType.STRING, required=True)
 @lightbulb.command("weather", "See the weather of a given city", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

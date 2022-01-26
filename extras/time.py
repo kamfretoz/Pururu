@@ -1,4 +1,3 @@
-
 import time
 
 def format_seconds(seconds):
