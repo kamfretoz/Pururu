@@ -13,7 +13,6 @@ for path in Path("./res/oneshot/faces/").glob("*.png"):
 oneshot_plugin = lightbulb.Plugin("oneshot", "OneShot TextBox Generator")
 
 @oneshot_plugin.command()
-
 @lightbulb.option("text", "The text you want to write", str, required=True)
 @lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=faces)
 @lightbulb.command("oneshot", "Generate a custom OneShot Textbox")
