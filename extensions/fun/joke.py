@@ -6,7 +6,7 @@ joke_plugin = lightbulb.Plugin("joke", "Jokes! But be wary for the offensive one
 @joke_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("lang", "The language of the joke", str, required=False, default = "en", choices = ["cs","de","en","es","fr","pt"])
-@lightbulb.command("joke", "For all kinds of jokes! (Some might be offensive, be careful.)")
+@lightbulb.command("joke", "For all kinds of jokes! (Some might be offensive, be careful.)", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def joke(ctx: lightbulb.Context) -> None:
     parameters = {
@@ -16,7 +16,7 @@ async def joke(ctx: lightbulb.Context) -> None:
     }
     
     async with ctx.bot.d.aio_session.get(f'https://v2.jokeapi.dev/joke/Any', params = parameters) as resp:
-        resp.raise_for_status()
+        
         data = await resp.json()
         
     emb = hikari.Embed(title="Here comes a joke!")

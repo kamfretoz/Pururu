@@ -18,7 +18,7 @@ async def ip_finder(ctx: lightbulb.Context) -> None:
     ip_result = match(ip_regex, ip)
     if ip_result:
         async with ctx.bot.d.aio_session.get(f'https://ipapi.co/{ip}/json/') as resp:
-            resp.raise_for_status()
+            
             data = json.loads(await resp.read())
             
         ipaddr = data["ip"]
