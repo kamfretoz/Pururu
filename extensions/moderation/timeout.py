@@ -6,10 +6,10 @@ timeout_plugin = lightbulb.Plugin("timeout")
 timeout_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS)
-    )
+)
 
 @timeout_plugin.command()
-@lightbulb.option("reason", "the reason for the timeout", hikari.OptionType.STRING, required=False)
+@lightbulb.option("reason", "the reason for the timeout", hikari.OptionType.STRING, required=False,modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("days", "the duration of the timeout (days)", hikari.OptionType.INTEGER, required=False, default=0)
 @lightbulb.option("hour", "the duration of the timeout (hour)", hikari.OptionType.INTEGER, required=False, default=0)
 @lightbulb.option("minute", "the duration of the timeout (minute)", hikari.OptionType.INTEGER, required=False, default=0)

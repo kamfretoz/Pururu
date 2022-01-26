@@ -10,7 +10,7 @@ purge_plugin = lightbulb.Plugin("purge")
     lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
     lightbulb.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES)
 )
-@lightbulb.option("amount", "The number of messages to purge.", type=int, required=True)
+@lightbulb.option("amount", "The number of messages to purge.", type=int, required=True, max_value = 500)
 @lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def purge_messages(ctx: lightbulb.Context) -> None:
