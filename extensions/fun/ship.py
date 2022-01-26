@@ -4,7 +4,7 @@ from random import randint, choice
 from io import BytesIO
 from datetime import datetime
 from PIL import Image
-from extras.masks import ellipse
+from utils.masks import ellipse
 
 ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?")
 

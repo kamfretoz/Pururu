@@ -1,7 +1,7 @@
 import lightbulb
 from random import random
 from math import floor
-from extras.quotes import jargonConstructs, jargonWordPool
+from utils.quotes import jargonConstructs, jargonWordPool
 
 hack_plugin = lightbulb.Plugin("hackerman", "HAAAAAAAAAAAAAAAX")
 

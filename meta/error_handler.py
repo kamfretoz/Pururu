@@ -2,7 +2,7 @@ import lightbulb
 import hikari
 import random
 import datetime
-from extras.quotes import error_quotes
+from utils.quotes import error_quotes
 
 error_message = {
             "CommandNotFound": "`{}` is an invalid command!",

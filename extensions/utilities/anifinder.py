@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 import json
-from extras.time import format_seconds
+from utils.time import format_seconds
 
 anifinder_plugin = lightbulb.Plugin("animefinder")
 
