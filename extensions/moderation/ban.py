@@ -19,22 +19,22 @@ async def ban(ctx: lightbulb.Context):
     user = ctx.options.user
     res = ctx.options.reason or f"'No Reason Provided.' By {ctx.author.username}"
     delete = ctx.options.delete_message or 0
-    await ctx.respond(f"Banning **{user}**")
+    await ctx.respond(f"Banning **{user.username}**")
     await ctx.bot.rest.ban_member(user = user, guild = ctx.get_guild(), reason = res, delete_message_days=delete)
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
     
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("reason", "the reason for unbanning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.OptionType.STRING, required=True)
+@lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.Snowflake, required=True)
 @lightbulb.command("unban", "unban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def unban(ctx: lightbulb.Context):
     user = ctx.options.user
     res = ctx.options.reason or f"'No Reason Provided.' By {ctx.author.username}"
-    await ctx.respond(f"Unbanning **{user}**")
+    await ctx.respond(f"Unbanning the user ID of **{user}**")
     await ctx.bot.rest.unban_member(user = user, guild = ctx.get_guild(), reason = res)
-    await ctx.edit_last_response(f"Succesfully unbanned `{user}` for `{res}`!")
+    await ctx.edit_last_response(f"Succesfully unbanned the ID of `{user}` for `{res}`!")
     
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
