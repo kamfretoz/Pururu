@@ -175,7 +175,8 @@ error_quotes = (
     "Stop breaking me! :(",
     "Oyasumi...",
     "I did not succumb.",
-    "You think this is funny?!"
+    "You think this is funny?!",
+    "im scared mom hold my hand"
 )
 
 
