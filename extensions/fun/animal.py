@@ -14,7 +14,7 @@ ANIMALS = {
     "Kangaroo": "🦘",
 }
 
-animal_plugin = lightbulb.Plugin("animal")
+animal_plugin = lightbulb.Plugin("animal", "For cute animals!")
 
 @animal_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)

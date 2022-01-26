@@ -1,11 +1,11 @@
 import hikari
 import lightbulb
 
-meme_plugin = lightbulb.Plugin("meme")
+meme_plugin = lightbulb.Plugin("meme", "moar meeemeees")
 
 @meme_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("meme", "Get a funni meme")
+@lightbulb.command("meme", "Get a funni meme", auto_defer = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def meme(ctx: lightbulb.Context) -> None:
     async with ctx.bot.d.aio_session.get(
@@ -26,8 +26,7 @@ async def meme(ctx: lightbulb.Context) -> None:
 
         else:
             await ctx.respond(
-                "Could not fetch a meme :c", flags=hikari.MessageFlag.EPHEMERAL
-            )
+                "Could not fetch a meme :c", flags=hikari.MessageFlag.EPHEMERAL)
 
 
 def load(bot: lightbulb.BotApp) -> None:

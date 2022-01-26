@@ -59,7 +59,7 @@ async def user_info(ctx: lightbulb.Context) -> None:
 @user_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("target", "The member to get the banner.", hikari.Member, required=True)
-@lightbulb.command("banner", "Get a member's banner.")
+@lightbulb.command("banner", "Get a member's banner.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_banner(ctx: lightbulb.Context):
     """Show the banner of a user, if any"""
@@ -86,7 +86,7 @@ async def user_banner(ctx: lightbulb.Context):
 @user_plugin.command
 @lightbulb.option("server", "Get the server avatar instead?", hikari.OptionType.BOOLEAN)
 @lightbulb.option("target", "The member to get the avatar.", hikari.OptionType.USER, required=True)
-@lightbulb.command("avatar", "Get a member's avatar.")
+@lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_avatar(ctx: lightbulb.Context):
     """Show avatar of a user, if any"""

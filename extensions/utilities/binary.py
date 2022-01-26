@@ -4,7 +4,7 @@ import hikari
 binary_plugin = lightbulb.Plugin("binary")
 
 @binary_plugin.command
-@lightbulb.command("bin", "converts between binary and ASCII value")
+@lightbulb.command("binary", "converts between binary and ASCII value")
 @lightbulb.implements(lightbulb.SlashCommandGroup, lightbulb.PrefixCommandGroup)
 async def bin_tool(ctx: lightbulb.Context) -> None:
     pass

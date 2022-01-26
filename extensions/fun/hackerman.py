@@ -3,7 +3,7 @@ from random import random
 from math import floor
 from extras.quotes import jargonConstructs, jargonWordPool
 
-hack_plugin = lightbulb.Plugin("hackerman")
+hack_plugin = lightbulb.Plugin("hackerman", "HAAAAAAAAAAAAAAAX")
 
 @hack_plugin.command()
 @lightbulb.command("hackerman", "l33t h4x000r!11", aliases=["hack"])

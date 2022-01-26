@@ -26,7 +26,7 @@ async def ban(ctx: lightbulb.Context):
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("reason", "the reason for unbanning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("user", "the user you want to unban", hikari.OptionType.MENTIONABLE, required=True)
+@lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.OptionType.STRING, required=True)
 @lightbulb.command("unban", "unban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def unban(ctx: lightbulb.Context):
@@ -38,7 +38,7 @@ async def unban(ctx: lightbulb.Context):
     
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("bans", "see the list of banned members in this server")
+@lightbulb.command("bans", "see the list of banned members in this server", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def banlist(ctx: lightbulb.Context):
     bans = await ctx.bot.rest.fetch_bans(ctx.get_guild())
