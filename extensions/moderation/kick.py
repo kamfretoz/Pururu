@@ -9,8 +9,8 @@ kick_plugin.add_checks(
 
 @kick_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("reason", "the reason for kicking the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("user", "the user you want to kick", hikari.OptionType.USER, required=True)
+@lightbulb.option("reason", "the reason for kicking the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("user", "the user you want to kick", hikari.User , required=True)
 @lightbulb.command("kick", "kick a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def kick(ctx: lightbulb.Context):

@@ -4,7 +4,7 @@ import hikari
 urban_plugin = lightbulb.Plugin("urban", "Urban Dictionary related command!")
 
 @urban_plugin.command()
-@lightbulb.option("definiton", "The definition you want to look up", hikari.OptionType.STRING, required=True)
+@lightbulb.option("definiton", "The definition you want to look up", str, required=True)
 @lightbulb.command("urban", "Look up urban dictionary for the given word!", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def urban(ctx: lightbulb.Context) -> None:

@@ -9,8 +9,8 @@ slowmode_plugin.add_checks(
 
 @slowmode_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("interval", "The interval amount (in seconds)", hikari.OptionType.INTEGER, min_value = 0, max_value = 21600, required=False)
-@lightbulb.option("channel", "The channel you want to set", hikari.OptionType.CHANNEL, required=True)
+@lightbulb.option("interval", "The interval amount (in seconds)", int, min_value = 0, max_value = 21600, required=False)
+@lightbulb.option("channel", "The channel you want to set", hikari.GuildChannel, required=True)
 @lightbulb.command("slowmode", "Set the slowmode interval for a channel")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def slowmode(ctx: lightbulb.Context):

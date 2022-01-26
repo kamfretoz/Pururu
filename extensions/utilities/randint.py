@@ -6,8 +6,8 @@ randint_plugin = lightbulb.Plugin("randint")
 
 @randint_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("end", "The start of the range", hikari.OptionType.INTEGER, required=True)
-@lightbulb.option("begin", "The start of the range", hikari.OptionType.INTEGER, required=True)
+@lightbulb.option("end", "The start of the range", int, required=True)
+@lightbulb.option("begin", "The start of the range", int, required=True)
 @lightbulb.command("randint", "Give you a randomized number between a range", aliases=["randnum"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def randint(ctx: lightbulb.Context) -> None:

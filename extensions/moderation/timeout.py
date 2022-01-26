@@ -10,12 +10,12 @@ timeout_plugin.add_checks(
 
 @timeout_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("reason", "the reason for the timeout", hikari.OptionType.STRING, required=False,modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("days", "the duration of the timeout (days)", hikari.OptionType.INTEGER, required=False, default=0)
-@lightbulb.option("hour", "the duration of the timeout (hour)", hikari.OptionType.INTEGER, required=False, default=0)
-@lightbulb.option("minute", "the duration of the timeout (minute)", hikari.OptionType.INTEGER, required=False, default=0)
-@lightbulb.option("second", "the duration of the timeout (second)", hikari.OptionType.INTEGER, required=False, default=0)
-@lightbulb.option("user", "the user you want to be put in timeout", hikari.OptionType.USER, required=True)
+@lightbulb.option("reason", "the reason for the timeout", str, required=False,modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("days", "the duration of the timeout (days)", int, required=False, default=0)
+@lightbulb.option("hour", "the duration of the timeout (hour)", int, required=False, default=0)
+@lightbulb.option("minute", "the duration of the timeout (minute)", int, required=False, default=0)
+@lightbulb.option("second", "the duration of the timeout (second)", int, required=False, default=0)
+@lightbulb.option("user", "the user you want to be put in timeout", hikari.User , required=True)
 @lightbulb.command("timeout", "Timeout a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def timeout(ctx: lightbulb.Context):

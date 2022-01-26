@@ -5,7 +5,7 @@ dict_plugin = lightbulb.Plugin("dictionary")
 
 @dict_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("word", "The text you want to define", hikari.OptionType.STRING, required=True)
+@lightbulb.option("word", "The text you want to define", str, required=True)
 @lightbulb.command("define", "Look up the definition of a word", aliases=["def"], auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def dictionary(ctx: lightbulb.Context) -> None:

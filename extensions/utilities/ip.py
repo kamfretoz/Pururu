@@ -9,7 +9,7 @@ ip_regex = '^(?!^0\.)(?!^10\.)(?!^100\.6[4-9]\.)(?!^100\.[7-9]\d\.)(?!^100\.1[0-
 
 @ip_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("address", "The ip you want to analyze", hikari.OptionType.STRING, required=True)
+@lightbulb.option("address", "The ip you want to analyze", str, required=True)
 @lightbulb.command("ip", "Repeats the text that you have given", aliases=["ipaddr"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ip_finder(ctx: lightbulb.Context) -> None:

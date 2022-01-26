@@ -84,8 +84,8 @@ async def user_banner(ctx: lightbulb.Context):
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
         
 @user_plugin.command
-@lightbulb.option("server", "Get the server avatar instead?", hikari.OptionType.BOOLEAN)
-@lightbulb.option("target", "The member to get the avatar.", hikari.OptionType.USER, required=True)
+@lightbulb.option("server", "Get the server avatar instead?", bool)
+@lightbulb.option("target", "The member to get the avatar.", hikari.User , required=True)
 @lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_avatar(ctx: lightbulb.Context):

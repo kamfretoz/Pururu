@@ -13,7 +13,7 @@ async def qr(ctx: lightbulb.Context) -> None:
 
 @qr.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "The text you want to encode", hikari.OptionType.STRING, required=True)
+@lightbulb.option("value", "The text you want to encode", str, required=True)
 @lightbulb.command("maker", "Encodes a text into a QR Code", aliases=["make"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def qr_maker(ctx: lightbulb.Context):
@@ -35,10 +35,10 @@ async def qr_maker(ctx: lightbulb.Context):
             
 @qr.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("temporary", "set if you want the member joined to be temporary", hikari.OptionType.BOOLEAN, required=False)
-@lightbulb.option("max_use", "The limit of the invite usage", hikari.OptionType.INTEGER, required=False)
-@lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", hikari.OptionType.INTEGER, required=False)
-@lightbulb.option("channel", "The channel you want to pick", hikari.OptionType.CHANNEL, required=True)
+@lightbulb.option("temporary", "set if you want the member joined to be temporary", bool, required=False)
+@lightbulb.option("max_use", "The limit of the invite usage", int, required=False)
+@lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", int, required=False)
+@lightbulb.option("channel", "The channel you want to pick", hikari.GuildChannel, required=True)
 @lightbulb.command("invite", "Encodes an invite into a QR Code", aliases=["inv"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def qr_invite(ctx: lightbulb.Context):

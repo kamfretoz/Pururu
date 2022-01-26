@@ -5,9 +5,9 @@ from random import randint
 minesweeper_plugin = lightbulb.Plugin("minesweeper")
 
 @minesweeper_plugin.command()
-@lightbulb.option("bombs", "The amount of bombs you want", hikari.OptionType.INTEGER, required=True, min_value = 1)
-@lightbulb.option("rows", "The amount of rows you want", hikari.OptionType.INTEGER, required=True, min_value = 1, max_value = 13)
-@lightbulb.option("columns", "The amount of colom that you want", hikari.OptionType.INTEGER, required=True, min_value = 1, max_value = 13)
+@lightbulb.option("bombs", "The amount of bombs you want", int, required=True, min_value = 1)
+@lightbulb.option("rows", "The amount of rows you want", int, required=True, min_value = 1, max_value = 13)
+@lightbulb.option("columns", "The amount of colom that you want", int, required=True, min_value = 1, max_value = 13)
 @lightbulb.command("minesweeper", "Play minesweeper")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def minesweeper(ctx: lightbulb.Context) -> None:

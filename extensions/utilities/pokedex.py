@@ -4,7 +4,7 @@ import hikari
 pokedex_plugin = lightbulb.Plugin("pokedex")
 
 @pokedex_plugin.command()
-@lightbulb.option("pokemon", "The name of the pokemon you want to look up", hikari.OptionType.STRING, required=True)
+@lightbulb.option("pokemon", "The name of the pokemon you want to look up", str, required=True)
 @lightbulb.command("pokedex", "Access Pokédex database of Information", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def pokedex(ctx: lightbulb.Context) -> None:

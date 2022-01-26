@@ -6,9 +6,9 @@ calc_plugin = lightbulb.Plugin("calculator")
 
 @calc_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("right", "The rightmost value", hikari.OptionType.INTEGER, required=True)
-@lightbulb.option("operation", "The operation you want to perform", hikari.OptionType.STRING, required=True, choices=["+","-","*","/","^"])
-@lightbulb.option("left", "The leftmost value", hikari.OptionType.INTEGER, required=True)
+@lightbulb.option("right", "The rightmost value", int, required=True)
+@lightbulb.option("operation", "The operation you want to perform", str, required=True, choices=["+","-","*","/","^"])
+@lightbulb.option("left", "The leftmost value", int, required=True)
 @lightbulb.command("calculator", "Calculate the given value", aliases=["calc"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def calc(ctx: lightbulb.Context) -> None:

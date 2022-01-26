@@ -13,9 +13,9 @@ ksoft_key = os.environ.get("KSOFT_API_KEY")
 
 @curr_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "The amount you want to convert", hikari.OptionType.INTEGER, required=True)
-@lightbulb.option("to", "The currency you want to convert to", hikari.OptionType.STRING, required=True)
-@lightbulb.option("origin", "The currency you want to convert from", hikari.OptionType.STRING, required=True)
+@lightbulb.option("value", "The amount you want to convert", int, required=True)
+@lightbulb.option("to", "The currency you want to convert to", str, required=True)
+@lightbulb.option("origin", "The currency you want to convert from", str, required=True)
 @lightbulb.command("currency", "Convert value from one currency to another", aliases=["curr"], auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def currency(ctx: lightbulb.Context) -> None:

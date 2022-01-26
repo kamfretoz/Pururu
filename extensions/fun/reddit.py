@@ -14,8 +14,8 @@ ksoft_key = os.environ.get("KSOFT_API_KEY")
 
 @subreddit_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("span", "select range from which to get the images.", hikari.OptionType.STRING, required = False, choices = ["hour", "day", "week", "month", "year", "all"], default = "day")
-@lightbulb.option("sub", "the subreddit you want to see", hikari.OptionType.STRING, required = True)
+@lightbulb.option("span", "select range from which to get the images.", str, required = False, choices = ["hour", "day", "week", "month", "year", "all"], default = "day")
+@lightbulb.option("sub", "the subreddit you want to see", str, required = True)
 @lightbulb.command("subreddit", "Sends a random weird imagery from subreddit", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def subreddit(ctx: lightbulb.Context):

@@ -4,7 +4,7 @@ import hikari
 amiibo_plugin = lightbulb.Plugin("amiibo", "For Nintendo's Amiibo related command")
 
 @amiibo_plugin.command()
-@lightbulb.option("query", "The amiibo you want to look up", hikari.OptionType.STRING, required=True)
+@lightbulb.option("query", "The amiibo you want to look up", str, required=True)
 @lightbulb.command("amiibo", "Look up information on Nintendo's Amiibo", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def amiibo(ctx: lightbulb.Context) -> None:

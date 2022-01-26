@@ -10,9 +10,9 @@ ban_plugin.add_checks(
 
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("reason", "the reason for banning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", hikari.OptionType.INTEGER, min_value = 0, max_value = 7, default = 0 ,required=False)
-@lightbulb.option("user", "the user you want to ban", hikari.OptionType.USER, required=True)
+@lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", int, min_value = 0, max_value = 7, default = 0 ,required=False)
+@lightbulb.option("user", "the user you want to ban", hikari.User , required=True)
 @lightbulb.command("ban", "ban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def ban(ctx: lightbulb.Context):
@@ -25,7 +25,7 @@ async def ban(ctx: lightbulb.Context):
     
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("reason", "the reason for unbanning the member", hikari.OptionType.STRING, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("reason", "the reason for unbanning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.Snowflake, required=True)
 @lightbulb.command("unban", "unban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)

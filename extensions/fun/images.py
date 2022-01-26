@@ -18,7 +18,7 @@ async def wink(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to hug!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to hug!", hikari.User , required = True)
 @lightbulb.command("hug", "*hugs you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def hugs(ctx: lightbulb.Context):
@@ -33,7 +33,7 @@ async def hugs(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to snuggles!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to snuggles!", hikari.User , required = True)
 @lightbulb.command("snuggle", "*snuggles you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def snug(ctx: lightbulb.Context):
@@ -48,7 +48,7 @@ async def snug(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to kiss!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to kiss!", hikari.User , required = True)
 @lightbulb.command("kiss", "*kisses you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def kiss(ctx: lightbulb.Context):
@@ -63,7 +63,7 @@ async def kiss(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to tickle!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to tickle!", hikari.User , required = True)
 @lightbulb.command("tickle", "*tickles you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def tick(ctx: lightbulb.Context):
@@ -78,7 +78,7 @@ async def tick(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to slap!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to slap!", hikari.User , required = True)
 @lightbulb.command("slap", "*slaps you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def slapping(ctx: lightbulb.Context):
@@ -93,7 +93,7 @@ async def slapping(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to poke!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to poke!", hikari.User , required = True)
 @lightbulb.command("poke", "*pokes you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def poking(ctx: lightbulb.Context):
@@ -108,7 +108,7 @@ async def poking(ctx: lightbulb.Context):
         
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "the one you want to cuddle!", hikari.OptionType.USER, required = True)
+@lightbulb.option("user", "the one you want to cuddle!", hikari.User , required = True)
 @lightbulb.command("pat", "*pats you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def pats(ctx: lightbulb.Context):

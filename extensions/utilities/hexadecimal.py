@@ -11,7 +11,7 @@ async def hex_tool(ctx: lightbulb.Context) -> None:
 
 @hex_tool.child
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "the value to decode", hikari.OptionType.STRING, required = True)
+@lightbulb.option("value", "the value to decode", str, required = True)
 @lightbulb.command("decode", "convert hex to ascii")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def hex_decode(ctx:lightbulb.Context):
@@ -32,7 +32,7 @@ async def hex_decode(ctx:lightbulb.Context):
             
 @hex_tool.child
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "the value to decode", hikari.OptionType.STRING, required = True)
+@lightbulb.option("value", "the value to decode", str, required = True)
 @lightbulb.command("encode", "convert ascii to hex")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def hex_encode(ctx:lightbulb.Context):
