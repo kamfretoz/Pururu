@@ -3,7 +3,10 @@ import hikari
 from datetime import datetime, timedelta, timezone
 
 timeout_plugin = lightbulb.Plugin("timeout")
-timeout_plugin.add_checks(lightbulb.checks.has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS))
+timeout_plugin.add_checks(
+    lightbulb.checks.has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS),
+    lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS)
+    )
 
 @timeout_plugin.command()
 @lightbulb.option("reason", "the reason for the timeout", hikari.OptionType.STRING, required=False)

@@ -2,7 +2,10 @@ import lightbulb
 import hikari
 
 slowmode_plugin = lightbulb.Plugin("slowmode")
-slowmode_plugin.add_checks(lightbulb.checks.has_guild_permissions(hikari.Permissions.MANAGE_CHANNELS))
+slowmode_plugin.add_checks(
+    lightbulb.checks.has_guild_permissions(hikari.Permissions.MANAGE_CHANNELS),
+    lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MANAGE_CHANNELS)
+    )
 
 @slowmode_plugin.command()
 @lightbulb.option("interval", "The interval amount (in seconds)", hikari.OptionType.INTEGER, min_value = 0, max_value = 21600, required=False)

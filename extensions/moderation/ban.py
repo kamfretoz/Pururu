@@ -1,12 +1,16 @@
+from email.policy import default
 import lightbulb
 import hikari
 from lightbulb.utils import pag, nav
 
 ban_plugin = lightbulb.Plugin("ban")
-ban_plugin.add_checks(lightbulb.checks.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
+ban_plugin.add_checks(
+    lightbulb.checks.has_guild_permissions(hikari.Permissions.BAN_MEMBERS),
+    lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.BAN_MEMBERS)
+    )
 
 @ban_plugin.command()
-@lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", hikari.OptionType.INTEGER, min_value = 0, max_value = 7 ,required=False)
+@lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", hikari.OptionType.INTEGER, min_value = 0, max_value = 7, default = 0 ,required=False)
 @lightbulb.option("reason", "the reason for banning the member", hikari.OptionType.STRING, required=False)
 @lightbulb.option("user", "the user you want to ban", hikari.OptionType.USER, required=True)
 @lightbulb.command("ban", "ban a member")

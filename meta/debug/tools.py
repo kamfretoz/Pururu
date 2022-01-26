@@ -27,7 +27,17 @@ async def clear(ctx: lightbulb.Context):
             for _ in range(100):
                 print()
     await ctx.respond("Console cleared successfully.")
-    
+
+@tools_plugin.command()
+@lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", hikari.OptionType.BOOLEAN, required = True, default = False)
+@lightbulb.option("guild","The ID of the target guild", hikari.OptionType.STRING, required = True)
+@lightbulb.command("clear_cmd", "purge all slash commands from specified guild")
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def purge_cmd(ctx: lightbulb.Context):
+    guild = ctx.options.guild
+    await ctx.bot.purge_application_commands(guild, global_commands=ctx.options.globals)
+    await ctx.respond("Task Completed Successfully!")
+
 @tools_plugin.command()
 @lightbulb.command("extension", "manage an extension")
 @lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
