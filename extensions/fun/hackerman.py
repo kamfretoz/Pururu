@@ -6,6 +6,7 @@ from extras.quotes import jargonConstructs, jargonWordPool
 hack_plugin = lightbulb.Plugin("hackerman", "HAAAAAAAAAAAAAAAX")
 
 @hack_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.command("hackerman", "l33t h4x000r!11", aliases=["hack"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def hackerman(ctx: lightbulb.Context):

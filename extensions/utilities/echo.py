@@ -1,5 +1,4 @@
 import lightbulb
-import hikari
 
 echo_plugin = lightbulb.Plugin("echo")
 

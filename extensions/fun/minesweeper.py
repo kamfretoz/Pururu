@@ -5,6 +5,7 @@ from random import randint
 minesweeper_plugin = lightbulb.Plugin("minesweeper")
 
 @minesweeper_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("bombs", "The amount of bombs you want", int, required=True, min_value = 1)
 @lightbulb.option("rows", "The amount of rows you want", int, required=True, min_value = 1, max_value = 13)
 @lightbulb.option("columns", "The amount of colom that you want", int, required=True, min_value = 1, max_value = 13)
