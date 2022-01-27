@@ -38,7 +38,7 @@ async def unban(ctx: lightbulb.Context):
     
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("bans", "see the list of banned members in this server", auto_defer = True)
+@lightbulb.command("banlist", "see the list of banned members in this server", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def banlist(ctx: lightbulb.Context):
     bans = await ctx.bot.rest.fetch_bans(ctx.get_guild())
