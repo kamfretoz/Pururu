@@ -17,8 +17,7 @@ bot = lightbulb.BotApp(
         "incremental": True,
         "loggers": {
             "hikari": {"level": "INFO"},
-            "hikari.ratelimits": {"level": "TRACE_HIKARI"},
-            "lightbulb": {"level": "DEBUG"},
+            "lightbulb": {"level": "INFO"},
         },
     },
 )
