@@ -56,7 +56,7 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         await send_embed("ConversionError", 400 ,exception.option)
     elif isinstance(exception, lightbulb.OnlyInGuild):
         await send_embed("NoPrivateMessage", 423)
-    elif isinstance(exception, lightbulb.errors.NSFWChannelRequired):
+    elif isinstance(exception, lightbulb.errors.NSFWChannelOnly):
         await send_embed("NSFWChannelRequired", 423)
     elif isinstance(exception, lightbulb.errors.CheckFailure):
         await send_embed("CheckFailure", 401)
