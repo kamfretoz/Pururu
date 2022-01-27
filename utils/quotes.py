@@ -159,7 +159,7 @@ error_quotes = (
     "You wanna touch it, don't ya?",
     "NO FUN ALLOWED.",
     "You are trying to do something useful, for this you require a proper computer, and a mouse with more than one button. Ask an adult to help you buy one.",
-    "We have detected that you are drunk, beyond the point of responsible posting - and that you •may' regret this post tomorrow. Would you like to save as a draft for the morning?",
+    "We have detected that you are drunk, beyond the point of responsible posting - and that you •may• regret this post tomorrow. Would you like to save as a draft for the morning?",
     "OOPS: child ded",
     "These haiku circulated 20 years back. Things haven’t changed much.",
     "You ask far too much.",
@@ -176,7 +176,8 @@ error_quotes = (
     "Oyasumi...",
     "I did not succumb.",
     "You think this is funny?!",
-    "im scared mom hold my hand"
+    "im scared mom hold my hand",
+    "Watch the road, there are kids around here!"
 )
 
 
