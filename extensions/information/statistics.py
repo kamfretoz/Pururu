@@ -56,11 +56,6 @@ async def stats(ctx: lightbulb.Context) -> None:
         inline=False,
     )
     em.add_field(
-        name=":gear: CPU Frequency",
-        value=f"{psutil.cpu_freq().current} MHz",
-        inline=False,
-    )
-    em.add_field(
         name=":dna: Kernel Version",
         value=f"{platform.platform(aliased=True, terse=True)}",
         inline=False,
