@@ -44,7 +44,7 @@ async def subreddit(ctx: lightbulb.Context):
         code = data["code"]
         msg = data["message"]
         raise ValueError(f"⚠ An Error Occured! {msg.capitalize()} (Code: {code})")
-    emb = hikari.Embed(timestamp=datetime.utcnow())
+    emb = hikari.Embed(timestamp=datetime.now().astimezone())
     emb.set_image(img_url)
     emb.add_field(name="Title", value=f"[{title}]({source})", inline=False)
     emb.add_field(name="Author", value=author)

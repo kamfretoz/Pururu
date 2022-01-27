@@ -110,7 +110,7 @@ async def ship(ctx: lightbulb.Context) -> None:
     shipname = "".join([name1letters, name2letters])
     emb = (hikari.Embed(color=shipColor,
                         title="Love test for:",
-                        timestamp=datetime.utcnow(),
+                        timestamp=datetime.now().astimezone(),
                         description="**{0}** and **{1}** (**{2}**) {3}".format(user1, user2, shipname, choice([
                             ":sparkling_heart:",
                             ":heart_decoration:",
