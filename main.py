@@ -9,7 +9,7 @@ dotenv.load_dotenv()
 
 bot = lightbulb.BotApp(
     os.environ["BOT_TOKEN"],
-    prefix="x!",
+    prefix=os.environ["PREFIX"],
     intents=hikari.Intents.ALL,
     default_enabled_guilds=(875986914367385600),
     ignore_bots=True,
@@ -43,4 +43,9 @@ if __name__ == "__main__":
 
         uvloop.install()
 
-    bot.run()
+    bot.run(
+        status=hikari.Status.IDLE,
+        activity=hikari.Activity(
+            name="from the distance...",
+            type=hikari.ActivityType.WATCHING,)
+    )
