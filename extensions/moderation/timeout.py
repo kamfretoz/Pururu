@@ -33,7 +33,7 @@ async def timeout(ctx: lightbulb.Context):
         await ctx.respond("You can't time someone out for more than 28 days")
         return
     
-    if days is 0 and hour is 0 and min is 0 and sec is 0:
+    if days == 0 and hour == 0 and min == 0 and sec == 0:
         await ctx.respond(f"Removing timeout from **{user}**")
     else:
         await ctx.respond(f"Attempting to timeout **{user}**")

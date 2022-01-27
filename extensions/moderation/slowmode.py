@@ -16,7 +16,7 @@ slowmode_plugin.add_checks(
 async def slowmode(ctx: lightbulb.Context):
     ch = ctx.options.channel
     time = ctx.options.interval or 0
-    if time is 0:
+    if time == 0:
         await ctx.respond(f"Removing slow mode from the selected channel")
     else:
         await ctx.respond(f"Attempting to set slowmode on the selected channel for **{time} seconds**")
