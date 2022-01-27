@@ -1,5 +1,6 @@
 import lightbulb
 import hikari
+from random import choice
 
 
 ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i dont know where to put them")
@@ -27,7 +28,69 @@ async def namedeez(ctx: lightbulb.Context):
             embed = hikari.Embed(
                 description=result, color=0x8253c3)
             await ctx.respond(embed=embed)
-    
+            
+@ext_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.command("rickroll", "You have been rickrolled!")
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def rickroll(ctx: lightbulb.Context):
+    rick = hikari.Embed()
+    rick.set_image("https://i.kym-cdn.com/photos/images/original/000/041/494/1241026091_youve_been_rickrolled.gif")
+    await ctx.respond(embed=rick)
+
+@ext_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.option("question", "the question you want to ask", str, required = True)
+@lightbulb.command("8ball", "Ask a question to the 8Ball!")
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def eball(ctx: lightbulb.Context):
+    question = ctx.options.question
+    ps = {
+        "psgood": [
+            "Yes",
+            "It is certain",
+            "It is decidedly so",
+            "Without a doubt",
+            "Yes - definitely",
+            "You may rely on it",
+            "As I see it, yes",
+            "Most likely",
+            "Outlook good",
+            "Signs point to yes",
+        ],
+        "psbad": [
+            "Don't count on it",
+            "My reply is no",
+            "My sources say no",
+            "Outlook not so good",
+            "Very doubtful",
+            "No",
+        ],
+    }
+    choices = choice(choice(list(ps.values())))
+    if choices in ps["psbad"]:
+        color = hikari.Color(0xFF0000)
+    elif choices in ps["psgood"]:
+        color = hikari.Color(0x26D934)
+    eightball = hikari.Embed(color=color)
+    eightball.add_field(name="Question:", value=question.capitalize(), inline=False)
+    eightball.add_field(name="Answer:", value=f"{choices}.")
+    eightball.set_author(name = "The mighty 8-Ball")
+    eightball.set_footer(f"Requested by: {ctx.author.username}", icon=ctx.author.avatar_url)
+    eightball.set_thumbnail("https://i.imgur.com/Q9dxpTz.png")
+    await ctx.respond(embed=eightball)
+
+@ext_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.option("target", "who do you want to pay respect to?", str, required = True)
+@lightbulb.command("f", "Press F to pay respect.")
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def respect(ctx: lightbulb.Context):
+    text = ctx.options.target
+    hearts = ['❤', '💛', '💚', '💙', '💜', '♥']
+    reason = f"for **{text}** " if text else ""
+    await ctx.respond(f"**{ctx.author.username}** has paid their respect {reason}{choice(hearts)}")
+
 def load(bot):
     bot.add_plugin(ext_plugin)
 
