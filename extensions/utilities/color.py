@@ -3,11 +3,11 @@ import io
 from re import match
 from PIL import Image
 
-hex_color_plugin = lightbulb.Plugin("color")
+hex_color_plugin = lightbulb.Plugin("color", "#RGBforLyfe")
 
 @hex_color_plugin.command()
 @lightbulb.add_cooldown(3, 1, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("color_code", "HEX Code for the color", type = str, required = True)
+@lightbulb.option("color_code", "HEX Code for the color", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("color", "Posts color of given hex code", aliases=["getcolor", "colour", "getcolour"])
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def color(ctx: lightbulb.Context):

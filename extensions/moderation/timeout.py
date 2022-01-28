@@ -2,7 +2,7 @@ import lightbulb
 import hikari
 from datetime import datetime, timedelta, timezone
 
-timeout_plugin = lightbulb.Plugin("timeout")
+timeout_plugin = lightbulb.Plugin("timeout", "timeout for a moment.")
 timeout_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS)

@@ -3,7 +3,7 @@ import asyncio
 import hikari
 import lightbulb
 
-purge_plugin = lightbulb.Plugin("purge")
+purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
 
 @purge_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)

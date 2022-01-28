@@ -5,7 +5,7 @@ import dotenv
 import os
 from datetime import datetime
 
-curr_plugin = lightbulb.Plugin("currency")
+curr_plugin = lightbulb.Plugin("currency", "money money money")
 
 # To retrieve KSoft.Si API KEY
 dotenv.load_dotenv()

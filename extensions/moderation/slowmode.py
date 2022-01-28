@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 
-slowmode_plugin = lightbulb.Plugin("slowmode")
+slowmode_plugin = lightbulb.Plugin("slowmode" "*talks in slow motion")
 slowmode_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.MANAGE_CHANNELS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MANAGE_CHANNELS)

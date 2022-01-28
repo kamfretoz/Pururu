@@ -3,7 +3,7 @@ import hikari
 import json
 from utils.time import format_seconds
 
-anifinder_plugin = lightbulb.Plugin("animefinder")
+anifinder_plugin = lightbulb.Plugin("animefinder", "Anime Lookup with screenshot leveraging https://trace.moe/")
 
 @anifinder_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -14,8 +14,7 @@ async def anifinder(ctx: lightbulb.Context) -> None:
     try:
         attachment = ctx.attachments[0].url
     except IndexError:
-        await ctx.respond(embed=hikari.Embed(description="⚠ You haven't supplied any image!"))
-        return
+        raise ValueError("⚠ You haven't supplied any image!")
     
     # Then we send the image to the API
     parameters = {

@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 
-binary_plugin = lightbulb.Plugin("binary")
+binary_plugin = lightbulb.Plugin("binary", "Binary Digit conversion tool")
 
 @binary_plugin.command
 @lightbulb.command("binary", "converts between binary and ASCII value")
@@ -11,7 +11,7 @@ async def bin_tool(ctx: lightbulb.Context) -> None:
 
 @bin_tool.child
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "the value to decode", str, required = True)
+@lightbulb.option("value", "the value to decode", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("decode", "convert binary to ascii")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def bin_decode(ctx:lightbulb.Context):
@@ -33,7 +33,7 @@ async def bin_decode(ctx:lightbulb.Context):
             
 @bin_tool.child
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "the value to encode", str, required = True)
+@lightbulb.option("value", "the value to encode", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "convert ASCII to binary")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def bin_decode(ctx:lightbulb.Context):

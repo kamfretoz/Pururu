@@ -33,7 +33,7 @@ undertale_plugin.d.chars = [
 
 @undertale_plugin.command()
 @lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("text", "The text you want to write", str, required=True)
+@lightbulb.option("text", "The text you want to write", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("character", "The character you want to pick", str, required=True, choices = undertale_plugin.d.chars)
 @lightbulb.command("undertale", "Allows you to create Undertale Textbox")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

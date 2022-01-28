@@ -31,7 +31,7 @@ async def clear(ctx: lightbulb.Context):
 @tools_plugin.command()
 @lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", hikari.OptionType.BOOLEAN, required = True, default = False)
 @lightbulb.option("guild","The ID of the target guild", hikari.OptionType.STRING, required = True)
-@lightbulb.command("clear_cmd", "purge all slash commands from specified guild")
+@lightbulb.command("clearcmd", "purge all slash commands from specified guild")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def purge_cmd(ctx: lightbulb.Context):
     guild = ctx.options.guild
@@ -45,7 +45,7 @@ async def extension_manager(ctx:lightbulb.Context):
     pass
 
 @extension_manager.child()
-@lightbulb.option("name", "the extension you want to reload", hikari.OptionType.STRING, required=True)
+@lightbulb.option("name", "the extension you want to reload", hikari.OptionType.STRING, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("category", "the category of the extension", required = True, choices=["fun", "information", "moderation", "utilities"])
 @lightbulb.command("reload", "Reload an extension")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)

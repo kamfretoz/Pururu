@@ -147,7 +147,7 @@ async def horny(ctx: lightbulb.Context):
             
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("text", "the text you want to write!", str , required = True)
+@lightbulb.option("text", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the name of the user!", hikari.User , required = True)
 @lightbulb.command("tweet", "create a fake tweet", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -171,7 +171,7 @@ async def tweet(ctx:lightbulb.Context):
     
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("text", "the text you want to write!", str , required = True)
+@lightbulb.option("text", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the name of the user!", hikari.User , required = True)
 @lightbulb.command("ytcomment", "create a youtube comment", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -234,7 +234,7 @@ async def gay(ctx: lightbulb.Context):
 
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("text", "the text you want to write!", str , required = True)
+@lightbulb.option("text", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the name of the user!", hikari.User , required = True)
 @lightbulb.command("stupid", "Oh no its stupid", auto_defer = True, aliases = ["sputid"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -317,7 +317,7 @@ async def jail(ctx: lightbulb.Context):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("user", "the target user!", hikari.User , required = True)
-@lightbulb.command("kill", "You Died", auto_defer = True)
+@lightbulb.command("kill", "You Died", auto_defer = True, aliases=["wasted"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def wasted(ctx: lightbulb.Context):
     member = ctx.options.user

@@ -137,10 +137,10 @@ async def ship(ctx: lightbulb.Context) -> None:
     user2_pfp = BytesIO(await user2_asset.read())
     pfp1 = Image.open(user1_pfp)
     pfp1.convert("RGBA")
-    pfp1 = pfp1.resize((200, 200), resample=Image.ANTIALIAS, reducing_gap=3.0)
+    pfp1 = pfp1.resize((200, 200), reducing_gap=3.0)
     pfp2 = Image.open(user2_pfp)
     pfp2.convert("RGBA")
-    pfp2 = pfp2.resize((pfp1.size), resample=Image.ANTIALIAS, reducing_gap=3.0)
+    pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0)
     
     mask = ellipse(pfp1.size)
     
@@ -148,7 +148,7 @@ async def ship(ctx: lightbulb.Context) -> None:
     bg.paste(pfp2, (bg.width - pfp1.width - 30, 30), mask)
     
     with BytesIO() as image_binary:
-        bg.save(image_binary, format="PNG")
+        bg.save(image_binary, format="JPEG", optimize=True, quality=80)
         image_binary.seek(0)
         await ctx.edit_last_response(embed=emb, attachment=image_binary, content = "Here is the result!")
 

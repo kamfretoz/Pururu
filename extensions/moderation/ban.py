@@ -2,7 +2,7 @@ import lightbulb
 import hikari
 from lightbulb.utils import pag, nav
 
-ban_plugin = lightbulb.Plugin("ban")
+ban_plugin = lightbulb.Plugin("ban", "Prepare the ban hammer!! (Please use it wisely")
 ban_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.BAN_MEMBERS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.BAN_MEMBERS)

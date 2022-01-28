@@ -2,7 +2,7 @@ import lightbulb
 import hikari
 from operator import pow, truediv, mul, add, sub
 
-calc_plugin = lightbulb.Plugin("calculator")
+calc_plugin = lightbulb.Plugin("calculator", "It's a calculator, what did you expect?")
 
 @calc_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)

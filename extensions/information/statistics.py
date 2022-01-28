@@ -4,7 +4,7 @@ import psutil
 import platform
 from datetime import datetime
 
-stats_plugin = lightbulb.Plugin("stats")
+stats_plugin = lightbulb.Plugin("stats", "Statistics of this bot")
 
 counter = datetime.now()
 
@@ -56,13 +56,13 @@ async def stats(ctx: lightbulb.Context) -> None:
         inline=False,
     )
     em.add_field(
-        name=":dna: Kernel Version",
-        value=f"{platform.platform(aliased=True, terse=True)}",
+        name=":computer: System Memory Usage",
+        value=f"**{psutil.virtual_memory().percent}%** Used",
         inline=False,
     )
     em.add_field(
-        name=":computer: System Memory Usage",
-        value=f"**{psutil.virtual_memory().percent}%** Used",
+        name=":dna: Kernel Version",
+        value=f"{platform.platform(aliased=True, terse=True)}",
         inline=False,
     )
     em.add_field(

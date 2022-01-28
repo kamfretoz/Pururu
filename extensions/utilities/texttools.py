@@ -12,7 +12,7 @@ async def texttools(ctx: lightbulb.Context) -> None:
     pass
 
 @texttools.child
-@lightbulb.option("text", "The text you want to drunkify", str, required=True)
+@lightbulb.option("text", "The text you want to drunkify", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("mock", "iTS SpElleD sQl!!", aliases=["drunkify"])
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def mock(ctx: lightbulb.Context):
@@ -32,8 +32,8 @@ async def mock(ctx: lightbulb.Context):
             await ctx.respond(f"**{ctx.author.mention} There was a problem, and I could not send the output. It may be too large or malformed**")
 
 @texttools.child
+@lightbulb.option("text", "The text you want to reverse", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("gap", "The gap between each T E X T", int, min_value = 1, max_value = 5)
-@lightbulb.option("text", "The text you want to reverse", str, required=True)
 @lightbulb.command("expand", "E X P A N D the T E X T", aliases=["enlarge"])
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def expand(ctx:lightbulb.Context):
@@ -57,7 +57,7 @@ async def expand(ctx:lightbulb.Context):
         await ctx.respond("```Error: The number can only be from 1 to 5```")
 
 @texttools.child
-@lightbulb.option("text", "The text you want to reverse", str, required=True)
+@lightbulb.option("text", "The text you want to reverse", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("reverse", "txeT eht esreveR", aliases=["rev"])
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def reverse(ctx: lightbulb.Context):
@@ -73,7 +73,7 @@ async def reverse(ctx: lightbulb.Context):
             await ctx.respond(f"**{ctx.author.mention} There was a problem, and I could not send the output. It may be too large or malformed**")
             
 @texttools.child
-@lightbulb.option("text", "the text to be put in codeblock", str, required=True)
+@lightbulb.option("text", "the text to be put in codeblock", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("codeblock", "wrap a text inside a codeblock", aliases=["cb"])
 async def codeblock(ctx: lightbulb.Context):
     """Write text in code format."""

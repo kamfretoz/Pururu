@@ -2,7 +2,7 @@ import hikari
 import lightbulb
 import base64
 
-base64_plugin = lightbulb.Plugin("base64")
+base64_plugin = lightbulb.Plugin("base64", "Base64 Conversion tool")
 
 @base64_plugin.command()
 @lightbulb.command("base64", "Allows you to encode or decode base64")
@@ -12,7 +12,7 @@ async def base64_(ctx: lightbulb.Context) -> None:
 
 @base64_.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("input", "the value to decode", type = str, required = True)
+@lightbulb.option("input", "the value to decode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("decode", "to decode the base64 value")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def base64_decode(ctx: lightbulb.Context) -> None:
@@ -28,7 +28,7 @@ async def base64_decode(ctx: lightbulb.Context) -> None:
 
 @base64_.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("input", "the text you want to encode", type = str, required = True)
+@lightbulb.option("input", "the text you want to encode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "to encode the ASCII text")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def base64_encode(ctx: lightbulb.Context) -> None:

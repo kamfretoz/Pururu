@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 
-kick_plugin = lightbulb.Plugin("kick")
+kick_plugin = lightbulb.Plugin("kick", "DENGAN KEKUATAN SLEDING KAK SETO!")
 kick_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.KICK_MEMBERS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.KICK_MEMBERS)

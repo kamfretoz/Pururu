@@ -40,7 +40,7 @@ async def rickroll(ctx: lightbulb.Context):
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("question", "the question you want to ask", str, required = True)
+@lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("8ball", "Ask a question to the 8Ball!")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def eball(ctx: lightbulb.Context):

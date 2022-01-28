@@ -2,7 +2,7 @@ import lightbulb
 import hikari
 from random import randint
 
-minesweeper_plugin = lightbulb.Plugin("minesweeper")
+minesweeper_plugin = lightbulb.Plugin("minesweeper", "\U0001F642 Minesweeper \U0001F635")
 
 @minesweeper_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
