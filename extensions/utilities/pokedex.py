@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 
-pokedex_plugin = lightbulb.Plugin("pokedex")
+pokedex_plugin = lightbulb.Plugin("pokedex", "Pokeom Query Lookup tool")
 
 @pokedex_plugin.command()
 @lightbulb.option("pokemon", "The name of the pokemon you want to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)

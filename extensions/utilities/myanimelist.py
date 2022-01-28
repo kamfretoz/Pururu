@@ -1,6 +1,3 @@
-from email.policy import default
-from pydoc import synopsis
-from random import choice, choices
 import lightbulb
 import hikari
 import json
@@ -9,7 +6,7 @@ import asyncio
 from datetime import datetime
 from textwrap import shorten
 
-mal_plugin = lightbulb.Plugin("myanimelist")
+mal_plugin = lightbulb.Plugin("myanimelist", "Weebs Only")
 
 @mal_plugin.command()
 @lightbulb.command("myanimelist", "Allows you to look up anime informations!", aliases=["mal"])

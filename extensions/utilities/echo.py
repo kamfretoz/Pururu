@@ -1,6 +1,6 @@
 import lightbulb
 
-echo_plugin = lightbulb.Plugin("echo")
+echo_plugin = lightbulb.Plugin("echo", "Is anyone there?")
 
 @echo_plugin.command()
 @lightbulb.option("text", "The text you want to repeat", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)

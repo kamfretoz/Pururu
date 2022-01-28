@@ -50,7 +50,7 @@ morseAlphabet = {
     "=": "-...-"
 }
 
-morse_plugin = lightbulb.Plugin("morse")
+morse_plugin = lightbulb.Plugin("morse", "BEEP BEEP")
 
 @morse_plugin.command()
 @lightbulb.command("morse", "Allows you to encode or decode morse codes")

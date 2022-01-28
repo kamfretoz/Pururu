@@ -3,7 +3,7 @@ import hikari
 import lightbulb
 import os
 
-tools_plugin = lightbulb.Plugin("toolbox")
+tools_plugin = lightbulb.Plugin("toolbox", "Authorized Personel Only")
 tools_plugin.add_checks(lightbulb.checks.owner_only)
 
 @tools_plugin.command()

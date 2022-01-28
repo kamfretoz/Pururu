@@ -3,7 +3,7 @@ import lightbulb
 import hikari
 import random
 
-text_plugin = lightbulb.Plugin("texttools")
+text_plugin = lightbulb.Plugin("texttools", "Many kind of text manipulation tools!")
 
 @text_plugin.command()
 @lightbulb.command("text", "text manipulation tools at your disposal!")

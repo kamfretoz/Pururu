@@ -3,7 +3,7 @@ import hikari
 import qrcode
 from io import BytesIO
 
-qr_plugin = lightbulb.Plugin("qr")
+qr_plugin = lightbulb.Plugin("qr", "A QR Code Maker")
 
 @qr_plugin.command()
 @lightbulb.command("qr", "Creates a QR Code", aliases=["qrcode"])

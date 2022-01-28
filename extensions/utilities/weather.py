@@ -7,7 +7,7 @@ import pytemperature
 from datetime import datetime
 from math import trunc
 
-weather_plugin = lightbulb.Plugin("weather")
+weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 
 @weather_plugin.command()
 @lightbulb.add_cooldown(3, 2, lightbulb.cooldowns.UserBucket)

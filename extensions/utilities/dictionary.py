@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 
-dict_plugin = lightbulb.Plugin("dictionary")
+dict_plugin = lightbulb.Plugin("dictionary", "*turns to next page*")
 
 @dict_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)

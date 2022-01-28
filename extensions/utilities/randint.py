@@ -2,7 +2,7 @@ import lightbulb
 import hikari
 import random
 
-randint_plugin = lightbulb.Plugin("randint")
+randint_plugin = lightbulb.Plugin("randint", "Gimme random number!")
 
 @randint_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)

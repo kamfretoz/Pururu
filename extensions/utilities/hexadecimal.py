@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 
-hex_plugin = lightbulb.Plugin("hexadecimal")
+hex_plugin = lightbulb.Plugin("hexadecimal", "HEXXin good")
 
 @hex_plugin.command
 @lightbulb.command("hex", "converts between hexadecimal and ASCII value")
