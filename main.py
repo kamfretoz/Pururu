@@ -1,5 +1,4 @@
 import os
-
 import aiohttp
 import dotenv
 import hikari
@@ -9,6 +8,7 @@ dotenv.load_dotenv()
 
 bot = lightbulb.BotApp(
     os.environ["BOT_TOKEN"],
+    default_enabled_guilds=(875986914367385600),
     prefix=os.environ["PREFIX"],
     intents=hikari.Intents.ALL,
     ignore_bots=True,

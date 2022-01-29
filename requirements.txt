@@ -9,3 +9,4 @@ psutil
 pillow
 pytemperature
 qrcode[pil]
+spotipy
