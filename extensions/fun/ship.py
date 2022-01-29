@@ -148,7 +148,7 @@ async def ship(ctx: lightbulb.Context) -> None:
     bg.paste(pfp2, (bg.width - pfp1.width - 30, 30), mask)
     
     with BytesIO() as image_binary:
-        bg.save(image_binary, format="JPEG", optimize=True, quality=80)
+        bg.save(image_binary, format="PNG", optimize=True, quality=80)
         image_binary.seek(0)
         await ctx.edit_last_response(embed=emb, attachment=image_binary, content = "Here is the result!")
 
