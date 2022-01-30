@@ -4,13 +4,13 @@ import psutil
 import platform
 from datetime import datetime
 
-stats_plugin = lightbulb.Plugin("stats", "Statistics of this bot")
+stats_plugin = lightbulb.Plugin("stats", "Statistics of this bot", include_datastore = True)
 
-counter = datetime.now()
+stats_plugin.d.counter = datetime.now()
 
 @stats_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("stats", "Get statistics info of the bot.")
+@lightbulb.command("stats", "Get statistics info of the bot.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def stats(ctx: lightbulb.Context) -> None:
     """Bot stats."""
@@ -30,10 +30,9 @@ async def stats(ctx: lightbulb.Context) -> None:
             __import__("psutil").Process(
             ).memory_full_info().rss / 1024 ** 2
         )
-    sysboot = datetime.fromtimestamp(
-        psutil.boot_time()).strftime("%B %d, %Y at %I:%M:%S %p")
-    uptime = datetime.now() - counter
-    uptime = datetime.now() - counter
+    sysboot = datetime.fromtimestamp(psutil.boot_time()).strftime("%B %d, %Y at %I:%M:%S %p")
+    uptime = datetime.now() - stats_plugin.d.counter
+    uptime = datetime.now() - stats_plugin.d.counter
     hours, rem = divmod(int(uptime.total_seconds()), 3600)
     minutes, seconds = divmod(rem, 60)
     days, hours = divmod(hours, 24)
