@@ -82,7 +82,7 @@ async def eball(ctx: lightbulb.Context):
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("target", "who do you want to pay respect to?", str, required = True)
+@lightbulb.option("target", "who do you want to pay respect to?")
 @lightbulb.command("f", "Press F to pay respect.")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def respect(ctx: lightbulb.Context):

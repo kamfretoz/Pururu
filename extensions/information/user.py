@@ -7,7 +7,7 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on a server member.")
+@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_info(ctx: lightbulb.Context) -> None:
     target = ctx.get_guild().get_member(ctx.options.target or ctx.user)

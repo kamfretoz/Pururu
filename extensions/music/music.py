@@ -136,12 +136,6 @@ async def play(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=embed)
         return None
     await _join(ctx)
-    if "youtube" in query:
-        embed=hikari.Embed(title="**Supported Platforms : Soundcloud, Spotify, Bandcamp, Vimeo, Twitch and HTTP Streams.**", color=0xC80000)
-        return await ctx.respond(embed=embed)
-    if "youtu.be" in query:
-        embed=hikari.Embed(title="**Supported Platforms : Soundcloud, Spotify, Bandcamp, Vimeo, Twitch and HTTP Streams.**", color=0xC80000)
-        return await ctx.respond(embed=embed)
     if "https://open.spotify.com/playlist" in ctx.options.song:
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
         playlist_link = f"{ctx.options.song}"
@@ -175,6 +169,18 @@ async def play(ctx: lightbulb.Context) -> None:
             pass
         embed=hikari.Embed(title="**Added Album To The Queue.**", color=0x6100FF)
         return await ctx.respond(embed=embed)
+    if "https://open.spotify.com/track" in ctx.options.song:
+        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
+        track_link = f"{query}"
+        track_id= track_link.split("/")[-1].split("?")[0]
+        track = f"spotify:track:{track_id}"
+        spotifytrack = sp.track(track)
+        trackname = spotifytrack['name'] + " " + spotifytrack["artists"][0]["name"]
+        result = f"ytmsearch:{trackname}"
+        query_information = await music_plugin.d.lavalink.get_tracks(result)   
+        await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
+        embed=hikari.Embed(title="Added Song To The Queue",color=0x6100FF) 
+        return await ctx.respond(embed=embed) 
     if not re.match(URL_REGEX, query):
       sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
       results = sp.search(q=f'{query}', limit=1)
@@ -305,7 +311,7 @@ async def stop(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("percentage", "What to change the volume to.", modifier=lightbulb.OptionModifier.CONSUME_REST)
+@lightbulb.option("percentage", "What to change the volume to.", int , max_value=200 )
 @lightbulb.command("volume", "Change the volume.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def volume(ctx: lightbulb.Context) -> None:
@@ -597,6 +603,7 @@ async def remove(ctx: lightbulb.Context) -> None:
     except:
         embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
         await ctx.respond(embed=embed)
+        return
     try:
         queue.pop(index)
     except:
@@ -738,11 +745,11 @@ async def newreleases(ctx: lightbulb.Context) -> None:
 async def trending(ctx: lightbulb.Context) -> None:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
     playlist_URI = "37i9dQZF1DXcBWIGoYBM5M"
-    track_uris = [x["track"]["uri"] for x in sp.playlist_tracks(playlist_URI)["items"]]
+    track_uris = [x["track"]["uri"] for x in sp.playlist_items(playlist_URI)["items"]]
     track = sp.track(track_uris[1])
     today = date.today()
     embed=hikari.Embed(title=f"**Trending Tracks - {today}**", color=0x6100FF)
-    embed.add_field(name="Top 20 Tracks Of The Day", value=f"\n".join([f"**{i}.** {track['track']['name']}" for i, track in enumerate(sp.playlist_tracks(playlist_URI, limit=21)["items"][1:], start=1)]))
+    embed.add_field(name="Top 20 Tracks Of The Day", value=f"\n".join([f"**{i}.** {track['track']['name']}" for i, track in enumerate(sp.playlist_items(playlist_URI, limit=21)["items"][1:], start=1)]))
     img = track['album']['images'][0]['url']
     try:
       embed.set_thumbnail(img)

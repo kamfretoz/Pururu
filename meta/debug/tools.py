@@ -46,7 +46,7 @@ async def extension_manager(ctx:lightbulb.Context):
 
 @extension_manager.child()
 @lightbulb.option("name", "the extension you want to reload", hikari.OptionType.STRING, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("category", "the category of the extension", required = True, choices=["fun", "information", "moderation", "utilities"])
+@lightbulb.option("category", "the category of the extension", required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
 @lightbulb.command("reload", "Reload an extension")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def extension_reload(ctx:lightbulb.Context):
