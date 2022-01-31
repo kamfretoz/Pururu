@@ -12,6 +12,8 @@ bot = lightbulb.BotApp(
     prefix=os.environ["PREFIX"],
     intents=hikari.Intents.ALL,
     ignore_bots=True,
+    help_slash_command=True,
+    case_insensitive_prefix_commands=True,
     logs={
         "version": 1,
         "incremental": True,
