@@ -25,7 +25,7 @@ async def on_guild_message_delete(event: hikari.GuildMessageDeleteEvent):
             attachment_file = None
             
         # Log Stuff
-        print(f"server:{srvid}, channel:{chid}, author:{auth_name}, content:{content}, url:{attachment_file}") #PRINTS ALL DELETED MESSAGES INTO THE CONSOLE (CAN BE SPAMMY)
+        # print(f"server:{srvid}, channel:{chid}, author:{auth_name}, content:{content}, url:{attachment_file}") #PRINTS ALL DELETED MESSAGES INTO THE CONSOLE (CAN BE SPAMMY)
         sniper.d.delsniped.update({
             srvid: {
                 chid: {
@@ -49,7 +49,9 @@ async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
         auth_mention = new_msg.author.mention
         old_message = old_msg.content
         new_message = new_msg.content
-        print(f"server:{srvid}, channel:{chid}, author:{auth_name}, before:{old_message}, after:{new_message}")
+        
+        # Log Stuff
+        # print(f"server:{srvid}, channel:{chid}, author:{auth_name}, before:{old_message}, after:{new_message}")
         sniper.d.editsniped.update({
             srvid: {
                 chid: {
