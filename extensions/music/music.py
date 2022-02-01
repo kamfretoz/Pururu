@@ -42,7 +42,7 @@ class EventHandler:
         if skip and not node.queue and not node.now_playing:
             await lavalink.stop(event.guild_id)
 
-music_plugin = lightbulb.Plugin("Music", "Music Related commands", include_datastore=True)
+music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 
 async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None
