@@ -55,6 +55,30 @@ async def extension_reload(ctx:lightbulb.Context):
     await ctx.respond(f"Reloading the extension `{ctx.options.name}`")
     ctx.bot.reload_extensions(f"extensions.{category}.{name}")
     await ctx.edit_last_response(f"Successfully reloaded `{ctx.options.name}`!")
+    
+@extension_manager.child()
+@lightbulb.option("name", "the extension you want to unload", hikari.OptionType.STRING, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("category", "the category of the extension", required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
+@lightbulb.command("unload", "Unload an extension")
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+async def extension_unload(ctx:lightbulb.Context):
+    name = ctx.options.name
+    category = ctx.options.category
+    await ctx.respond(f"unloading the extension `{ctx.options.name}`")
+    ctx.bot.unload_extensions(f"extensions.{category}.{name}")
+    await ctx.edit_last_response(f"Successfully unloaded `{ctx.options.name}`!")
+    
+@extension_manager.child()
+@lightbulb.option("name", "the extension you want to load", hikari.OptionType.STRING, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("category", "the category of the extension", required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
+@lightbulb.command("load", "Load an extension")
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+async def extension_load(ctx:lightbulb.Context):
+    name = ctx.options.name
+    category = ctx.options.category
+    await ctx.respond(f"loading the extension `{ctx.options.name}`")
+    ctx.bot.load_extensions(f"extensions.{category}.{name}")
+    await ctx.edit_last_response(f"Successfully loaded `{ctx.options.name}`!")
 
 
 def load(bot):
