@@ -9,59 +9,65 @@ sniper.d.editsniped = {}
 
 @sniper.listener(hikari.GuildMessageDeleteEvent)
 async def on_guild_message_delete(event: hikari.GuildMessageDeleteEvent):
-    msg = event.old_message
-    if not msg.author.is_bot:
-        srvid = msg.guild_id
-        chid = msg.channel_id
-        auth_name = msg.author.username
-        auth_mention = msg.author.mention
-        content = msg.content
-        try:
-            attach = msg.attachments[0]
-            attachment_name = attach.filename
-            attachment_file = attach.url or attach.proxy_url
-        except(IndexError, KeyError):
-            attachment_name = None
-            attachment_file = None
-            
-        # Log Stuff
-        # print(f"server:{srvid}, channel:{chid}, author:{auth_name}, content:{content}, url:{attachment_file}") #PRINTS ALL DELETED MESSAGES INTO THE CONSOLE (CAN BE SPAMMY)
-        sniper.d.delsniped.update({
-            srvid: {
-                chid: {
-                    'Sender': auth_name,
-                    'Mention': auth_mention,
-                    'Content': content,
-                    'Attachment': attachment_file,
-                    'Filename': attachment_name
+    try:
+        msg = event.old_message
+        if not msg.author.is_bot:
+            srvid = msg.guild_id
+            chid = msg.channel_id
+            auth_name = msg.author.username
+            auth_mention = msg.author.mention
+            content = msg.content
+            try:
+                attach = msg.attachments[0]
+                attachment_name = attach.filename
+                attachment_file = attach.url or attach.proxy_url
+            except(IndexError, KeyError):
+                attachment_name = None
+                attachment_file = None
+
+            # Log Stuff
+            # print(f"server:{srvid}, channel:{chid}, author:{auth_name}, content:{content}, url:{attachment_file}") #PRINTS ALL DELETED MESSAGES INTO THE CONSOLE (CAN BE SPAMMY)
+            sniper.d.delsniped.update({
+                srvid: {
+                    chid: {
+                        'Sender': auth_name,
+                        'Mention': auth_mention,
+                        'Content': content,
+                        'Attachment': attachment_file,
+                        'Filename': attachment_name
+                    }
                 }
-            }
-        })
+            })
+    except:
+        pass
         
 @sniper.listener(hikari.GuildMessageUpdateEvent)
 async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
-    new_msg = event.message
-    old_msg = event.old_message
-    if not new_msg.author.is_bot:
-        srvid = new_msg.guild_id
-        chid = new_msg.channel_id
-        auth_name = new_msg.author.username
-        auth_mention = new_msg.author.mention
-        old_message = old_msg.content
-        new_message = new_msg.content
-        
-        # Log Stuff
-        # print(f"server:{srvid}, channel:{chid}, author:{auth_name}, before:{old_message}, after:{new_message}")
-        sniper.d.editsniped.update({
-            srvid: {
-                chid: {
-                    'Sender': auth_name,
-                    'Mention': auth_mention,
-                    'Before': old_message,
-                    'After': new_message
+    try:
+        new_msg = event.message
+        old_msg = event.old_message
+        if not old_msg.author.is_bot:
+            srvid = new_msg.guild_id
+            chid = new_msg.channel_id
+            auth_name = new_msg.author.username
+            auth_mention = new_msg.author.mention
+            old_message = old_msg.content
+            new_message = new_msg.content
+
+            # Log Stuff
+            # print(f"server:{srvid}, channel:{chid}, author:{auth_name}, before:{old_message}, after:{new_message}")
+            sniper.d.editsniped.update({
+                srvid: {
+                    chid: {
+                        'Sender': auth_name,
+                        'Mention': auth_mention,
+                        'Before': old_message,
+                        'After': new_message
+                    }
                 }
-            }
-        })
+            })
+    except:
+        pass
         
 @sniper.command()
 @lightbulb.command("snipe", "Allows you to see recently deleted message in the current channel.", aliases=["s"])
