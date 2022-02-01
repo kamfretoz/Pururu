@@ -60,8 +60,6 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         await send_embed("NSFWChannelRequired", 423)
     elif isinstance(exception, lightbulb.errors.CheckFailure):
         await send_embed("CheckFailure", 401)
-    elif isinstance(exception, hikari.errors.ForbiddenError):
-        await send_embed("ForbiddenError", 403)
     
 def load(bot):
     bot.subscribe(lightbulb.CommandErrorEvent, on_error)
