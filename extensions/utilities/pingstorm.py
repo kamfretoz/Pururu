@@ -6,7 +6,7 @@ pingstorm_plugin = lightbulb.Plugin("pingstorm", "ping deez nuts", include_datas
 pingstorm_plugin.d.lock = asyncio.Lock()
 
 @pingstorm_plugin.command()
-@lightbulb.add_cooldown(2, 3600, lightbulb.cooldowns.GuildBucket)
+@lightbulb.add_cooldown(3600, 2, lightbulb.cooldowns.GuildBucket)
 @lightbulb.option("amount", "The amount of the pings", int, required = False, default=5, min_value=1, max_value=100)
 @lightbulb.option("user", "The target user", hikari.Member, required = True)
 @lightbulb.command("pingstorm", "Ping specified user number of times", hidden=True)
@@ -30,6 +30,7 @@ async def pingstorm(ctx: lightbulb.Context) -> None:
             while ping < int(amount):
                 await ctx.respond(f"{user.mention} - {ping + 1}/{amount}")
                 ping += 1
+                await asyncio.sleep(0.5)
             await ctx.respond("Finished!")
             await ctx.delete_last_response()
 
