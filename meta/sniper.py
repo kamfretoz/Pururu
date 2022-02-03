@@ -71,7 +71,7 @@ async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
         
 @sniper.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("snipe", "Allows you to see recently deleted message in the current channel.", aliases=["s"])
+@lightbulb.command("snipe", "Allows you to see recently deleted message in the current channel.", aliases=["s","delsnipe"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def deletesnipe(ctx: lightbulb.Context) -> None:
     try:
@@ -89,8 +89,6 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
                 if str(name).endswith(".png") or str(name).endswith(".gif") or str(name).endswith(".jpg") or str(name).endswith(".jpeg"):
                     emb.set_image(attachment)
             await ctx.respond(embed=emb)
-            await asyncio.sleep(5)
-            await ctx.delete_last_response()
         else:
             emb = hikari.Embed(title="Sniped!")
             emb.add_field(name="Author:", value=author, inline=False)
@@ -102,23 +100,20 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
                 if str(name).endswith(".png") or str(name).endswith(".gif"):
                     emb.set_image(attachment)
             await ctx.respond(embed=emb)
-            await asyncio.sleep(5)
-            await ctx.delete_last_response()
-        try:
-            sniper.d.delsniped.popitem()
-        except:
-            pass
+
+        del sniper.d.delsniped[ctx.guild_id][ctx.channel_id]
+        await asyncio.sleep(5)
+        await ctx.delete_last_response()
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"))
         await asyncio.sleep(3)
         await ctx.delete_last_response()
-        return
 
 @sniper.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("editsnipe", "Similar to deletesnipe, this command allows you to see edited message.", aliases=["es"])
+@lightbulb.command("editsnipe", "Similar to deletesnipe, this command allows you to see edited message.", aliases=["es","esnipe"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def deletesnipe(ctx: lightbulb.Context) -> None:
+async def editsnipe(ctx: lightbulb.Context) -> None:
     try:
         author = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Sender"]
         author_mention = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Mention"]
@@ -133,9 +128,6 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
             emb.add_field(name="After:", value=after)
             emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
             await ctx.respond(embed=emb)
-            sniper.d.editsniped.popitem()
-            await asyncio.sleep(5)
-            await ctx.delete_last_response()
         else:
             emb = hikari.Embed(title="Sniped!")
             emb.add_field(name="Author:", value=author, inline=False)
@@ -144,18 +136,16 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
             emb.set_footer(
                 text=f"Sniped by: {ctx.message.author}", icon=ctx.author.avatar_url)
             await ctx.respond(embed=emb)
-            sniper.d.editsniped.popitem()
-            await asyncio.sleep(5)
-            await ctx.delete_last_response()
+        del sniper.d.editsniped[ctx.guild_id][ctx.channel_id]
+        await asyncio.sleep(5)
+        await ctx.delete_last_response()
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"))
         await asyncio.sleep(3)
-        return
 
 def load(bot) -> None:
     bot.add_plugin(sniper)
 
 def unload(bot) -> None:
-    del sniper.d.delsniped
-    del sniper.d.editsniped
+    sniper.d.clear()
     bot.remove_plugin(sniper)
