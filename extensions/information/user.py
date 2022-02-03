@@ -7,7 +7,7 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui"])
+@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui","profile","info"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_info(ctx: lightbulb.Context) -> None:
     target = ctx.get_guild().get_member(ctx.options.target or ctx.user)
@@ -84,9 +84,9 @@ async def user_banner(ctx: lightbulb.Context):
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
         
 @user_plugin.command
-@lightbulb.option("server", "Get the server avatar instead?", bool)
+@lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = True)
 @lightbulb.option("target", "The member to get the avatar.", hikari.User , required=True)
-@lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True)
+@lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def user_avatar(ctx: lightbulb.Context):
     """Show avatar of a user, if any"""
