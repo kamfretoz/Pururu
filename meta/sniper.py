@@ -1,6 +1,6 @@
 import hikari
 import lightbulb
-import asyncio
+from lightbulb.ext import tasks
 
 sniper = lightbulb.Plugin("snipe", "snippin yo ass", include_datastore=True)
 
@@ -135,8 +135,15 @@ async def editsnipe(ctx: lightbulb.Context) -> None:
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"), delete_after=3)
 
+@tasks.task(h=1, auto_start=True)
+async def clear_sniper():
+    sniper.d.editsniped.clear()
+    sniper.d.delsniped.clear()
+    
+
 def load(bot) -> None:
     bot.add_plugin(sniper)
+    tasks.load(bot)
 
 def unload(bot) -> None:
     sniper.d.clear()
