@@ -41,7 +41,6 @@ async def undertale(ctx: lightbulb.Context) -> None:
     text = ctx.options.text
     chara = ctx.options.character
     
-    await ctx.respond("Loading... Please Wait!")
     parameters = {
         "message": text,
         "character": chara
@@ -51,7 +50,7 @@ async def undertale(ctx: lightbulb.Context) -> None:
         image_data = await resp.read()
     img = BytesIO(image_data)
     img.seek(0)
-    await ctx.edit_last_response("Here you go!",attachment = img)
+    await ctx.respond("Here you go!",attachment = img)
 
 
 def load(bot):

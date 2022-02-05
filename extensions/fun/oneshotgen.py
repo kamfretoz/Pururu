@@ -15,12 +15,11 @@ for path in Path("./res/oneshot/faces/").glob("*.png"):
 @lightbulb.add_cooldown(1, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("text", "The text you want to write", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=oneshot_plugin.d.faces)
-@lightbulb.command("oneshot", "Generate a custom OneShot Textbox")
+@lightbulb.command("oneshot", "Generate a custom OneShot Textbox", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def oneshotgen(ctx: lightbulb.Context) -> None:
     text = ctx.options.text
     expr = ctx.options.expression
-    await ctx.respond("Loading... Please Wait!")
     with Image.open("res/oneshot/template.png") as template:
         template = template.convert("RGBA")
         with Image.open("res/oneshot/textboxArrow.png") as arrow:
@@ -36,7 +35,7 @@ async def oneshotgen(ctx: lightbulb.Context) -> None:
                 with BytesIO() as image_binary:
                     template.save(image_binary, format="PNG")
                     image_binary.seek(0)
-                    await ctx.edit_last_response("Here you go!",attachment = image_binary)
+                    await ctx.respond("Here you go!",attachment = image_binary)
     
 def load(bot):
     bot.add_plugin(oneshot_plugin)

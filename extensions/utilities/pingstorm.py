@@ -17,8 +17,8 @@ async def pingstorm(ctx: lightbulb.Context) -> None:
     if amount > 100:
         await ctx.respond("**WARNING:** **Maximum allowed amount is 100.**")
         return
-    if user == ctx.bot.get_me:
-        await ctx.reply("HA! You think it'll work against me?? Nice Try.")
+    if user.id == ctx.bot.application.id:
+        await ctx.respond("HA! You think it'll work against me?? Nice Try.")
         user = ctx.author
         await asyncio.sleep(2)
     if not pingstorm_plugin.d.lock.locked():

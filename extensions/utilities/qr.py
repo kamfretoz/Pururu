@@ -30,8 +30,7 @@ async def qr_maker(ctx: lightbulb.Context):
     with BytesIO() as file:
             img.save(file, "PNG")
             file.seek(0)
-            await ctx.respond(f"Loading...")
-            await ctx.edit_last_response(f"Here is your QR Code:", attachment=file)
+            await ctx.respond(f"Here is your QR Code:", attachment=file)
             
 @qr.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -59,8 +58,7 @@ async def qr_invite(ctx: lightbulb.Context):
     with BytesIO() as file:
             img.save(file, "PNG")
             file.seek(0)
-            await ctx.respond(f"Loading...")
-            await ctx.edit_last_response(f"Here is your QR Code:", attachment=file)
+            await ctx.respond(f"Here is your QR Code:", attachment=file)
 
 def load(bot):
     bot.add_plugin(qr_plugin)

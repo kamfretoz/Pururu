@@ -12,12 +12,11 @@ ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?")
 @lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("person2", "The other one you want to ship", hikari.Member, required=True)
 @lightbulb.option("person1", "The one you want to ship", hikari.Member, required=True)
-@lightbulb.command("ship", "Ship somebody with someone else!")
+@lightbulb.command("ship", "Ship somebody with someone else!", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ship(ctx: lightbulb.Context) -> None:
     user1 = ctx.options.person1
     user2 = ctx.options.person2
-    await ctx.respond("Calculating... Please Wait!")
     shipnumber = randint(0, 100)
     if 0 <= shipnumber <= 10:
         status = "Really low! {}".format(choice(["Friendzone ;(",
@@ -150,7 +149,7 @@ async def ship(ctx: lightbulb.Context) -> None:
     with BytesIO() as image_binary:
         bg.save(image_binary, format="PNG", optimize=True, quality=80)
         image_binary.seek(0)
-        await ctx.edit_last_response(embed=emb, attachment=image_binary, content = "Here is the result!")
+        await ctx.respond(embed=emb, attachment=image_binary, content = "Here is the result!")
 
 def load(bot):
     bot.add_plugin(ship_plugin)

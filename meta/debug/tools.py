@@ -80,7 +80,6 @@ async def extension_load(ctx:lightbulb.Context):
     ctx.bot.load_extensions(f"extensions.{category}.{name}")
     await ctx.edit_last_response(f"Successfully loaded `{ctx.options.name}`!")
 
-
 def load(bot):
     bot.add_plugin(tools_plugin)
 
