@@ -2,6 +2,7 @@ import lightbulb
 import hikari
 import qrcode
 from io import BytesIO
+from lightbulb.ext import filament
 
 qr_plugin = lightbulb.Plugin("qr", "A QR Code Maker")
 
@@ -13,12 +14,11 @@ async def qr(ctx: lightbulb.Context) -> None:
 
 @qr.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("value", "The text you want to encode", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("data", "The text you want to encode", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("maker", "Encodes a text into a QR Code", aliases=["make"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
-async def qr_maker(ctx: lightbulb.Context):
-    data = ctx.options.value
-    
+@filament.utils.pass_options
+async def qr_maker(ctx: lightbulb.Context, data):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -34,17 +34,14 @@ async def qr_maker(ctx: lightbulb.Context):
             
 @qr.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("temporary", "set if you want the member joined to be temporary", bool, required=False)
-@lightbulb.option("max_use", "The limit of the invite usage", int, required=False)
-@lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", int, required=False)
+@lightbulb.option("temporary", "set if you want the member joined to be temporary", bool, required=False, default = False)
+@lightbulb.option("max_use", "The limit of the invite usage", int, required=False, default=0)
+@lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", int, required=False, default=86400)
 @lightbulb.option("channel", "The channel you want to pick", hikari.GuildChannel, required=True)
 @lightbulb.command("invite", "Encodes an invite into a QR Code", aliases=["inv"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
-async def qr_invite(ctx: lightbulb.Context):
-    channel = ctx.options.channel
-    max_use = ctx.options.max_use or 1
-    temp = ctx.options.temporary or False
-    age = ctx.options.max_time or 86400
+@filament.utils.pass_options
+async def qr_invite(ctx: lightbulb.Context, channel, max_use, max_time, temporary):
     
     qr = qrcode.QRCode(
         version=1,
@@ -52,7 +49,7 @@ async def qr_invite(ctx: lightbulb.Context):
         box_size=10,
         border=2,
     )
-    link = await ctx.bot.rest.create_invite(channel, max_uses=max_use, max_age=age ,temporary=temp)
+    link = await ctx.bot.rest.create_invite(channel, max_uses=max_use, max_age=max_time ,temporary=temporary)
     qr.add_data(link)
     img = qr.make_image(fill_color="black", back_color="white")
     with BytesIO() as file:

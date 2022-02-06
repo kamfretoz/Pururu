@@ -9,6 +9,7 @@ import re
 import os
 from datetime import date
 import dotenv
+from lightbulb.ext import filament
 
 dotenv.load_dotenv()
 
@@ -120,11 +121,11 @@ async def leave(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("song", "The name of the song you want to play.", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True)
+@lightbulb.option("query", "The name of the song you want to play.", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True)
 @lightbulb.command("play", "searches for your song.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def play(ctx: lightbulb.Context) -> None:
-    query = ctx.options.song
+@filament.utils.pass_options
+async def play(ctx: lightbulb.Context, query) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -136,9 +137,9 @@ async def play(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=embed)
         return None
     await _join(ctx)
-    if "https://open.spotify.com/playlist" in ctx.options.song:
+    if "https://open.spotify.com/playlist" in query:
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-        playlist_link = f"{ctx.options.song}"
+        playlist_link = f"{query}"
         playlist_URI = playlist_link.split("/")[-1].split("?")[0]
         track_uris = [x["track"]["uri"] for x in sp.playlist_tracks(playlist_URI)["items"]]
         for track in sp.playlist_tracks(playlist_URI)["items"]:
@@ -153,7 +154,7 @@ async def play(ctx: lightbulb.Context) -> None:
             pass
         embed=hikari.Embed(title="**Added Playlist To The Queue.**", color=0x6100FF)
         return await ctx.respond(embed=embed)
-    if "https://open.spotify.com/album" in ctx.options.song:	
+    if "https://open.spotify.com/album" in query:	
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
         album_link = f"{query}"
         album_id= album_link.split("/")[-1].split("?")[0]
@@ -169,7 +170,7 @@ async def play(ctx: lightbulb.Context) -> None:
             pass
         embed=hikari.Embed(title="**Added Album To The Queue.**", color=0x6100FF)
         return await ctx.respond(embed=embed)
-    if "https://open.spotify.com/track" in ctx.options.song:
+    if "https://open.spotify.com/track" in query:
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
         track_link = f"{query}"
         track_id= track_link.split("/")[-1].split("?")[0]
@@ -312,7 +313,8 @@ async def stop(ctx: lightbulb.Context) -> None:
 @lightbulb.option("percentage", "What to change the volume to.", int , max_value=200 )
 @lightbulb.command("volume", "Change the volume.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def volume(ctx: lightbulb.Context) -> None:
+@filament.utils.pass_options
+async def volume(ctx: lightbulb.Context, percentage) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -322,8 +324,8 @@ async def volume(ctx: lightbulb.Context) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    await music_plugin.d.lavalink.volume(ctx.guild_id, int(ctx.options.percentage))
-    embed=hikari.Embed(title=f"**Volume is now at {ctx.options.percentage}%**", color=0x6100FF)
+    await music_plugin.d.lavalink.volume(ctx.guild_id, int(percentage))
+    embed=hikari.Embed(title=f"**Volume is now at {percentage}%**", color=0x6100FF)
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
@@ -331,7 +333,8 @@ async def volume(ctx: lightbulb.Context) -> None:
 @lightbulb.option("time", "What time you would like to seek to.", modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.command("seek", "Seek to a specific point in a song.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def seek(ctx: lightbulb.Context) -> None:
+@filament.utils.pass_options
+async def seek(ctx: lightbulb.Context, time) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -341,7 +344,7 @@ async def seek(ctx: lightbulb.Context) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    if not (match := re.match(TIME_REGEX, ctx.options.time)):
+    if not (match := re.match(TIME_REGEX, time)):
             embed = hikari.Embed(title="**Invalid time entered.**", colour=0xC80000)
             await ctx.respond(embed=embed)
     if match.group(3):
@@ -363,7 +366,7 @@ async def seek(ctx: lightbulb.Context) -> None:
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
 
-        embed.add_field(name="Current Position", value=f"{ctx.options.time}/{int(length[0])}:{round(length[1]/1000):02}")
+        embed.add_field(name="Current Position", value=f"{time}/{int(length[0])}:{round(length[1]/1000):02}")
     except:
         pass
     await ctx.respond(embed=embed)
@@ -478,7 +481,7 @@ async def resume(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.command("nowplaying", "See what's currently playing.", auto_defer=True)
+@lightbulb.command("nowplaying", "See what's currently playing.", auto_defer=True, aliases=["np","playing"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def now_playing(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -563,7 +566,8 @@ async def queue(ctx: lightbulb.Context) -> None:
 @lightbulb.option("index", "Index for the song you want to remove.", int, required = True)
 @lightbulb.command("remove", "Removes a song from the queue.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def remove(ctx: lightbulb.Context) -> None:
+@filament.utils.pass_options
+async def remove(ctx: lightbulb.Context, index) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -574,7 +578,6 @@ async def remove(ctx: lightbulb.Context) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    index = ctx.options.index
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if index == 0:
         embed = hikari.Embed(title=f"**You cannot remove a song that is currently playing.**",color=0xC80000)
@@ -599,7 +602,8 @@ async def remove(ctx: lightbulb.Context) -> None:
 @lightbulb.option("position", "The song's position in the queue.", int, required = True)
 @lightbulb.command("skipto", "skip to a different song in the queue.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def skipto(ctx: lightbulb.Context) -> None:
+@filament.utils.pass_options
+async def skipto(ctx: lightbulb.Context, position) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -610,7 +614,7 @@ async def skipto(ctx: lightbulb.Context) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    index = ctx.options.position
+    index = position
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if index == 0:
         embed = hikari.Embed(title=f"**You cannot move to a song that is currently playing.**",color=0xC80000)
@@ -640,7 +644,8 @@ async def skipto(ctx: lightbulb.Context) -> None:
 @lightbulb.option("new_position", "The song's new position in the queue.", int, required = True)
 @lightbulb.command("move", "Move a song to a different position in the queue.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def move(ctx: lightbulb.Context) -> None:
+@filament.utils.pass_options
+async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -652,8 +657,8 @@ async def move(ctx: lightbulb.Context) -> None:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return
-    new_index = ctx.options.new_position
-    old_index = ctx.options.current_position
+    new_index = new_position
+    old_index = current_position
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not len(node.queue) >= 1:
         embed = hikari.Embed(title=f"**There is only 1 song in the queue.**",color=0xC80000)

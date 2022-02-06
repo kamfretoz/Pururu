@@ -1,5 +1,5 @@
 import lightbulb
-import hikari
+from lightbulb.ext import filament
 
 hex_plugin = lightbulb.Plugin("hexadecimal", "HEXXin good")
 
@@ -14,10 +14,10 @@ async def hex_tool(ctx: lightbulb.Context) -> None:
 @lightbulb.option("value", "the value to decode", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("decode", "convert hex to ascii")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
-async def hex_decode(ctx:lightbulb.Context):
-    txt = ctx.options.value
+@filament.utils.pass_options
+async def hex_decode(ctx:lightbulb.Context, value):
     try:
-        hex = bytearray.fromhex(txt).decode()
+        hex = bytearray.fromhex(value).decode()
     except Exception as e:
         await ctx.respond(f"**Error: `{e}`. This probably means the text is malformed. Sorry, you can always try here**: http://www.unit-conversion.info/texttools/hexadecimal/#data")
         return

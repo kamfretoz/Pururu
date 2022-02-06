@@ -1,5 +1,6 @@
 import lightbulb
 import hikari
+from lightbulb.ext import filament
 
 urban_plugin = lightbulb.Plugin("urban", "Urban Dictionary related command!")
 
@@ -7,11 +8,11 @@ urban_plugin = lightbulb.Plugin("urban", "Urban Dictionary related command!")
 @lightbulb.option("definiton", "The definition you want to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("urban", "Look up urban dictionary for the given word!", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def urban(ctx: lightbulb.Context) -> None:
-    query = ctx.options.definiton
+@filament.utils.pass_options
+async def urban(ctx: lightbulb.Context, definition) -> None:
     #--First we connect to Urban Dictionary's API and get the results--#
     parameters = {
-        "term": query
+        "term": definition
     }
     async with ctx.bot.d.aio_session.get(f'http://api.urbandictionary.com/v0/define', params=parameters) as r:
         #--Now we decode the JSON and get the variables, truncating definitions and examples if they are longer than 900 characters due to Discord API limitations and replacing example with None if blank--#

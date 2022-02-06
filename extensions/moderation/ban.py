@@ -1,6 +1,7 @@
 import lightbulb
 import hikari
 from lightbulb.utils import pag, nav
+from lightbulb.ext import filament
 
 ban_plugin = lightbulb.Plugin("ban", "Prepare the ban hammer!! (Please use it wisely")
 ban_plugin.add_checks(
@@ -15,10 +16,10 @@ ban_plugin.add_checks(
 @lightbulb.option("user", "the user you want to ban", hikari.User , required=True)
 @lightbulb.command("ban", "ban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-async def ban(ctx: lightbulb.Context):
-    user = ctx.options.user
-    res = ctx.options.reason or f"'No Reason Provided.' By {ctx.author.username}"
-    delete = ctx.options.delete_message or 0
+@filament.utils.pass_options
+async def ban(ctx: lightbulb.Context, user, delete_message, reason):
+    res = reason or f"'No Reason Provided.' By {ctx.author.username}"
+    delete = delete_message or 0
     await ctx.respond(f"Banning **{user.username}**")
     await ctx.bot.rest.ban_member(user = user, guild = ctx.get_guild(), reason = res, delete_message_days=delete)
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
@@ -29,9 +30,9 @@ async def ban(ctx: lightbulb.Context):
 @lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.Snowflake, required=True)
 @lightbulb.command("unban", "unban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-async def unban(ctx: lightbulb.Context):
-    user = ctx.options.user
-    res = ctx.options.reason or f"'No Reason Provided.' By {ctx.author.username}"
+@filament.utils.pass_options
+async def unban(ctx: lightbulb.Context, user, reason):
+    res = reason or f"'No Reason Provided.' By {ctx.author.username}"
     await ctx.respond(f"Unbanning the user ID of **{user}**")
     await ctx.bot.rest.unban_member(user = user, guild = ctx.get_guild(), reason = res)
     await ctx.edit_last_response(f"Succesfully unbanned the ID of `{user}` for `{res}`!")
@@ -52,7 +53,6 @@ async def banlist(ctx: lightbulb.Context):
     
     for users in bans:
             lst.add_line(str(users.user))
-    
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
     

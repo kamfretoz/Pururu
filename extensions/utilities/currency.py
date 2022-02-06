@@ -4,6 +4,7 @@ import json
 import dotenv
 import os
 from datetime import datetime
+from lightbulb.ext import filament
 
 curr_plugin = lightbulb.Plugin("currency", "money money money")
 
@@ -18,10 +19,8 @@ ksoft_key = os.environ.get("KSOFT_API_KEY")
 @lightbulb.option("origin", "The currency you want to convert from", str, required=True)
 @lightbulb.command("currency", "Convert value from one currency to another", aliases=["curr"], auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def currency(ctx: lightbulb.Context) -> None:
-    origin = ctx.options.origin
-    to = ctx.options.to
-    val = ctx.options.value
+@filament.utils.pass_options
+async def currency(ctx: lightbulb.Context, origin, to , value) -> None:
     
     head = {
         "Authorization": ksoft_key
@@ -29,7 +28,7 @@ async def currency(ctx: lightbulb.Context) -> None:
     params = {
         "from": origin,
         "to": to,
-        "value": val
+        "value": value
     }
     async with ctx.bot.d.aio_session.get('https://api.ksoft.si/kumo/currency', headers=head, params=params) as resp:
         data = json.loads(await resp.read())

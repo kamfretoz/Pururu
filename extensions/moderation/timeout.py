@@ -1,6 +1,7 @@
 import lightbulb
 import hikari
 from datetime import datetime, timedelta, timezone
+from lightbulb.ext import filament
 
 timeout_plugin = lightbulb.Plugin("timeout", "timeout for a moment.")
 timeout_plugin.add_checks(
@@ -18,22 +19,17 @@ timeout_plugin.add_checks(
 @lightbulb.option("user", "the user you want to be put in timeout", hikari.User , required=True)
 @lightbulb.command("timeout", "Timeout a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-async def timeout(ctx: lightbulb.Context):
-    user = ctx.options.user
-    reason = ctx.options.timeout
-    days = ctx.options.days
-    hour = ctx.options.hour
-    min = ctx.options.minute
-    sec = ctx.options.second
+@filament.utils.pass_options
+async def timeout(ctx: lightbulb.Context, user, second, minute, hour, days, reason):
     
     now = datetime.now(timezone.utc)
-    then = now + timedelta(days=days, hours=hour, minutes=min, seconds=sec)
+    then = now + timedelta(days=days, hours=hour, minutes=minute, seconds=second)
     
     if (then - now).days > 28:
         await ctx.respond("You can't time someone out for more than 28 days")
         return
     
-    if days == 0 and hour == 0 and min == 0 and sec == 0:
+    if days == 0 and hour == 0 and minute == 0 and second == 0:
         await ctx.respond(f"Removing timeout from **{user}**")
     else:
         await ctx.respond(f"Attempting to timeout **{user}**")

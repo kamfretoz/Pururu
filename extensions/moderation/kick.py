@@ -1,5 +1,6 @@
 import lightbulb
 import hikari
+from lightbulb.ext import filament
 
 kick_plugin = lightbulb.Plugin("kick", "DENGAN KEKUATAN SLEDING KAK SETO!")
 kick_plugin.add_checks(
@@ -13,9 +14,9 @@ kick_plugin.add_checks(
 @lightbulb.option("user", "the user you want to kick", hikari.User , required=True)
 @lightbulb.command("kick", "kick a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-async def kick(ctx: lightbulb.Context):
-    user = ctx.options.user
-    res = ctx.options.reason or f"'No Reason Provided.' By {ctx.author.username}"
+@filament.utils.pass_options
+async def kick(ctx: lightbulb.Context, user, reason):
+    res = reason or f"'No Reason Provided.' By {ctx.author.username}"
     await ctx.respond(f"Kicking **{user}**")
     await ctx.bot.rest.kick_member(user = user, guild = ctx.get_guild(), reason = res)
     await ctx.edit_last_response(f"Succesfully kicked `{user}` for `{res}`!")

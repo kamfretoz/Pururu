@@ -1,5 +1,6 @@
 import lightbulb
 import hikari
+from lightbulb.ext import filament
 
 joke_plugin = lightbulb.Plugin("joke", "Jokes! But be wary for the offensive ones!")
 
@@ -8,11 +9,12 @@ joke_plugin = lightbulb.Plugin("joke", "Jokes! But be wary for the offensive one
 @lightbulb.option("lang", "The language of the joke", str, required=False, default = "en", choices = ["cs","de","en","es","fr","pt"])
 @lightbulb.command("joke", "For all kinds of jokes! (Some might be offensive, be careful.)", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def joke(ctx: lightbulb.Context) -> None:
+@filament.utils.pass_options
+async def joke(ctx: lightbulb.Context, lang) -> None:
     parameters = {
         "format": "json",
         "amount": 1,
-        "lang": ctx.options.lang
+        "lang": lang
     }
     
     async with ctx.bot.d.aio_session.get(f'https://v2.jokeapi.dev/joke/Any', params = parameters) as resp:

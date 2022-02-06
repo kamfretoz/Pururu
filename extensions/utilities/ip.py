@@ -3,6 +3,7 @@ import hikari
 import json
 import datetime
 from re import match
+from lightbulb.ext import filament
 
 ip_plugin = lightbulb.Plugin("ip", "IP Adress Query Lookup")
 ip_regex = '^(?!^0\.)(?!^10\.)(?!^100\.6[4-9]\.)(?!^100\.[7-9]\d\.)(?!^100\.1[0-1]\d\.)(?!^100\.12[0-7]\.)(?!^127\.)(?!^169\.254\.)(?!^172\.1[6-9]\.)(?!^172\.2[0-9]\.)(?!^172\.3[0-1]\.)(?!^192\.0\.0\.)(?!^192\.0\.2\.)(?!^192\.88\.99\.)(?!^192\.168\.)(?!^198\.1[8-9]\.)(?!^198\.51\.100\.)(?!^203.0\.113\.)(?!^22[4-9]\.)(?!^23[0-9]\.)(?!^24[0-9]\.)(?!^25[0-5]\.)(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$'
@@ -12,12 +13,12 @@ ip_regex = '^(?!^0\.)(?!^10\.)(?!^100\.6[4-9]\.)(?!^100\.[7-9]\d\.)(?!^100\.1[0-
 @lightbulb.option("address", "The ip you want to analyze", str, required=True)
 @lightbulb.command("ip", "Lookup information of an IP Adress", aliases=["ipaddr"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def ip_finder(ctx: lightbulb.Context) -> None:
-    ip = ctx.options.address
+@filament.utils.pass_options
+async def ip_finder(ctx: lightbulb.Context, address) -> None:
     
-    ip_result = match(ip_regex, ip)
+    ip_result = match(ip_regex, address)
     if ip_result:
-        async with ctx.bot.d.aio_session.get(f'https://ipapi.co/{ip}/json/') as resp:
+        async with ctx.bot.d.aio_session.get(f'https://ipapi.co/{address}/json/') as resp:
             
             data = json.loads(await resp.read())
             

@@ -1,5 +1,6 @@
 import lightbulb
 import hikari
+from lightbulb.ext import filament
 
 slowmode_plugin = lightbulb.Plugin("slowmode", "*talks in slow motion*")
 slowmode_plugin.add_checks(
@@ -13,14 +14,14 @@ slowmode_plugin.add_checks(
 @lightbulb.option("channel", "The channel you want to set", hikari.GuildChannel, required=True)
 @lightbulb.command("slowmode", "Set the slowmode interval for a channel")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-async def slowmode(ctx: lightbulb.Context):
-    ch = ctx.options.channel
-    time = ctx.options.interval or 0
+@filament.utils.pass_options
+async def slowmode(ctx: lightbulb.Context, channel, interval):
+    time = interval or 0
     if time == 0:
         await ctx.respond(f"Removing slow mode from the selected channel")
     else:
         await ctx.respond(f"Attempting to set slowmode on the selected channel for **{time} seconds**")
-    await ctx.bot.rest.edit_channel(ch, rate_limit_per_user=time)
+    await ctx.bot.rest.edit_channel(channel, rate_limit_per_user=time)
     await ctx.edit_last_response("Task Finished Successfully!")
     
 def load(bot):

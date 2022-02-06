@@ -5,18 +5,18 @@ from io import BytesIO
 from datetime import datetime
 from PIL import Image
 from utils.masks import ellipse
+from lightbulb.ext import filament
 
 ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?")
 
 @ship_plugin.command()
 @lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("person2", "The other one you want to ship", hikari.Member, required=True)
-@lightbulb.option("person1", "The one you want to ship", hikari.Member, required=True)
+@lightbulb.option("user2", "The other one you want to ship", hikari.Member, required=True)
+@lightbulb.option("user1", "The one you want to ship", hikari.Member, required=True)
 @lightbulb.command("ship", "Ship somebody with someone else!", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def ship(ctx: lightbulb.Context) -> None:
-    user1 = ctx.options.person1
-    user2 = ctx.options.person2
+@filament.utils.pass_options
+async def ship(ctx: lightbulb.Context, user1, user2) -> None:
     shipnumber = randint(0, 100)
     if 0 <= shipnumber <= 10:
         status = "Really low! {}".format(choice(["Friendzone ;(",

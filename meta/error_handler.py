@@ -31,7 +31,7 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
     # Unwrap the exception to get the original cause
     exception = event.exception.__cause__ or event.exception
 
-    async def send_embed(name, code: int ,*args):
+    async def send_embed(name, code: int, *args):
         message = error_message[name]
         if args:
             message = message.format(*args)

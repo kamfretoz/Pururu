@@ -1,5 +1,6 @@
 import lightbulb
 from io import BytesIO
+from lightbulb.ext import filament
 
 undertale_plugin = lightbulb.Plugin("undertale", "Generates custom undertale textbox!", include_datastore=True)
 
@@ -37,13 +38,11 @@ undertale_plugin.d.chars = [
 @lightbulb.option("character", "The character you want to pick", str, required=True, choices = undertale_plugin.d.chars)
 @lightbulb.command("undertale", "Allows you to create Undertale Textbox")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def undertale(ctx: lightbulb.Context) -> None:
-    text = ctx.options.text
-    chara = ctx.options.character
-    
+@filament.utils.pass_options
+async def undertale(ctx: lightbulb.Context, character, text) -> None:
     parameters = {
         "message": text,
-        "character": chara
+        "character": character
     }
 
     async with ctx.bot.d.aio_session.get(f"https://demirramon.com/utgen.png", params=parameters) as resp:

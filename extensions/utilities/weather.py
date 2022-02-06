@@ -6,6 +6,7 @@ import os
 import pytemperature
 from datetime import datetime
 from math import trunc
+from lightbulb.ext import filament
 
 weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 
@@ -14,9 +15,8 @@ weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 @lightbulb.option("city", "the city you want to check", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("weather", "See the weather of a given city", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def weather(ctx: lightbulb.Context) -> None:
-    city = ctx.options.city
-    
+@filament.utils.pass_options
+async def weather(ctx: lightbulb.Context, city) -> None:
     # To retrieve the API KEY
     dotenv.load_dotenv()
     key = os.environ.get("WEATHER_API_KEY")

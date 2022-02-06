@@ -1,5 +1,6 @@
 import hikari
 import lightbulb
+from lightbulb.ext import filament
 
 morseAlphabet = {
     "A": ".-",

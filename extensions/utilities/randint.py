@@ -1,6 +1,7 @@
 import lightbulb
 import hikari
 import random
+from lightbulb.ext import filament
 
 randint_plugin = lightbulb.Plugin("randint", "Gimme random number!")
 
@@ -10,13 +11,11 @@ randint_plugin = lightbulb.Plugin("randint", "Gimme random number!")
 @lightbulb.option("begin", "The start of the range", int, required=True)
 @lightbulb.command("randint", "Give you a randomized number between a range", aliases=["randnum"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def randint(ctx: lightbulb.Context) -> None:
-    a = ctx.options.begin
-    b = ctx.options.end
-    
-    if b > a or a < b:
+@filament.utils.pass_options
+async def randint(ctx: lightbulb.Context, begin, end) -> None:
+    if end > begin or begin < end:
         em = hikari.Embed(color=0x00ff00, title='Your randomized number:')
-        em.description = random.randint(a, b)
+        em.description = random.randint(begin, end)
         await ctx.respond(embed=em)
     else:
         raise ValueError("The end range cannot be smaller than the begin range")

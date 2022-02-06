@@ -1,16 +1,16 @@
 import lightbulb
 import hikari
+from lightbulb.ext import filament
 
 roast_plugin = lightbulb.Plugin("roast", "Has been roastin since 2011!")
 
 @roast_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("user", "The user you want to roast!", hikari.Member, required=True)
+@lightbulb.option("member", "The user you want to roast!", hikari.Member, required=True)
 @lightbulb.command("roast", "For all kinds of jokes! (Some might be offensive, be careful.)", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def roast(ctx: lightbulb.Context) -> None:
-        member = ctx.options.user
-    
+@filament.utils.pass_options
+async def roast(ctx: lightbulb.Context, member) -> None:
         parameters = {
             "lang" : "en",
             "type" : "json"

@@ -1,7 +1,7 @@
 import asyncio
-
 import hikari
 import lightbulb
+from lightbulb.ext import filament
 
 purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
 
@@ -14,8 +14,8 @@ purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
 @lightbulb.option("amount", "The number of messages to purge.", type=int, required=True, max_value = 500)
 @lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def purge_messages(ctx: lightbulb.Context) -> None:
-    num_msgs = ctx.options.amount
+@filament.utils.pass_options
+async def purge_messages(ctx: lightbulb.Context, amount) -> None:
     channel = ctx.channel_id
 
     # If the command was invoked using the PrefixCommand, it will create a message
@@ -23,7 +23,7 @@ async def purge_messages(ctx: lightbulb.Context) -> None:
     if isinstance(ctx, lightbulb.PrefixContext):
         await ctx.event.message.delete()
 
-    msgs = await ctx.bot.rest.fetch_messages(channel).limit(num_msgs)
+    msgs = await ctx.bot.rest.fetch_messages(channel).limit(amount)
     await ctx.bot.rest.delete_messages(channel, msgs)
 
     resp = await ctx.respond(f"{len(msgs)} messages deleted")

@@ -30,7 +30,7 @@ async def pingstorm(ctx: lightbulb.Context) -> None:
             while ping < int(amount):
                 await ctx.respond(f"{user.mention} - {ping + 1}/{amount}")
                 ping += 1
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(1)
             await ctx.respond("Finished!")
             await ctx.delete_last_response()
 

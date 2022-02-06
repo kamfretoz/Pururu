@@ -1,4 +1,5 @@
 import lightbulb
+from lightbulb.ext import filament
 from PIL import Image, ImageFont, ImageDraw
 from textwrap import fill
 from io import BytesIO
@@ -17,15 +18,14 @@ for path in Path("./res/oneshot/faces/").glob("*.png"):
 @lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=oneshot_plugin.d.faces)
 @lightbulb.command("oneshot", "Generate a custom OneShot Textbox", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def oneshotgen(ctx: lightbulb.Context) -> None:
-    text = ctx.options.text
-    expr = ctx.options.expression
+@filament.utils.pass_options
+async def oneshotgen(ctx: lightbulb.Context, expression, text) -> None:
     with Image.open("res/oneshot/template.png") as template:
         template = template.convert("RGBA")
         with Image.open("res/oneshot/textboxArrow.png") as arrow:
             arrow = arrow.convert("RGBA")
             template.alpha_composite(arrow, (300, 118))
-            with Image.open(f"res/oneshot/faces/{expr}.png") as sprite:
+            with Image.open(f"res/oneshot/faces/{expression}.png") as sprite:
                 sprite = sprite.convert("RGBA")
                 template.alpha_composite(sprite, (496, 16))
                 font = ImageFont.truetype("res/oneshot/font-b.ttf", 24)

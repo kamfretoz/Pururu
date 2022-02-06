@@ -1,14 +1,14 @@
 import lightbulb
 import hikari
-
+from lightbulb.ext import filament
 pokedex_plugin = lightbulb.Plugin("pokedex", "Pokeom Query Lookup tool")
 
 @pokedex_plugin.command()
 @lightbulb.option("pokemon", "The name of the pokemon you want to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("pokedex", "Access Pokédex database of Information", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def pokedex(ctx: lightbulb.Context) -> None:
-    query = ctx.options.pokemon
+@filament.utils.pass_options
+async def pokedex(ctx: lightbulb.Context, pokemon) -> None:
     #--Some Pokemon with several forms are named differently on the API, so if one of those Pokemon are specified, we replace the query with the correct name--#
     pkmn = {
         'meloetta': 'Meloetta - Aria Forme',
@@ -31,7 +31,7 @@ async def pokedex(ctx: lightbulb.Context) -> None:
         'wishiwashi': 'Wishiwashi - Solo Form',
         'minior': 'Minior - Meteor Form',
         'mimikyu': 'Mimikyu - Disguised Form',
-    }.get(query.lower(), query)
+    }.get(pokemon.lower(), pokemon)
 
     #--First we connect to the Pokedex API and download the Pokedex entry--#
     async with ctx.bot.d.aio_session.get(f'https://pokeapi.glitch.me/v1/pokemon/{pkmn}') as dex_entry:

@@ -1,5 +1,6 @@
 import lightbulb
 import hikari
+from lightbulb.ext import filament
 
 dict_plugin = lightbulb.Plugin("dictionary", "*turns to next page*")
 
@@ -8,8 +9,8 @@ dict_plugin = lightbulb.Plugin("dictionary", "*turns to next page*")
 @lightbulb.option("word", "The text you want to define", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("define", "Look up the definition of a word", aliases=["def"], auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def dictionary(ctx: lightbulb.Context) -> None:
-    word = ctx.options.word
+@filament.utils.pass_options
+async def dictionary(ctx: lightbulb.Context, word) -> None:
     try:
         #--Connect to unofficial Google Dictionary API and get results--#
         async with ctx.bot.d.aio_session.get(f'https://api.dictionaryapi.dev/api/v1/entries/en/{word}') as r:

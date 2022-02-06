@@ -1,6 +1,7 @@
 import lightbulb
 import hikari
 from random import choice
+from lightbulb.ext import filament
 
 
 ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i dont know where to put them")
@@ -43,8 +44,8 @@ async def rickroll(ctx: lightbulb.Context):
 @lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("8ball", "Ask a question to the 8Ball!")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def eball(ctx: lightbulb.Context):
-    question = ctx.options.question
+@filament.utils.pass_options
+async def eball(ctx: lightbulb.Context, question: str):
     ps = {
         "psgood": [
             "Yes",
@@ -82,11 +83,11 @@ async def eball(ctx: lightbulb.Context):
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("target", "who do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("f", "Press F to pay respect.")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def respect(ctx: lightbulb.Context):
-    text = ctx.options.target
+@filament.utils.pass_options
+async def respect(ctx: lightbulb.Context, text: str):
     hearts = ['❤', '💛', '💚', '💙', '💜', '♥']
     reason = f"for **{text}** " if text else ""
     await ctx.respond(f"**{ctx.author.username}** has paid their respect {reason}{choice(hearts)}")

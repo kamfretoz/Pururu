@@ -4,6 +4,7 @@ import json
 import dotenv
 import os
 from datetime import datetime
+from lightbulb.ext import filament
 
 
 subreddit_plugin = lightbulb.Plugin("subreddit", "REEEEEEEEEEEEEEEEEEEEdit")
@@ -18,9 +19,8 @@ ksoft_key = os.environ.get("KSOFT_API_KEY")
 @lightbulb.option("sub", "the subreddit you want to see", str, required = True)
 @lightbulb.command("subreddit", "Sends a random weird imagery from subreddit", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def subreddit(ctx: lightbulb.Context):
-    reddit = ctx.options.sub
-    span = ctx.options.span
+@filament.utils.pass_options
+async def subreddit(ctx: lightbulb.Context, span, sub):
     head = {
         "Authorization": ksoft_key
     }
@@ -28,7 +28,7 @@ async def subreddit(ctx: lightbulb.Context):
         "remove_nsfw": "true",
         "span": span
     }
-    async with ctx.bot.d.aio_session.get(f'https://api.ksoft.si/images/rand-reddit/{reddit}', headers=head, params=param) as resp:
+    async with ctx.bot.d.aio_session.get(f'https://api.ksoft.si/images/rand-reddit/{sub}', headers=head, params=param) as resp:
         data = json.loads(await resp.read())
     try:
         title = data["title"]

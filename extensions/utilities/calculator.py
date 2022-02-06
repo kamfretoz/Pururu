@@ -1,6 +1,7 @@
 import lightbulb
 import hikari
 from operator import pow, truediv, mul, add, sub
+from lightbulb.ext import filament
 
 calc_plugin = lightbulb.Plugin("calculator", "It's a calculator, what did you expect?")
 
@@ -9,10 +10,11 @@ calc_plugin = lightbulb.Plugin("calculator", "It's a calculator, what did you ex
 @lightbulb.option("right", "The rightmost value", int, required=True)
 @lightbulb.option("operation", "The operation you want to perform", str, required=True, choices=["+","-","*","/","^"])
 @lightbulb.option("left", "The leftmost value", int, required=True)
-@lightbulb.command("calculator", "Calculate the given value", aliases=["calc"])
+@lightbulb.command("calculator", "Calculate the given value", aliases=["calc"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def calc(ctx: lightbulb.Context) -> None:
-    calculation = f"{ctx.options.left}{ctx.options.operation}{ctx.options.right}"
+@filament.utils.pass_options
+async def calc(ctx: lightbulb.Context, left, operation, right) -> None:
+    calculation = f"{left}{operation}{right}"
     
     calculation.strip()
     

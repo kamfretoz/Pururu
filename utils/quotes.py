@@ -2,7 +2,7 @@
 ## Customizeable Error Message Quote ##
 #######################################
 
-error_quotes = (
+error_quotes = [
     "Values of B will give rise to dom.",
     "FATAL system error #nnnn CAUSE: We should never get here!",
     "OHHHH…. I give up Core dumped",
@@ -178,7 +178,7 @@ error_quotes = (
     "You think this is funny?!",
     "im scared mom hold my hand",
     "Watch the road, there are kids around here!"
-)
+]
 
 
 # Hackerman jargon stuff
@@ -189,3 +189,11 @@ jargonWordPool = [["TCP", "HTTP", "SDD", "RAM", "GB", "CSS", "SSL", "AGP", "SQL"
                 ["backing up", "bypassing", "hacking", "overriding", "compressing", "copying", "navigating", "indexing", "connecting", "generating", "quantifying", "calculating", "synthesizing", "inputting", "transmitting", "programming", "rebooting", "parsing", "shutting down", "injecting", "transcoding", "encoding", "attaching", "disconnecting", "networking"]
             ]
 jargonConstructs = ["If we {3} the {2}, we can get to the {0} {2} through the {1} {0} {2}!", "We need to {3} the {1} {0} {2}!", "Try to {3} the {0} {2}, maybe it will {3} the {1} {2}!", "You can't {3} the {2} without {4} the {1} {0} {2}!", "Use the {1} {0} {2}, then you can {3} the {1} {2}!", "The {0} {2} is down, {3} the {1} {2} so we can {3} the {0} {2}!", "{4} the {2} won't do anything, we need to {3} the {1} {0} {2}!", "I'll {3} the {1} {0} {2}, that should {3} the {0} {2}!", "My {0} {2} is down, our only choice is to {3} and {3} the {1} {2}!", "They're inside the {2}, use the {1} {0} {2} to {3} their {2}!", "Send the {1} {2} into the {2}, it will {3} the {2} by {4} its {0} {2}!"]
+
+
+statuses = ["this Society.",
+            "光",
+            "your mom",
+            "Scheiße",
+            "deez giga nuts"
+        ]
