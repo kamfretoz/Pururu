@@ -75,13 +75,13 @@ async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def deletesnipe(ctx: lightbulb.Context) -> None:
     try:
-        if isinstance(ctx, lightbulb.PrefixContext):
-            await ctx.event.message.delete()
         author = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Sender"]
         author_mention = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Mention"]
         msg = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Content"]
         attachment = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Attachment"]
         name = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Filename"]
+        if isinstance(ctx, lightbulb.PrefixContext):
+            await ctx.event.message.delete()
         if msg:
             emb = hikari.Embed(title="Sniped!",description=msg)
             emb.add_field(name="Author:",value=author_mention, inline=False)
@@ -113,13 +113,12 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def editsnipe(ctx: lightbulb.Context) -> None:
     try:
-        if isinstance(ctx, lightbulb.PrefixContext):
-            await ctx.event.message.delete()
         author = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Sender"]
         author_mention = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Mention"]
         before = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Before"]
         after = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["After"]
-
+        if isinstance(ctx, lightbulb.PrefixContext):
+            await ctx.event.message.delete()
         if before and after:
             emb = hikari.Embed(title="Sniped!")
             emb.add_field(name="Author:",value=author_mention, inline=False)
