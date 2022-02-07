@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from lightbulb.ext import filament
 import hikari
 import lightbulb
 
@@ -7,10 +7,11 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui","profile","info"])
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def user_info(ctx: lightbulb.Context) -> None:
-    target = ctx.get_guild().get_member(ctx.options.target or ctx.user)
+@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo"])
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
+@filament.utils.pass_options
+async def  member_info(ctx: lightbulb.Context, target) -> None:
+    target = ctx.get_guild().get_member(target or ctx.user)
 
     if not target:
         await ctx.respond("That user is not in the server.")
@@ -20,50 +21,85 @@ async def user_info(ctx: lightbulb.Context) -> None:
     joined_at = int(target.joined_at.timestamp())
 
     roles = (await target.fetch_roles())[1:]  # All but @everyone
-    embed = (
-        hikari.Embed(
-            title=f"User Info - {target.display_name}",
+    emb = hikari.Embed(
+        title=f"User Info - {target.display_name}",
+        description=f"ID: `{target.id}`",
+        colour=target.accent_color,
+        timestamp=datetime.now().astimezone(),
+    )
+    emb.set_footer(
+        text=f"Requested by {ctx.member.display_name}",
+        icon=ctx.member.avatar_url or ctx.member.default_avatar_url,
+    )
+    emb.set_thumbnail(target.avatar_url or target.default_avatar_url)
+    emb.add_field(
+        "Bot?",
+        str(target.is_bot),
+        inline=False,
+    )
+    emb.add_field(
+        "Created account on",
+        f"<t:{created_at}:d>\n(<t:{created_at}:R>)",
+        inline=False,
+    )
+    emb.add_field(
+        "Joined server on",
+        f"<t:{joined_at}:d>\n(<t:{joined_at}:R>)",
+        inline=False,
+    )
+    emb.add_field(
+        "Roles",
+        ", ".join(r.mention for r in roles),
+        inline=False,
+    )
+    emb.add_field(
+        "Mention", 
+        target.mention, 
+        inline=False
+    )
+    
+    await ctx.respond(emb)
+    
+@user_plugin.command
+@lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
+@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui","uprofile","uinfo"])
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@filament.utils.pass_options
+async def  user_info(ctx: lightbulb.Context, target) -> None:
+    target = await ctx.bot.rest.fetch_user(user = target or ctx.user)
+    
+    if not target:
+        await ctx.respond("Cannot find that user.")
+        return
+    created_at = int(target.created_at.timestamp())
+    emb = hikari.Embed(
+            title=f"User Info - {target}",
             description=f"ID: `{target.id}`",
-            colour=0x3B9DFF,
+            colour=target.accent_color,
             timestamp=datetime.now().astimezone(),
         )
-        .set_footer(
-            text=f"Requested by {ctx.member.display_name}",
-            icon=ctx.member.avatar_url or ctx.member.default_avatar_url,
-        )
-        .set_thumbnail(target.avatar_url or target.default_avatar_url)
-        .add_field(
-            "Bot?",
-            str(target.is_bot),
-            inline=False,
-        )
-        .add_field(
+    emb.add_field(name="Is bot?", value=target.is_bot, inline=False)
+    emb.set_thumbnail(target.avatar_url or target.default_avatar_url)
+    if target.banner_url:
+        emb.set_image(target.banner_url)
+    emb.add_field(
             "Created account on",
             f"<t:{created_at}:d>\n(<t:{created_at}:R>)",
             inline=False,
-        )
-        .add_field(
-            "Joined server on",
-            f"<t:{joined_at}:d>\n(<t:{joined_at}:R>)",
-            inline=False,
-        )
-        .add_field(
-            "Roles",
-            ", ".join(r.mention for r in roles),
-            inline=False,
-        )
     )
-
-    await ctx.respond(embed)
+    emb.add_field(name="Mention", value=target.mention, inline=False)
+    
+    await ctx.respond(embed=emb)
 
 @user_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("target", "The member to get the banner.", hikari.Member, required=True)
 @lightbulb.command("banner", "Get a member's banner.", auto_defer = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def user_banner(ctx: lightbulb.Context):
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
+@filament.utils.pass_options
+async def user_banner(ctx: lightbulb.Context, target):
     """Show the banner of a user, if any"""
-    target = await ctx.bot.rest.fetch_user(user = ctx.options.target or ctx.user)
+    target = await ctx.bot.rest.fetch_user(user = target or ctx.user)
 
     if not target:
         await ctx.respond("That user is not in the server.")
@@ -87,10 +123,11 @@ async def user_banner(ctx: lightbulb.Context):
 @lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = True)
 @lightbulb.option("target", "The member to get the avatar.", hikari.User , required=True)
 @lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"])
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def user_avatar(ctx: lightbulb.Context):
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
+@filament.utils.pass_options
+async def user_avatar(ctx: lightbulb.Context, target):
     """Show avatar of a user, if any"""
-    target = ctx.options.target or ctx.user
+    target = target or ctx.user
 
     if not target:
         await ctx.respond("That user is not in the server.")
