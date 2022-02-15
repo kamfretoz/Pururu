@@ -10,6 +10,8 @@ import os
 from datetime import date
 import dotenv
 from lightbulb.ext import filament
+import miru
+from miru.ext import nav
 
 dotenv.load_dotenv()
 
@@ -20,20 +22,38 @@ SPOTCLIENT_ID=os.getenv("SPOTID")
 SPOTCLIENT_SECRET=os.getenv("SPOTSECRET")
 TOKEN=os.getenv("BOT_TOKEN")
 LAVALINK_SERVER=os.getenv("LAVA_SRV")
+LAVALINK_PORT=os.getenv("LAVA_PORT")
 LAVALINK_PASSWORD=os.getenv("LAVA_PASS")
 
+music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 class EventHandler:
 
     async def track_start(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
-        logging.info("Track started on guild: %s", event.guild_id)
+        logging.info(f"Track started on guild: {event.guild_id}")
         
 
-    async def track_finish(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
-        logging.info("Track finished on guild: %s", event.guild_id)
+    async def track_finish(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
+        guild_node = await lavalink.get_guild_node(event.guild_id)
+        loop_enabled = guild_node.get_data().get("loop")
+        if loop_enabled:
+            song = await music_plugin.d.lavalink.decode_track(event.track)
+            result = await music_plugin.d.lavalink.get_tracks(song.uri)
+            await lavalink.play(event.guild_id, result.tracks[0]).queue()
+            return
+        
+        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0:
+            await music_plugin.d.lavalink.destroy(event.guild_id)
+            await music_plugin.d.lavalink.leave(event.guild_id)
+            await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
+            await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
+            return
+
 
     async def track_exception(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackException) -> None:
-        logging.warning("Track exception event happened on guild: %d", event.guild_id)
+        logging.warning(f"Track exception event happened on guild: {event.guild_id}")
+        
 
+        # If a track was unable to be played, skip it
         skip = await lavalink.skip(event.guild_id)
         node = await lavalink.get_guild_node(event.guild_id)
 
@@ -42,8 +62,6 @@ class EventHandler:
 
         if skip and not node.queue and not node.now_playing:
             await lavalink.stop(event.guild_id)
-
-music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 
 async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None
@@ -79,7 +97,7 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
 async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     builder = (
         lavasnek_rs.LavalinkBuilder(event.my_user.id, TOKEN)
-        .set_host(LAVALINK_SERVER).set_password(LAVALINK_PASSWORD)
+        .set_host(LAVALINK_SERVER).set_port(int(LAVALINK_PORT)).set_password(LAVALINK_PASSWORD)
     )
     if HIKARI_VOICE:
         builder.set_start_gateway(False)
@@ -89,7 +107,7 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("join", "Joins your voice channel", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def join(ctx: lightbulb.Context) -> None:
     channel_id = await _join(ctx)
     if channel_id:
@@ -99,7 +117,7 @@ async def join(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("leave", "leaves your voice channel.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def leave(ctx: lightbulb.Context) -> None:
     await music_plugin.d.lavalink.destroy(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -111,7 +129,7 @@ async def leave(ctx: lightbulb.Context) -> None:
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0x6100FF)
         await ctx.respond(embed=embed)
-        return None
+        return
     else:
         await music_plugin.d.lavalink.leave(ctx.guild_id)
     await music_plugin.d.lavalink.remove_guild_node(ctx.guild_id)
@@ -121,9 +139,9 @@ async def leave(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("query", "The name of the song you want to play.", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True)
+@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True)
 @lightbulb.command("play", "searches for your song.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def play(ctx: lightbulb.Context, query) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -276,7 +294,7 @@ async def play(ctx: lightbulb.Context, query) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("stop", "stops the currently playing song. (Type skip if you would like to move onto the next song.)", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def stop(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
@@ -312,7 +330,7 @@ async def stop(ctx: lightbulb.Context) -> None:
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("percentage", "What to change the volume to.", int , max_value=200 )
 @lightbulb.command("volume", "Change the volume.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def volume(ctx: lightbulb.Context, percentage) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -332,7 +350,7 @@ async def volume(ctx: lightbulb.Context, percentage) -> None:
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("time", "What time you would like to seek to.", modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.command("seek", "Seek to a specific point in a song.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def seek(ctx: lightbulb.Context, time) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -374,7 +392,7 @@ async def seek(ctx: lightbulb.Context, time) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("replay", "Replays the current song.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def replay(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
@@ -393,7 +411,7 @@ async def replay(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("skip", "skips to the next song (if any).", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def skip(ctx: lightbulb.Context) -> None:
     skip = await music_plugin.d.lavalink.skip(ctx.guild_id)
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
@@ -414,7 +432,7 @@ async def skip(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("pause", "Pauses the currently playing track.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def pause(ctx: lightbulb.Context) -> None:
     await music_plugin.d.lavalink.pause(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -448,7 +466,7 @@ async def pause(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("resume", "Resumes playing the currently playing track.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def resume(ctx: lightbulb.Context) -> None:
     await music_plugin.d.lavalink.resume(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
@@ -482,7 +500,7 @@ async def resume(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("nowplaying", "See what's currently playing.", auto_defer=True, aliases=["np","playing"])
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def now_playing(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
@@ -530,36 +548,48 @@ async def now_playing(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.command("queue", "Shows you the queue.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.command("queue", "Shows you the queue.")
+@lightbulb.implements(lightbulb.SlashCommand)
 async def queue(ctx: lightbulb.Context) -> None:
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return None
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
-    embed = hikari.Embed(title="**The Queue**",description=f"Here are the next **{len(node.queue)}** tracks.",color=0x6100FF)
+        await ctx.respond(embed=embed)
+        return
+    if len(node.queue) == 1:
+        embed = hikari.Embed(title="**The queue is currently empty.**", colour=0xC80000)
+        await ctx.respond(embed=embed)
+        return
+    songs = [f'{tq.track.info.title} - {tq.track.info.author} ({int(divmod(tq.track.info.length, 60000)[0])}:{round(divmod(tq.track.info.length, 60000)[1]/1000):02})' for i, tq in enumerate(node.queue[1:], start=1)]
+    chunks = [songs[i : i + 10] for i in range(0, len(songs), 10)]
+    embeds = []
+    i = 1
+    for chunk in chunks:
+        texts = []
+        for track in chunk:
+            texts.append(f"**{i}.** {track}")
+            i += 1
+        names = "\n".join(texts)
+        songs = hikari.Embed(title="**The Queue**", description=names, color=0x6100FF)
+        embeds.append(songs)
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f'{node.now_playing.track.info.author} {node.now_playing.track.info.title}', limit=1)
+    results = sp.search(q=f'{node.queue[1].track.info.author} {node.queue[1].track.info.title}', limit=1)
     for idx, track in enumerate(results['tracks']['items']):
         querytrack = track['name']
         queryartist = track["artists"][0]["name"]	
     try:
-        embed.set_thumbnail(f"{track['album']['images'][0]['url']}")
+        songs.set_thumbnail(f"{track['album']['images'][0]['url']}")
     except:
         pass
-    try:
-      embed.add_field(name="Currently playing", value=f"{[node.queue[0].track.info.title]}({track['external_urls']['spotify']})")
-    except:
-      embed.add_field(name="Currently playing", value=f"{node.queue[0].track.info.title}")  
-    i = 1
-    if len(node.queue) > 1:
-        embed.add_field(name="Upcoming", value=f"\n".join([f'**{i}.** {tq.track.info.title}' for i, tq in enumerate(node.queue[1:], start=1)]))
-    await ctx.respond(embed=embed)
+    navigator = nav.NavigatorView(pages=embeds)
+    await navigator.send(ctx.interaction)
     
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -637,6 +667,33 @@ async def skipto(ctx: lightbulb.Context, position) -> None:
     await music_plugin.d.lavalink.skip(ctx.guild_id)
     embed = hikari.Embed(title=f"**Skipped to {song_to_be_skipped.track.info.title}.**",color=0x6100FF)
     await ctx.respond(embed=embed)
+    
+@music_plugin.command()
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.command("loop", "Loops the currently playing song!", auto_defer=True)
+@lightbulb.implements(lightbulb.SlashCommand)
+async def loop(ctx: lightbulb.Context) -> None:
+    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
+    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
+    if not voice_state:
+        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
+        await ctx.respond(embed=embed)
+        return None
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
+    if not node or not node.now_playing:
+        embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
+        await ctx.respond(embed=embed)
+        return
+    loop_enabled = node.get_data().get("loop")
+    if loop_enabled:
+        node.set_data({"loop": False})
+        embed = hikari.Embed(title="**Disabled the loop.**", color=0x6100FF)
+        await ctx.respond(embed=embed)
+    else:
+        node.set_data({"loop": True})
+        embed = hikari.Embed(title="**Enabled the loop.**", color=0x6100FF)
+        await ctx.respond(embed=embed)
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -679,7 +736,7 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("empty", "Clear the queue.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def empty(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
@@ -704,7 +761,7 @@ async def empty(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("newreleases", "See the latest releases for the day.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def newreleases(ctx: lightbulb.Context) -> None:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
     response = sp.new_releases(limit=21)
@@ -722,7 +779,7 @@ async def newreleases(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("trending", "See the latest trending tracks.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def trending(ctx: lightbulb.Context) -> None:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
     playlist_URI = "37i9dQZF1DXcBWIGoYBM5M"
@@ -755,6 +812,7 @@ if HIKARI_VOICE:
 
 
 def load(bot: lightbulb.BotApp) -> None:
+    miru.load(bot)
     bot.add_plugin(music_plugin)
 
 
