@@ -7,14 +7,14 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo"])
+@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo"], ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
 @filament.utils.pass_options
 async def  member_info(ctx: lightbulb.Context, target) -> None:
     target = ctx.get_guild().get_member(target or ctx.user)
 
     if not target:
-        await ctx.respond("That user is not in the server.")
+        await ctx.respond("That user is not in the server, use the userinfo command instead.")
         return
 
     created_at = int(target.created_at.timestamp())
@@ -62,7 +62,7 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui","uprofile","uinfo"])
+@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui","uprofile","uinfo"], ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def  user_info(ctx: lightbulb.Context, target) -> None:

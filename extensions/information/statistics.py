@@ -10,7 +10,7 @@ stats_plugin.d.counter = datetime.now()
 
 @stats_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.command("stats", "Get statistics info of the bot.", auto_defer = True)
+@lightbulb.command("stats", "Get statistics info of the bot.", auto_defer = True, ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def stats(ctx: lightbulb.Context) -> None:
     """Bot stats."""
