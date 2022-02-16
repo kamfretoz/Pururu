@@ -6,8 +6,10 @@ import lightbulb
 
 dotenv.load_dotenv()
 
+TOKEN = os.environ["BOT_TOKEN"]
+
 bot = lightbulb.BotApp(
-    os.environ["BOT_TOKEN"],
+    TOKEN.strip(),
     default_enabled_guilds=(875986914367385600),
     prefix=os.environ["PREFIX"],
     intents=hikari.Intents.ALL,
