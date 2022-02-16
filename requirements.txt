@@ -1,12 +1,13 @@
-aiohttp[speedups]
-hikari[speedups]
-hikari-lightbulb
-lightbulb-ext-filament
-ciso8601
-python-dotenv
-uvloop; sys_platform != "win32"
-psutil
-pillow
-pytemperature
-qrcode[pil]
-spotipy
+aiohttp[speedups] == 3.8.1
+hikari[speedups] == 2.0.0.dev106
+hikari-lightbulb == 2.2.0
+lightbulb-ext-filament == 0.1.2
+lavasnek-rs==0.1.0a4
+ciso8601 == 2.2.0
+python-dotenv == 0.19.2
+uvloop == 0.16.0; sys_platform != "win32" 
+psutil == 5.9.0
+pillow == 9.0.1
+pytemperature == 1.1
+qrcode == 7.3.1
+spotipy == 2.19.0
