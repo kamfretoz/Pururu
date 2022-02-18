@@ -1,5 +1,4 @@
 import lightbulb
-import hikari
 
 binary_plugin = lightbulb.Plugin("binary", "Binary Digit conversion tool")
 

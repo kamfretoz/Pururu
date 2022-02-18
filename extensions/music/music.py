@@ -98,8 +98,11 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
 async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     builder = (
         lavasnek_rs.LavalinkBuilder(event.my_user.id, TOKEN)
-        .set_host(LAVALINK_SERVER).set_port(int(LAVALINK_PORT)).set_password(LAVALINK_PASSWORD)
+        .set_host(LAVALINK_SERVER)
+        .set_port(int(LAVALINK_PORT))
+        .set_password(LAVALINK_PASSWORD)
     )
+    
     if HIKARI_VOICE:
         builder.set_start_gateway(False)
     lava_client = await builder.build(EventHandler())
