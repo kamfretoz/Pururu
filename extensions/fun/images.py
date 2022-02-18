@@ -128,6 +128,7 @@ async def pats(ctx: lightbulb.Context, user):
 @lightbulb.option("user", "the horny one!", hikari.User , required = True)
 @lightbulb.command("horny", "Horny card for u", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@filament.utils.pass_options
 async def horny(ctx: lightbulb.Context, user):
     parameters = {
         "avatar" : str(user.avatar_url)
@@ -148,7 +149,7 @@ async def horny(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("user", "the name of the user!", hikari.User , required = True)
+@lightbulb.option("member", "the name of the user!", hikari.User , required = True)
 @lightbulb.command("tweet", "create a fake tweet", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
@@ -171,7 +172,7 @@ async def tweet(ctx:lightbulb.Context, member, message):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("user", "the name of the user!", hikari.User , required = True)
+@lightbulb.option("member", "the name of the user!", hikari.User , required = True)
 @lightbulb.command("ytcomment", "create a youtube comment", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
@@ -365,7 +366,7 @@ async def triggered(ctx: lightbulb.Context, member):
     async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/triggered', params = parameters) as resp:
             imageData = io.BytesIO(await resp.read()) # read the image/bytes
             em = hikari.Embed(
-                    title=f"{member.name} have been triggered!",
+                    title=f"{member.username} have been triggered!",
                     color=0xf1f1f1,
                 )
             em.set_image(imageData)
