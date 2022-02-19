@@ -125,7 +125,7 @@ async def user_banner(ctx: lightbulb.Context, target):
 @lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
 @filament.utils.pass_options
-async def user_avatar(ctx: lightbulb.Context, target):
+async def user_avatar(ctx: lightbulb.Context, target: hikari.User, server: bool):
     """Show avatar of a user, if any"""
     target = target or ctx.user
 
@@ -133,7 +133,7 @@ async def user_avatar(ctx: lightbulb.Context, target):
         await ctx.respond("That user is not in the server.")
         return
     
-    if ctx.options.server:
+    if server:
         pfp = target.guild_avatar_url or target.avatar_url
     else:
         pfp = target.avatar_url or target.default_avatar_url

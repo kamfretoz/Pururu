@@ -61,7 +61,12 @@ async def stats(ctx: lightbulb.Context) -> None:
     )
     em.add_field(
         name=":dna: Kernel Version",
-        value=f"{platform.platform(aliased=True, terse=True)}",
+        value=platform.platform(aliased=True, terse=True),
+        inline=False,
+    )
+    em.add_field(
+        name=":gear: Library version",
+        value=f"hikari {hikari.__version__}",
         inline=False,
     )
     em.add_field(

@@ -7,9 +7,9 @@ randint_plugin = lightbulb.Plugin("randint", "Gimme random number!")
 
 @randint_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("end", "The start of the range", int, required=True)
-@lightbulb.option("begin", "The start of the range", int, required=True)
-@lightbulb.command("randint", "Give you a randomized number between a range", aliases=["randnum"])
+@lightbulb.option("end", "The start of the range", int, required=True, default=420)
+@lightbulb.option("begin", "The start of the range", int, required=True, default=69)
+@lightbulb.command("randint", "Give you a randomized number between a range", aliases=["randnum"], auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def randint(ctx: lightbulb.Context, begin, end) -> None:

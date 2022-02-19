@@ -149,13 +149,13 @@ async def horny(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("member", "the name of the user!", hikari.User , required = True)
+@lightbulb.option("member", "the name of the user!", hikari.Member , required = True)
 @lightbulb.command("tweet", "create a fake tweet", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def tweet(ctx:lightbulb.Context, member, message):
+async def tweet(ctx: lightbulb.Context, member: hikari.Member, message: str):
     parameters = {
-        "avatar" : str(member.avatar_url),
+        "avatar" : member.avatar_url.url,
         "username" : member.username,
         "displayname" : member.display_name or member.username,
         "comment" : message
@@ -167,18 +167,18 @@ async def tweet(ctx:lightbulb.Context, member, message):
                     color=0xf1f1f1,
                 )
             em.set_image(imageData)
-            await ctx.respond(attachment=em) # sending the file
+            await ctx.respond(embed=em) # sending the file
     
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("member", "the name of the user!", hikari.User , required = True)
+@lightbulb.option("member", "the name of the user!", hikari.Member , required = True)
 @lightbulb.command("ytcomment", "create a youtube comment", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def yt(ctx:lightbulb.Context, member, message):
+async def yt(ctx:lightbulb.Context, member: hikari.Member, message: str):
     parameters = {
-        "avatar" : str(member.avatar_url),
+        "avatar" : member.avatar_url.url,
         "username" : member.username,
         "comment" : message
     }

@@ -7,14 +7,11 @@ calc_plugin = lightbulb.Plugin("calculator", "It's a calculator, what did you ex
 
 @calc_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("right", "The rightmost value", int, required=True)
-@lightbulb.option("operation", "The operation you want to perform", str, required=True, choices=["+","-","*","/","^"])
-@lightbulb.option("left", "The leftmost value", int, required=True)
+@lightbulb.option("calculation", "The operation you want to perform", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("calculator", "Calculate the given value", aliases=["calc"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def calc(ctx: lightbulb.Context, left, operation, right) -> None:
-    calculation = f"{left}{operation}{right}"
+async def calc(ctx: lightbulb.Context, calculation: str) -> None:
     
     calculation.strip()
     
@@ -39,7 +36,7 @@ async def calc(ctx: lightbulb.Context, left, operation, right) -> None:
             "**", "^").replace("x", "*").replace(" ", "").strip())), inline=False)
     except Exception as e:
         raise ValueError(f"An Error Occured! {e}")
-    await ctx.respond(content=None, embed=em)
+    await ctx.respond(embed=em)
 
 def load(bot):
     bot.add_plugin(calc_plugin)

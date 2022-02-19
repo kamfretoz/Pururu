@@ -15,7 +15,7 @@ async def qr(ctx: lightbulb.Context) -> None:
 @qr.child()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("data", "The text you want to encode", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("maker", "Encodes a text into a QR Code", aliases=["make"])
+@lightbulb.command("create", "Encodes a text into a QR Code", aliases=["make"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 @filament.utils.pass_options
 async def qr_maker(ctx: lightbulb.Context, data):
