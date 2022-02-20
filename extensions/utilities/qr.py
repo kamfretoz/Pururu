@@ -37,7 +37,7 @@ async def qr_maker(ctx: lightbulb.Context, data):
 @lightbulb.option("temporary", "set if you want the member joined to be temporary", bool, required=False, default = False)
 @lightbulb.option("max_use", "The limit of the invite usage", int, required=False, default=0)
 @lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", int, required=False, default=86400)
-@lightbulb.option("channel", "The channel you want to pick", hikari.GuildChannel, required=True)
+@lightbulb.option("channel", "The channel you want to pick", hikari.TextableGuildChannel, required=True)
 @lightbulb.command("invite", "Encodes an invite into a QR Code", aliases=["inv"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 @filament.utils.pass_options
