@@ -1,5 +1,7 @@
 import lightbulb
 import hikari
+import asyncio
+import concurrent.futures
 from random import randint, choice
 from io import BytesIO
 from datetime import datetime
@@ -7,7 +9,24 @@ from PIL import Image
 from utils.masks import ellipse
 from lightbulb.ext import filament
 
-ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?")
+ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?", include_datastore=True)
+
+def image_processing(user1: BytesIO, user2: BytesIO):
+    bg = Image.open("res/ship.png")
+    bg.convert("RGBA")
+    pfp1 = Image.open(user1)
+    pfp1.convert("RGBA")
+    pfp1 = pfp1.resize((200, 200), reducing_gap=3.0)
+    pfp2 = Image.open(user2)
+    pfp2.convert("RGBA")
+    pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0)
+    
+    mask = ellipse(pfp1.size)
+    
+    bg.paste(pfp1, (30, 30), mask)
+    bg.paste(pfp2, (bg.width - pfp1.width - 30, 30), mask)
+    
+    return bg
 
 @ship_plugin.command()
 @lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
@@ -17,6 +36,9 @@ ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def ship(ctx: lightbulb.Context, user1, user2) -> None:
+    
+    loop = asyncio.get_running_loop()
+    
     shipnumber = randint(0, 100)
     if 0 <= shipnumber <= 10:
         status = "Really low! {}".format(choice(["Friendzone ;(",
@@ -128,26 +150,16 @@ async def ship(ctx: lightbulb.Context, user1, user2) -> None:
     emb.add_field(name="Status:", value=(status), inline=False)
     emb.add_field(name="Love Meter:", value=meter, inline=False)
     
-    bg = Image.open("res/ship.png")
-    bg.convert("RGBA")
     user1_asset = user1.avatar_url
     user1_pfp = BytesIO(await user1_asset.read())
     user2_asset = user2.avatar_url
     user2_pfp = BytesIO(await user2_asset.read())
-    pfp1 = Image.open(user1_pfp)
-    pfp1.convert("RGBA")
-    pfp1 = pfp1.resize((200, 200), reducing_gap=3.0)
-    pfp2 = Image.open(user2_pfp)
-    pfp2.convert("RGBA")
-    pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0)
     
-    mask = ellipse(pfp1.size)
-    
-    bg.paste(pfp1, (30, 30), mask)
-    bg.paste(pfp2, (bg.width - pfp1.width - 30, 30), mask)
-    
+    with concurrent.futures.ProcessPoolExecutor() as pool:
+        img = await loop.run_in_executor(pool, image_processing, user1_pfp, user2_pfp)
+        
     with BytesIO() as image_binary:
-        bg.save(image_binary, format="PNG", optimize=True, quality=80)
+        img.save(image_binary, format="PNG", optimize=True, quality=80)
         image_binary.seek(0)
         await ctx.respond(embed=emb, attachment=image_binary, content = "Here is the result!")
 
