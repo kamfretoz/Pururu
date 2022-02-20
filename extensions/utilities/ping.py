@@ -5,10 +5,16 @@ import datetime
 ping_plugin = lightbulb.Plugin("ping")
 
 @ping_plugin.command()
-@lightbulb.command("ping", "measure the ping of the bot", ephemeral = True, auto_defer=True)
+@lightbulb.command("ping", "measure the ping of the bot", ephemeral = True, auto_defer=True, aliases=["pong"])
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def ping(ctx: lightbulb.Context) -> None:
     heartbeat = ctx.bot.heartbeat_latency * 1000
+    
+    if isinstance(ctx, lightbulb.PrefixContext):
+        if ctx.invoked_with == "pong":
+            txt = (f":ping_pong: Ping!")
+        else:
+            txt = (f":ping_pong: Pong!")
     
     if heartbeat > 1000:
         colours = hikari.Colour(0xFF0000)
@@ -23,7 +29,7 @@ async def ping(ctx: lightbulb.Context) -> None:
             timestamp=datetime.datetime.now().astimezone(),
             color=colours,
         )
-    await ctx.respond(embed=ping)
+    await ctx.respond(embed=ping, content=txt)
     
     
 def load(bot):
