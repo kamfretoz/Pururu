@@ -8,17 +8,16 @@ stats_plugin = lightbulb.Plugin("stats", "Statistics of this bot", include_datas
 
 stats_plugin.d.counter = datetime.now()
 
+def solveunit(input):
+    output = ((input // 1024) // 1024) // 1024
+    return int(output)
+
 @stats_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.command("stats", "Get statistics info of the bot.", auto_defer = True, ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def stats(ctx: lightbulb.Context) -> None:
     """Bot stats."""
-
-    def solveunit(input):
-        output = ((input // 1024) // 1024) // 1024
-        return int(output)
-
     try:
         mem_usage = "{:.2f} MiB".format(
             __import__("psutil").Process(
@@ -30,13 +29,15 @@ async def stats(ctx: lightbulb.Context) -> None:
             __import__("psutil").Process(
             ).memory_full_info().rss / 1024 ** 2
         )
+    freq = psutil.cpu_freq(percpu=False).current
     sysboot = datetime.fromtimestamp(psutil.boot_time()).strftime("%B %d, %Y at %I:%M:%S %p")
-    uptime = datetime.now() - stats_plugin.d.counter
     uptime = datetime.now() - stats_plugin.d.counter
     hours, rem = divmod(int(uptime.total_seconds()), 3600)
     minutes, seconds = divmod(rem, 60)
     days, hours = divmod(hours, 24)
-    guilds = await ctx.bot.rest.fetch_my_guilds()
+    guilds = ctx.bot.cache.get_guilds_view()
+    users = ctx.bot.cache.get_users_view()
+    channels = ctx.bot.cache.get_guild_channels_view()
     
     if days:
         time = "%s days, %s hours, %s minutes, and %s seconds" % (
@@ -51,7 +52,7 @@ async def stats(ctx: lightbulb.Context) -> None:
     em = hikari.Embed(title="System Status", color=0x32441C)
     em.add_field(
         name=":desktop: CPU Usage",
-        value=f"{psutil.cpu_percent():.2f}% ({psutil.cpu_count(logical=False)} Cores / {psutil.cpu_count(logical=True)} Threads) \nload avg: {psutil.getloadavg()}",
+        value=f"{psutil.cpu_percent():.2f}% ({psutil.cpu_count(logical=False)} Cores / {psutil.cpu_count(logical=True)} Threads) ({'{:0.2f}'.format(freq)} GHz) \nload avg: {psutil.getloadavg()}",
         inline=False,
     )
     em.add_field(
@@ -90,8 +91,18 @@ async def stats(ctx: lightbulb.Context) -> None:
         inline=False
     )
     em.add_field(
-        name="\u2694 Servers (Guilds)",
+        name="🛰️ Servers (Guilds)",
         value=str(len(guilds)),
+        inline=False
+    )
+    em.add_field(
+        name="🚩 Channels",
+        value=str(len(channels)),
+        inline=False
+    )
+    em.add_field(
+        name="👥 Users",
+        value=str(len(users)),
         inline=False
     )
     await ctx.respond(em)

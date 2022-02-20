@@ -26,18 +26,18 @@ async def kym(ctx: lightbulb.Context, query: str) -> None:
         list1 = soup1.findAll("a", href=True)
     async with ctx.bot.d.aio_session.get('http://knowyourmeme.com' + list1[135]['href'], headers=HEADERS, params=PARAMETERS) as resp2:
         text2 = await resp2.read()
-        soup2 = BeautifulSoup(text2.decode('utf-8'), 'html5lib')  # parsing it
-        title = soup2.find('meta', attrs={"property": "og:title"})['content'] # finding the title
-        desc = soup2.find('meta', attrs={"property": "og:description"})['content'] # finding the description
-        imageurl = soup2.find('meta', attrs={"property": "og:image"})['content']  # finding image url
-        siteurl = soup2.find('meta', attrs={"property": "og:url"})['content']  # finding site url
+        try:
+            soup2 = BeautifulSoup(text2.decode('utf-8'), 'html5lib')  # parsing it
+            title = soup2.find('meta', attrs={"property": "og:title"})['content'] # finding the title
+            desc = soup2.find('meta', attrs={"property": "og:description"})['content'] # finding the description
+            imageurl = soup2.find('meta', attrs={"property": "og:image"})['content']  # finding image url
+            siteurl = soup2.find('meta', attrs={"property": "og:url"})['content']  # finding site url
+        except TypeError:
+            raise ValueError("Query not found")
         
-    try:
         emb = hikari.Embed(title=title, description=desc)
         emb.add_field("More Information", f"[Click Here.]({siteurl})")
         emb.set_image(imageurl)
-    except TypeError:
-        raise ValueError("Query not found")
     
     await ctx.respond(embed=emb)
 
