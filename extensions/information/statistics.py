@@ -52,7 +52,7 @@ async def stats(ctx: lightbulb.Context) -> None:
     em = hikari.Embed(title="System Status", color=0x32441C)
     em.add_field(
         name=":desktop: CPU Usage",
-        value=f"{psutil.cpu_percent():.2f}% ({psutil.cpu_count(logical=False)} Cores / {psutil.cpu_count(logical=True)} Threads) ({'{:0.2f}'.format(freq)} GHz) \nload avg: {psutil.getloadavg()}",
+        value=f"{psutil.cpu_percent():.2f}% ({psutil.cpu_count(logical=False)} Cores / {psutil.cpu_count(logical=True)} Threads) ({'{:0.2f}'.format(freq)} MHz) \nload avg: {psutil.getloadavg()}",
         inline=False,
     )
     em.add_field(
