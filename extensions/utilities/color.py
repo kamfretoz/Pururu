@@ -1,4 +1,3 @@
-from pickletools import optimize
 import lightbulb
 import io
 import hikari
