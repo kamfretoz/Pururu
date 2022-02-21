@@ -337,6 +337,7 @@ async def wasted(ctx: lightbulb.Context, member):
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("missionpass", "Mission Passed! Respect++", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@filament.utils.pass_options
 async def passed(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
