@@ -115,17 +115,23 @@ You will need to configure the bot with the `.env` file. This is needed to store
 1. Clone the repository
    ```sh
    git clone https://github.com/kamfretoz/XJ9.git
+   cd XJ9/
    ```
+
 2. Create a Virtual Enviroment and activate it
     ```sh
     python3 -m pip venv .venv
     source .venv/bin/activate
     ```
-3. Install the required dependencies
+
+3. Follow the steps from <a href="#prerequisites">Prerequisites</a>
+
+4. Install the required dependencies
    ```sh
    python3 -m pip install -r requirements.txt
    ```
-4. Run the bot 
+
+5. Run the bot 
    ```sh
    chmod +x run.sh
    ./run.sh
