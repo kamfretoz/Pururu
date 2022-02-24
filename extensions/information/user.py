@@ -99,7 +99,7 @@ async def  user_info(ctx: lightbulb.Context, target) -> None:
 @filament.utils.pass_options
 async def user_banner(ctx: lightbulb.Context, target: hikari.User):
     """Show the banner of a user, if any"""
-    target = target or ctx.user
+    target = await ctx.bot.rest.fetch_user(target or ctx.user)
 
     if not target:
         await ctx.respond("That user is not in the server.")
