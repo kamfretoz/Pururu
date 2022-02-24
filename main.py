@@ -10,11 +10,10 @@ TOKEN = os.environ["BOT_TOKEN"]
 
 bot = lightbulb.BotApp(
     TOKEN.strip(),
-    default_enabled_guilds=(875986914367385600),
+    default_enabled_guilds=(875986914367385600), # <- Example
     prefix=os.environ["PREFIX"],
     intents=hikari.Intents.ALL,
     ignore_bots=True,
-    help_slash_command=True,
     case_insensitive_prefix_commands=True,
     logs={
         "version": 1,
@@ -47,7 +46,7 @@ if __name__ == "__main__":
         uvloop.install()
 
     bot.run(
-        status=hikari.Status.IDLE,
+        status=hikari.Status.ONLINE,
         activity=hikari.Activity(
             name="from the distance...",
             type=hikari.ActivityType.WATCHING,)
