@@ -36,9 +36,6 @@ def image_processing(user1: BytesIO, user2: BytesIO):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def ship(ctx: lightbulb.Context, user1, user2) -> None:
-    
-    loop = asyncio.get_running_loop()
-    
     shipnumber = randint(0, 100)
     if 0 <= shipnumber <= 10:
         status = "Really low! {}".format(choice(["Friendzone ;(",
@@ -97,6 +94,7 @@ async def ship(ctx: lightbulb.Context, user1, user2) -> None:
             choice(["Forever together and never be apart."]))
     else:
         status = "🤔"
+        
     meter = "🖤🖤🖤🖤🖤🖤🖤🖤🖤🖤"
     if shipnumber <= 10:
         meter = "❤🖤🖤🖤🖤🖤🖤🖤🖤🖤"
@@ -118,6 +116,7 @@ async def ship(ctx: lightbulb.Context, user1, user2) -> None:
         meter = "❤❤❤❤❤❤❤❤❤🖤"
     else:
         meter = "❤❤❤❤❤❤❤❤❤❤"
+
     if shipnumber <= 33:
         shipColor = 0xE80303
     elif 33 < shipnumber < 66:
@@ -126,6 +125,7 @@ async def ship(ctx: lightbulb.Context, user1, user2) -> None:
         shipColor = 0x3be801
     else:
         shipColor = 0xee82ee
+
     name1letters = user1.username[:round(len(user1.username) / 2)]
     name2letters = user2.username[round(len(user2.username) / 2):]
     shipname = "".join([name1letters, name2letters])
@@ -156,6 +156,7 @@ async def ship(ctx: lightbulb.Context, user1, user2) -> None:
     user2_pfp = BytesIO(await user2_asset.read())
     
     with concurrent.futures.ProcessPoolExecutor() as pool:
+        loop = asyncio.get_running_loop()
         img = await loop.run_in_executor(pool, image_processing, user1_pfp, user2_pfp)
         
     with BytesIO() as image_binary:
