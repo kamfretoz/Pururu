@@ -8,7 +8,7 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.Member, required=False)
 @lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo"], ephemeral=True, auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def  member_info(ctx: lightbulb.Context, target) -> None:
     target = ctx.get_guild().get_member(target or ctx.user)
@@ -95,7 +95,7 @@ async def  user_info(ctx: lightbulb.Context, target) -> None:
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("target", "The member to get the banner.", hikari.User, required=True)
 @lightbulb.command("banner", "Get a member's banner.", auto_defer = True, ephemeral = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def user_banner(ctx: lightbulb.Context, target: hikari.User):
     """Show the banner of a user, if any"""
@@ -120,10 +120,10 @@ async def user_banner(ctx: lightbulb.Context, target: hikari.User):
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
         
 @user_plugin.command
-@lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = False)
+@lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = True)
 @lightbulb.option("target", "The member to get the avatar.", hikari.User , required=False)
 @lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"], ephemeral=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def user_avatar(ctx: lightbulb.Context, target: hikari.User, server: bool):
     """Show avatar of a user, if any"""
@@ -132,8 +132,6 @@ async def user_avatar(ctx: lightbulb.Context, target: hikari.User, server: bool)
     if not target:
         await ctx.respond("That user is not in the server.")
         return
-    
-    
     
     if server:
         try:
