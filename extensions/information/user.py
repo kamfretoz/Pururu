@@ -93,13 +93,13 @@ async def  user_info(ctx: lightbulb.Context, target) -> None:
 
 @user_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
-@lightbulb.option("target", "The member to get the banner.", hikari.Member, required=True)
+@lightbulb.option("target", "The member to get the banner.", hikari.User, required=True)
 @lightbulb.command("banner", "Get a member's banner.", auto_defer = True, ephemeral = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand, lightbulb.UserCommand)
 @filament.utils.pass_options
-async def user_banner(ctx: lightbulb.Context, target):
+async def user_banner(ctx: lightbulb.Context, target: hikari.User):
     """Show the banner of a user, if any"""
-    target = await ctx.bot.rest.fetch_user(user = target or ctx.user)
+    target = target or ctx.user
 
     if not target:
         await ctx.respond("That user is not in the server.")
