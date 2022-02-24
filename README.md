@@ -143,8 +143,10 @@ You will need to configure the bot with the `.env` file. This is needed to store
 
 There are few notes in regards to run the bot:
 * If you'd like to run the bot (Or when you want to restart it), you will have to re-activate the Virtual Environment if you haven't done so:
-    * `source .venv/bin/activate`
-    * `./run.sh`
+  ```sh
+    source .venv/bin/activate
+    ./run.sh
+  ```
 * After you have successfully run the bot, you will have to Minimize the "screen" to let the bot run in the background.
     * Press `CTRL + A, D` to Minimize the screen
     * Type in `screen -r bot` to restore the screen
