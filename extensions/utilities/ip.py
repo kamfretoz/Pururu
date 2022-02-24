@@ -23,23 +23,24 @@ async def ip_finder(ctx: lightbulb.Context, address) -> None:
             data = json.loads(await resp.read())
             
         ipaddr = data["ip"]
-        city = data["city"]
-        region = data["region"]
-        region_code = data["region_code"]
-        country = data["country"]
-        country_name = data["country_name"]
-        country_code_iso3 = data["country_code_iso3"]
-        continent_code = data["continent_code"]
+        city = data["city"] or "Unknown"
+        region = data["region"] or "Unknown"
+        region_code = data["region_code"] or "Unknown"
+        country = data["country"] or "Unknown"
+        country_name = data["country_name"] or "Unknown"
+        country_code_iso3 = data["country_code_iso3"] or "Unknown"
+        continent_code = data["continent_code"] or "Unknown"
         in_eu = data["in_eu"]
-        latitude = data["latitude"]
-        longitude = data["longitude"]
-        country_timezone = data["timezone"]
-        utc_offset = data["utc_offset"]
-        dial_code = data["country_calling_code"]
-        currency = data["currency"]
-        languages = data["languages"]
-        organization = data["org"]
-        asn = data["asn"]
+        postal = data["postal"] or "Unknown"
+        latitude = data["latitude"] or "Unknown"
+        longitude = data["longitude"] or "Unknown"
+        country_timezone = data["timezone"] or "Unknown"
+        utc_offset = data["utc_offset"] or "Unknown"
+        dial_code = data["country_calling_code"] or "Unknown"
+        currency = data["currency"] or "Unknown"
+        languages = data["languages"] or "Unknown"
+        organization = data["org"] or "Unknown"
+        asn = data["asn"] or "Unknown"
         
         embd = hikari.Embed(
             title="IP Information", color=ctx.author.accent_colour, timestamp=datetime.datetime.now().astimezone())
@@ -48,6 +49,7 @@ async def ip_finder(ctx: lightbulb.Context, address) -> None:
         embd.add_field(name="City:", value=city, inline=False)
         embd.add_field(name="Regional Area:", value=region)
         embd.add_field(name="Region Code:",value=region_code, inline=False)
+        embd.add_field(name="Postal Code:", value=postal, inline=False)
         embd.add_field(name="Country:", value=country, inline=False)
         embd.add_field(name="Country Name:",value=country_name, inline=False)
         embd.add_field(name="Country Code (ISO):",value=country_code_iso3, inline=False)
