@@ -33,7 +33,6 @@ class EventHandler:
 
     async def track_start(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         logging.info(f"Track started on guild: {event.guild_id}")
-        
 
     async def track_finish(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
         guild_node = await lavalink.get_guild_node(event.guild_id)
@@ -44,17 +43,16 @@ class EventHandler:
             await lavalink.play(event.guild_id, result.tracks[0]).queue()
             return
         
-        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0:
+        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0 and not loop_enabled:
             await music_plugin.d.lavalink.destroy(event.guild_id)
             await music_plugin.d.lavalink.leave(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
+            logging.info(f"Track finished on guild: {event.guild_id}")
             return
-
 
     async def track_exception(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackException) -> None:
         logging.warning(f"Track exception event happened on guild: {event.guild_id}")
-        
 
         # If a track was unable to be played, skip it
         skip = await lavalink.skip(event.guild_id)
@@ -89,7 +87,7 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
         try:
             connection_info = await music_plugin.d.lavalink.join(ctx.guild_id, channel_id)
         except TimeoutError:
-            await ctx.respond("It seems that there's an issue. I might not have the right permissions.")
+            await ctx.respond("It seems that there's an issue. Please try again later")
             return None
 
     await music_plugin.d.lavalink.create_session(connection_info)
@@ -161,40 +159,12 @@ async def play(ctx: lightbulb.Context, query) -> None:
         embed = hikari.Embed(title="**Please enter a song to play.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return None
+
     await _join(ctx)
-    if "https://open.spotify.com/playlist" in query:
-        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-        playlist_link = f"{query}"
-        playlist_URI = playlist_link.split("/")[-1].split("?")[0]
-        track_uris = [x["track"]["uri"] for x in sp.playlist_tracks(playlist_URI)["items"]]
-        for track in sp.playlist_tracks(playlist_URI)["items"]:
-            track_name = track["track"]["name"]
-            track_artist = track["track"]["artists"][0]["name"]
-            queryfinal = f"{track_name} " + " " + f"{track_artist}" 
-            result = f"ytmsearch:{queryfinal}"
-            query_information = await music_plugin.d.lavalink.get_tracks(result)
-        try:
-            await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
-        except:
-            pass
-        embed=hikari.Embed(title="**Added Playlist To The Queue.**", color=ctx.author.accent_color)
-        return await ctx.respond(embed=embed)
-    if "https://open.spotify.com/album" in query:	
-        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-        album_link = f"{query}"
-        album_id= album_link.split("/")[-1].split("?")[0]
-        for track in sp.album_tracks(album_id)["items"]:
-            track_name = track["name"]
-            track_artist = track["artists"][0]["name"]
-            queryfinal = f"{track_name} " + f"{track_artist}" 
-            result = f"ytmsearch:{queryfinal}"
-            query_information = await music_plugin.d.lavalink.get_tracks(result)
-        try:
-            await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
-        except:
-            pass
-        embed=hikari.Embed(title="**Added Album To The Queue.**", color=ctx.author.accent_color)
-        return await ctx.respond(embed=embed)
+    
+    if "https://open.spotify.com/playlist/" in query:
+        return await ctx.respond(embed=hikari.Embed(title="Spotify Playlist are not currently supported.",color=ctx.author.accent_color))
+    
     if "https://open.spotify.com/track" in query:
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
         track_link = f"{query}"
@@ -205,9 +175,8 @@ async def play(ctx: lightbulb.Context, query) -> None:
         result = f"ytmsearch:{trackname}"
         query_information = await music_plugin.d.lavalink.get_tracks(result)   
         await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
-        embed=hikari.Embed(title="Added Song To The Queue",color=ctx.author.accent_color) 
-        return await ctx.respond(embed=embed) 
-
+        return await ctx.respond(embed=hikari.Embed(title="Added Song To The Queue",color=ctx.author.accent_color) ) 
+    
     if not re.match(URL_REGEX, query):
         result = f"ytsearch:{query}"
         query_information = await music_plugin.d.lavalink.get_tracks(result)
@@ -224,11 +193,11 @@ async def play(ctx: lightbulb.Context, query) -> None:
     emb.add_field(name="Length", value=f"{int(length[0])}:{round(length[1]/1000):02}", inline=False)
     emb.set_thumbnail(thumb)
     
-    await ctx.respond(embed=emb)
     try:
         await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
-    except lavasnek_rs.NoSessionPresent:
-        pass
+        await ctx.respond(embed=emb)
+    except lavasnek_rs.NoSessionPresent as e:
+        raise e
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -245,17 +214,7 @@ async def stop(ctx: lightbulb.Context) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}", limit=1)
-    print(f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}")  
-    for idx, track in enumerate(results['tracks']['items']):
-        querytrack = track['name']
-        queryartist = track["artists"][0]["name"]	
     embed = hikari.Embed(title=f"**Stopped {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
-    try:
-        embed.set_thumbnail(f"{track['album']['images'][0]['url']}")
-    except:
-        pass
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
         position = divmod(node.now_playing.track.info.position, 60000)
@@ -267,11 +226,11 @@ async def stop(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("percentage", "What to change the volume to.", int , max_value=200 )
+@lightbulb.option("percentage", "What to change the volume to.", int , max_value=200, min_value=0, default=100)
 @lightbulb.command("volume", "Change the volume.", auto_defer=True)
-@lightbulb.implements(lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def volume(ctx: lightbulb.Context, percentage) -> None:
+async def volume(ctx: lightbulb.Context, percentage: int) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -281,8 +240,18 @@ async def volume(ctx: lightbulb.Context, percentage) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    await music_plugin.d.lavalink.volume(ctx.guild_id, int(percentage))
+    
     embed=hikari.Embed(title=f"**Volume is now at {percentage}%**", color=ctx.author.accent_color)
+    
+    if isinstance(ctx, lightbulb.PrefixContext):
+        if percentage > 1000:
+            percentage = 1000
+    
+    if percentage > 200:
+        embed.add_field("**WARNING!**", "**You have gone above and beyond the safe threshold of the volume (200%).** \n*May God have mercy on your ears.*")
+    
+    await music_plugin.d.lavalink.volume(ctx.guild_id, int(percentage))
+    
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
@@ -303,23 +272,14 @@ async def seek(ctx: lightbulb.Context, time) -> None:
         return await ctx.respond(embed=embed)
     if not (match := re.match(TIME_REGEX, time)):
             embed = hikari.Embed(title="**Invalid time entered.**", colour=0xC80000)
-            await ctx.respond(embed=embed)
+            return await ctx.respond(embed=embed)
     if match.group(3):
             secs = (int(match.group(1)) * 60) + (int(match.group(3)))
     else:
             secs = int(match.group(1))
     await music_plugin.d.lavalink.seek_millis(ctx.guild_id, secs * 1000)
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}", limit=1)
-    print(f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}")  
-    for idx, track in enumerate(results['tracks']['items']):
-        querytrack = track['name']
-        queryartist = track["artists"][0]["name"]	
+
     embed = hikari.Embed(title=f"**Seeked {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
-    try:
-        embed.set_thumbnail(f"{track['album']['images'][0]['url']}")
-    except:
-        pass
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
 
@@ -363,10 +323,16 @@ async def skip(ctx: lightbulb.Context) -> None:
         embed = hikari.Embed(title="**There are no more tracks left in the queue.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
     else:
+        # If the queue is empty, the next track won't start playing (because there isn't any),
+        # so we stop the player.
         if not node.queue and not node.now_playing:
             await music_plugin.d.lavalink.stop(ctx.guild_id)
-    embed = hikari.Embed(title=f"**Skipped {skip.track.info.title}.**", colour=ctx.author.accent_color)
-    await ctx.respond(embed=embed)
+            skipped_track = skip.track.info
+            await ctx.respond(embed=hikari.Embed(description=f"**Skipped Track:** {skipped_track.title}"))
+        else:
+            skipped_track = skip.track.info
+            new_track = node.queue[0].track.info
+            await ctx.respond(embed=hikari.Embed(description=f"**Skipped Track:** {skipped_track.title}\n**Now Playing:** {new_track.title}"))
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -383,17 +349,7 @@ async def pause(ctx: lightbulb.Context) -> None:
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}", limit=1)
-    print(f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}")  
-    for idx, track in enumerate(results['tracks']['items']):
-        querytrack = track['name']
-        queryartist = track["artists"][0]["name"]	
     embed = hikari.Embed(title=f"**Paused {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
-    try:
-        embed.set_thumbnail(f"{track['album']['images'][0]['url']}")
-    except:
-        pass
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
         position = divmod(node.now_playing.track.info.position, 60000)
@@ -416,18 +372,8 @@ async def resume(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}", limit=1)
-    print(f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}")  
-    for idx, track in enumerate(results['tracks']['items']):
-        querytrack = track['name']
-        queryartist = track["artists"][0]["name"]	
+        return await ctx.respond(embed=embed)	
     embed = hikari.Embed(title=f"**Resumed {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
-    try:
-        embed.set_thumbnail(f"{track['album']['images'][0]['url']}")
-    except:
-        pass
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
         position = divmod(node.now_playing.track.info.position, 60000)
@@ -449,38 +395,14 @@ async def now_playing(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}", limit=1)
-    print(f"{node.now_playing.track.info.author} {node.now_playing.track.info.title}")  
-    for idx, track in enumerate(results['tracks']['items']):
-        querytrack = track['name']
-        queryartist = track["artists"][0]["name"]	
+        return await ctx.respond(embed=embed)	
     embed=hikari.Embed(title="**Currently Playing**",color=ctx.author.accent_color)
-    try:
-        embed.add_field(name="Name", value=f"{[querytrack]}({track['external_urls']['spotify']})", inline=False)
-    except:
-        embed.add_field(name="Name", value=f"{node.now_playing.track.info.title}", inline=False)
-    try:
-        embed.add_field(name="Artist", value=f"{[queryartist]}({track['artists'][0]['external_urls']['spotify']})", inline=False)
-    except:
-        embed.add_field(name="Artist", value=f"{node.now_playing.track.info.author}", inline=False)
-    try:
-        embed.add_field(name="Album", value=f"{[track['album']['name']]}({track['album']['external_urls']['spotify']})", inline=False)
-    except:
-        pass
+    embed.add_field(name="Name", value=f"{node.now_playing.track.info.title}", inline=False)
+    embed.add_field(name="Artist", value=f"{node.now_playing.track.info.author}", inline=False)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
         position = divmod(node.now_playing.track.info.position, 60000)
         embed.add_field(name="Duration Played", value=f"{int(position[0])}:{round(position[1]/1000):02}/{int(length[0])}:{round(length[1]/1000):02}")
-    except:
-        pass
-    try:
-        embed.add_field(name="Release Date", value=f"{track['album']['release_date']}", inline=False)
-    except:
-        pass
-    try:
-        embed.set_thumbnail(f"{track['album']['images'][0]['url']}")
     except:
         pass
     await ctx.respond(embed=embed)
@@ -518,16 +440,8 @@ async def queue(ctx: lightbulb.Context) -> None:
         lists = "\n".join(texts)
         songs.add_field(name="Current Queue:", value=lists)
         embeds.append(songs)
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
-    results = sp.search(q=f'{node.queue[1].track.info.author} {node.queue[1].track.info.title}', limit=1)
-    for idx, track in enumerate(results['tracks']['items']):
-        querytrack = track['name']
-        queryartist = track["artists"][0]["name"]	
-    try:
-        songs.set_thumbnail(f"{track['album']['images'][0]['url']}")
-    except:
-        pass
-
+        
+        
     if isinstance(ctx, lightbulb.SlashContext):
         navigator = miru_nav.NavigatorView(pages=embeds)
         await navigator.send(ctx.interaction)
@@ -558,8 +472,8 @@ async def remove(ctx: lightbulb.Context, index) -> None:
         embed = hikari.Embed(title=f"**You cannot remove a song that is currently playing.**",color=0xC80000)
         return await ctx.respond(embed=embed)
     try:
-     queue = node.queue
-     song_to_be_removed = queue[index]
+        queue = node.queue
+        song_to_be_removed = queue[index]
     except:
         embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
         return await ctx.respond(embed=embed)
@@ -599,8 +513,8 @@ async def skipto(ctx: lightbulb.Context, position) -> None:
         await music_plugin.d.lavalink.skip(ctx.guild_id)
         return await ctx.respond(embed=embed)
     try:
-     queue = node.queue
-     song_to_be_skipped = queue[index]
+        queue = node.queue
+        song_to_be_skipped = queue[index]
     except:
         embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
         return await ctx.respond(embed=embed)
@@ -716,7 +630,7 @@ async def newreleases(ctx: lightbulb.Context) -> None:
     embed.add_field(name="Latest Tracks", value=f"\n".join([f"**{i}.** {item['name']}" for i, item in enumerate(albums['items'][1:], start=1)]))
     img = response['albums']['items'][1]['images'][0]['url']
     try:
-      embed.set_thumbnail(img)
+        embed.set_thumbnail(img)
     except:
         pass
     await ctx.respond(embed=embed)
@@ -735,7 +649,7 @@ async def trending(ctx: lightbulb.Context) -> None:
     embed.add_field(name="Top 20 Tracks Of The Day", value=f"\n".join([f"**{i}.** {track['track']['name']}" for i, track in enumerate(sp.playlist_items(playlist_URI, limit=21)["items"][1:], start=1)]))
     img = track['album']['images'][0]['url']
     try:
-      embed.set_thumbnail(img)
+        embed.set_thumbnail(img)
     except:
         pass
     await ctx.respond(embed=embed)
