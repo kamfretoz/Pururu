@@ -9,13 +9,11 @@ ping_plugin = lightbulb.Plugin("ping")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def ping(ctx: lightbulb.Context) -> None:
     heartbeat = ctx.bot.heartbeat_latency * 1000
-    
+    txt = (f":ping_pong: Pong!")
     if isinstance(ctx, lightbulb.PrefixContext):
         if ctx.invoked_with == "pong":
             txt = (f":ping_pong: Ping!")
-        else:
-            txt = (f":ping_pong: Pong!")
-    
+
     if heartbeat > 1000:
         colours = hikari.Colour(0xFF0000)
     elif heartbeat > 500:
