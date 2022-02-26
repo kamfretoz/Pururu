@@ -164,5 +164,5 @@ There are few notes in regards to run the bot:
 [issues-shield]: https://img.shields.io/github/issues/kamfretoz/XJ9.svg?style=for-the-badge
 [issues-url]: https://github.com/kamfretoz/XJ9/issues
 [license-shield]: https://img.shields.io/github/license/kamfretoz/XJ9.svg?style=for-the-badge
-[license-url]: https://github.com/kamfretoz/XJ9/blob/master/LICENSE.txt
+[license-url]: https://github.com/kamfretoz/XJ9/blob/master/LICENSE
 [product-screenshot]: images/screenshot.png
