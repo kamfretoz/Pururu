@@ -29,10 +29,10 @@
 <br />
 <div align="center">
   <a href="https://github.com/kamfretoz/XJ9">
-    <img src="images/logo.svg" alt="Logo" width="80" height="80">
+    <img src="images/logo.svg" alt="Logo" width="128" height="128">
   </a>
 
-<h3 align="center">XJ9</h3>
+<h1 align="center">XJ9</h1>
 
   <p align="center">
     A Multi-Purpose bot written in Hikari + Lightbulb!
@@ -76,8 +76,9 @@ Feel free to explore it by yourself!
 
 ### Built With
 
-* [Hikari](https://github.com/hikari-py/hikari)
-* [Lightbulb](https://github.com/tandemdude/hikari-lightbulb/)
+* [`Hikari`](https://github.com/hikari-py/hikari) - An opinionated, static typed Discord microframework for Python3 and asyncio that supports Discord's V8 REST API and Gateway.
+* [`Lightbulb`](https://github.com/tandemdude/hikari-lightbulb/) - A flexible command framework designed to extend Hikari.
+
 
 
 
