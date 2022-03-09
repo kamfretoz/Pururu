@@ -19,7 +19,6 @@ async def ip_finder(ctx: lightbulb.Context, address) -> None:
     ip_result = match(ip_regex, address)
     if ip_result:
         async with ctx.bot.d.aio_session.get(f'https://ipapi.co/{address}/json/') as resp:
-            
             data = json.loads(await resp.read())
             
         ipaddr = data["ip"]
@@ -30,7 +29,6 @@ async def ip_finder(ctx: lightbulb.Context, address) -> None:
         country_name = data["country_name"] or "Unknown"
         country_code_iso3 = data["country_code_iso3"] or "Unknown"
         continent_code = data["continent_code"] or "Unknown"
-        in_eu = data["in_eu"]
         postal = data["postal"] or "Unknown"
         latitude = data["latitude"] or "Unknown"
         longitude = data["longitude"] or "Unknown"
@@ -55,7 +53,6 @@ async def ip_finder(ctx: lightbulb.Context, address) -> None:
         embd.add_field(name="Country Code (ISO):",value=country_code_iso3, inline=False)
         embd.add_field(name="Language Spoken:",value=languages, inline=False)
         embd.add_field(name="Continent Code:",value=continent_code, inline=False)
-        embd.add_field(name="Is country a member of European Union (EU)?", value=in_eu, inline=False)
         embd.add_field(name="Latitude Coordinate:",value=latitude, inline=False)
         embd.add_field(name="Longitude Coordinate:",value=longitude, inline=False)
         embd.add_field(name="Timezone:",value=country_timezone, inline=False)
