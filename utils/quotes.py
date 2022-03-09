@@ -177,7 +177,8 @@ error_quotes = [
     "I did not succumb.",
     "You think this is funny?!",
     "im scared mom hold my hand",
-    "Watch the road, there are kids around here!"
+    "Watch the road, there are kids around here!",
+    "Say the magic word!"
 ]
 
 
@@ -194,6 +195,6 @@ jargonConstructs = ["If we {3} the {2}, we can get to the {0} {2} through the {1
 statuses = ["this Society.",
             "光",
             "your mom",
-            "Scheiße",
+            "from the distance...",
             "deez giga nuts"
         ]
