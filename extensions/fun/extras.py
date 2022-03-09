@@ -4,7 +4,7 @@ from random import choice
 from lightbulb.ext import filament
 
 
-ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i dont know where to put them")
+ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i dont know where to put them", include_datastore=True)
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -39,6 +39,29 @@ async def rickroll(ctx: lightbulb.Context):
     rick.set_image("https://i.kym-cdn.com/photos/images/original/000/041/494/1241026091_youve_been_rickrolled.gif")
     await ctx.respond(embed=rick)
 
+ext_plugin.d.ps = {
+    "psgood": [
+        "Yes",
+        "It is certain",
+        "It is decidedly so",
+        "Without a doubt",
+        "Yes - definitely",
+        "You may rely on it",
+        "As I see it, yes",
+        "Most likely",
+        "Outlook good",
+        "Signs point to yes",
+    ],
+    "psbad": [
+        "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful",
+        "No",
+    ],
+}
+
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
@@ -46,32 +69,10 @@ async def rickroll(ctx: lightbulb.Context):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def eball(ctx: lightbulb.Context, question: str):
-    ps = {
-        "psgood": [
-            "Yes",
-            "It is certain",
-            "It is decidedly so",
-            "Without a doubt",
-            "Yes - definitely",
-            "You may rely on it",
-            "As I see it, yes",
-            "Most likely",
-            "Outlook good",
-            "Signs point to yes",
-        ],
-        "psbad": [
-            "Don't count on it",
-            "My reply is no",
-            "My sources say no",
-            "Outlook not so good",
-            "Very doubtful",
-            "No",
-        ],
-    }
     choices = choice(choice(list(ps.values())))
-    if choices in ps["psbad"]:
+    if choices in ext_plugin.d.ps["psbad"]:
         color = hikari.Color(0xFF0000)
-    elif choices in ps["psgood"]:
+    elif choices in ext_plugin.d.ps["psgood"]:
         color = hikari.Color(0x26D934)
     eightball = hikari.Embed(color=color)
     eightball.add_field(name="Question:", value=question.capitalize(), inline=False)
