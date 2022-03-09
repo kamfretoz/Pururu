@@ -38,7 +38,7 @@ async def urban(ctx: lightbulb.Context, definition) -> None:
             if len(example) < 1:
                 example = None
         except (IndexError, KeyError):
-            await ctx.respond("Sorry, I couldn't find that word. Check your spelling and try again.")
+            return await ctx.respond(":x: Sorry, I couldn't find that word. Check your spelling and try again.")
         embed = hikari.Embed(
             title=f":notebook: Urban Dictionary Definition for {word}", description=definition, url=url, color=0x8253c3)
         if example == None:
