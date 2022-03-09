@@ -50,12 +50,9 @@ async def extension_manager(ctx:lightbulb.Context):
 @lightbulb.command("reload", "Reload an extension", inherit_checks=True)
 @lightbulb.implements(lightbulb.PrefixSubCommand)
 @filament.utils.pass_options
-async def extension_reload(ctx:lightbulb.Context):
-    name = ctx.options.name
-    category = ctx.options.category
-    await ctx.respond(f"Reloading the extension `{ctx.options.name}`")
+async def extension_reload(ctx:lightbulb.Context, name, category):
     ctx.bot.reload_extensions(f"extensions.{category}.{name}")
-    await ctx.edit_last_response(f"Successfully reloaded `{ctx.options.name}`!")
+    await ctx.respond(f"Successfully reloaded `{name}`!")
     
 @extension_manager.child()
 @lightbulb.option("name", "the extension you want to unload", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
@@ -64,9 +61,8 @@ async def extension_reload(ctx:lightbulb.Context):
 @lightbulb.implements(lightbulb.PrefixSubCommand)
 @filament.utils.pass_options
 async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
-    await ctx.respond(f"unloading the extension `{name}`")
     ctx.bot.unload_extensions(f"extensions.{category}.{name}")
-    await ctx.edit_last_response(f"Successfully unloaded `{name}`!")
+    await ctx.respond(f"Successfully unloaded `{name}`!")
     
 @extension_manager.child()
 @lightbulb.option("name", "the extension you want to load", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
@@ -75,9 +71,8 @@ async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
 @lightbulb.implements(lightbulb.PrefixSubCommand)
 @filament.utils.pass_options
 async def extension_load(ctx:lightbulb.Context, name: str, category: str):
-    await ctx.respond(f"loading the extension `{name}`")
     ctx.bot.load_extensions(f"extensions.{category}.{name}")
-    await ctx.edit_last_response(f"Successfully loaded `{name}`!")
+    await ctx.respond(f"Successfully loaded `{name}`!")
 
 def load(bot):
     bot.add_plugin(tools_plugin)
