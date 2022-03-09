@@ -6,7 +6,7 @@ server_plugin = lightbulb.Plugin("server", "Server info commands")
 
 @server_plugin.command
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.command("serverinfo", "Show's the information of the current server", aliases=["si"], auto_defer=True)
+@lightbulb.command("serverinfo", "Show's the information of the current server", aliases=["si","servinfo"], auto_defer=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def serverinfo(ctx: lightbulb.Context):
     guild = ctx.bot.cache.get_guild(ctx.guild_id)
