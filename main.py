@@ -3,6 +3,8 @@ import aiohttp
 import dotenv
 import hikari
 import lightbulb
+from random import choice
+from utils.quotes import statuses
 
 dotenv.load_dotenv()
 
@@ -48,6 +50,6 @@ if __name__ == "__main__":
     bot.run(
         status=hikari.Status.ONLINE,
         activity=hikari.Activity(
-            name="from the distance...",
+            name=choice(statuses),
             type=hikari.ActivityType.WATCHING,)
     )
