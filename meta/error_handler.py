@@ -35,6 +35,7 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         errormsg.add_field(name="📜 **__Error Log__**:", value=f"```py\n{event.exception.__cause__}```")
         await event.context.respond(embed=errormsg, content=random.choice(error_quotes))
         logging.error(event.exception)
+        raise(event.exception)
 
     # Unwrap the exception to get the original cause
     exception = event.exception.__cause__ or event.exception
