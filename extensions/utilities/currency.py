@@ -33,7 +33,6 @@ async def currency(ctx: lightbulb.Context, origin: str, to: str, val: int):
 
     if data["status"] == "success":
         origin_name = data["base_currency_name"]
-        origin_amount = data["amount"]
         to_name = data["rates"][to.upper()]["currency_name"]
         to_amount = data["rates"][to.upper()]["rate_for_amount"]
     elif data["status"] == "failed":
@@ -45,7 +44,7 @@ async def currency(ctx: lightbulb.Context, origin: str, to: str, val: int):
 
     emb = hikari.Embed(timestamp=datetime.now().astimezone())
     emb.add_field(
-        name=f"Conversion from {origin_amount} {origin_name} to {to_name}", value=f"{to_amount} {to_name}"
+        name=f"Conversion from {val} {origin_name} to {to_name}", value=f"{to_amount} {to_name}"
         )
     await ctx.respond(embed=emb)
 
