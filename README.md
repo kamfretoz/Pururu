@@ -97,7 +97,7 @@ You will need to configure the bot with the `.env` file. This is needed to store
 * As the bot uses few publicly available API (and Discord itself!), it needs a token to access them and you will have to provide them yourself, get the keys here:
   * [Discord](https://discord.com/developers/applications)
   * [OpenWeatherMap](https://openweathermap.org/api)
-  * [KSoft.Si API](https://api.ksoft.si/)
+  * [Currency API](https://currency.getgeoapi.com/)
   * [Spotify](https://developer.spotify.com/dashboard/)
 
 * You will also need a Lavalink nodes for music functionality. There are 2 options, either you self-host your own or you use the readily available Free Lavalink Nodes. Here are some recommendation:
