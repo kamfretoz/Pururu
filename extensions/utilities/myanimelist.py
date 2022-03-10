@@ -47,7 +47,7 @@ async def myanimelist_anime(ctx: lightbulb.Context, name) -> None:
     score = data["data"][0]["score"]
 
     emb = hikari.Embed(
-        title="MyAnimeList Anime Information", timestamp=datetime.now().astimezone(), url="www.myanimelist.net")
+        title="MyAnimeList Anime Information", timestamp=datetime.now().astimezone(), url="https://www.myanimelist.net")
     if score == None or score == 0:
         score = "N/A"
     start = data["data"][0]["aired"]["from"]
@@ -140,7 +140,7 @@ async def myanimelist_manga(ctx: lightbulb.Context, name):
     if manga_chapters is None or manga_chapters == 0:
         manga_chapters = "Unknown"
     emb = hikari.Embed(
-        title="MyAnimeList Manga Information", timestamp=datetime.now().astimezone(), url="www.myanimelist.net")
+        title="MyAnimeList Manga Information", timestamp=datetime.now().astimezone(), url="https://www.myanimelist.net")
     emb.set_image(img_url)
     emb.set_thumbnail("https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png")
     emb.set_footer("Powered by: Jikan", icon="https://jikan.moe/assets/images/logo/jikan.logo.png")
@@ -186,7 +186,7 @@ async def myanimelist_chara(ctx: lightbulb.Context, name):
     char_name = data["data"][0]["name"]
     char_about = data["data"][0]["about"]
     
-    emb = hikari.Embed(title="MyAnimeList Character Information", timestamp=datetime.now().astimezone(), url="www.myanimelist.net")
+    emb = hikari.Embed(title="MyAnimeList Character Information", timestamp=datetime.now().astimezone(), url="https://www.myanimelist.net")
     emb.set_image(char_img)
     emb.set_thumbnail("https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png")
     emb.set_footer("Powered by: Jikan", icon="https://jikan.moe/assets/images/logo/jikan.logo.png")
