@@ -169,8 +169,8 @@ async def leave(ctx: lightbulb.Context) -> None:
     else:
         await music_plugin.d.lavalink.leave(ctx.guild_id)
     
-    await music_plugin.d.lavalink.remove_guild_node(ctx.guild_id)
     await music_plugin.d.lavalink.remove_guild_from_loops(ctx.guild_id)
+    await music_plugin.d.lavalink.remove_guild_node(ctx.guild_id)
     embed = hikari.Embed(title="**Left voice channel.**", colour=ctx.author.accent_color)
     await ctx.respond(embed=embed)
 
