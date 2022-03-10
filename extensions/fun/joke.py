@@ -17,8 +17,7 @@ async def joke(ctx: lightbulb.Context, lang) -> None:
         "lang": lang
     }
     
-    async with ctx.bot.d.aio_session.get(f'https://v2.jokeapi.dev/joke/Any', params = parameters) as resp:
-        
+    async with ctx.bot.d.aio_session.get('https://v2.jokeapi.dev/joke/Any', params = parameters) as resp:
         data = await resp.json()
         
     emb = hikari.Embed(title="Here comes a joke!")
