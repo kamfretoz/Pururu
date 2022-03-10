@@ -1,4 +1,3 @@
-from ctypes.wintypes import INT
 import lightbulb
 import hikari
 import json
