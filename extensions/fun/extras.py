@@ -69,7 +69,7 @@ ext_plugin.d.ps = {
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def eball(ctx: lightbulb.Context, question: str):
-    choices = choice(choice(list(ps.values())))
+    choices = choice(choice(list(ext_plugin.d.ps.values())))
     if choices in ext_plugin.d.ps["psbad"]:
         color = hikari.Color(0xFF0000)
     elif choices in ext_plugin.d.ps["psgood"]:
