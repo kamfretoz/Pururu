@@ -44,7 +44,7 @@ class EventHandler:
         if firsttrack == False:
             embed=hikari.Embed(title="**Playing the next track.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
             if loop_enabled: 
-                embed=hikari.Embed(title="**Playing the next track in the loop.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
+                embed=hikari.Embed(title="**Replaying the track.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
         else:
             embed=hikari.Embed(title="**Now Playing.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
             embed.add_field(name="Artist", value=f"{song.author}", inline=False)
@@ -57,7 +57,7 @@ class EventHandler:
         guild_node = await lavalink.get_guild_node(event.guild_id)
 
         states = music_plugin.bot.cache.get_voice_states_view_for_guild(event.guild_id)
-        users = [state async for state in states.iterator().filter(lambda i: i.user_id != music_plugin.bot.application.id)]
+        users = [state async for state in states.iterator().take_while(lambda i: i.user_id != music_plugin.bot.application.id)]
         
         try:
             loop_enabled = guild_node.get_data().get("loop")
@@ -96,7 +96,7 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None
 
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
 
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
@@ -156,7 +156,7 @@ async def leave(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     node.set_data({"loop": False})
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=ctx.author.accent_color)
         await ctx.respond(embed=embed)
@@ -182,7 +182,7 @@ async def leave(ctx: lightbulb.Context) -> None:
 @filament.utils.pass_options
 async def play(ctx: lightbulb.Context, query) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
@@ -250,7 +250,7 @@ async def play(ctx: lightbulb.Context, query) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def stop(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
@@ -277,7 +277,7 @@ async def stop(ctx: lightbulb.Context) -> None:
 @filament.utils.pass_options
 async def volume(ctx: lightbulb.Context, percentage: int) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -307,7 +307,7 @@ async def volume(ctx: lightbulb.Context, percentage: int) -> None:
 @filament.utils.pass_options
 async def seek(ctx: lightbulb.Context, time) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -340,7 +340,7 @@ async def seek(ctx: lightbulb.Context, time) -> None:
 async def shuffle(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
@@ -371,7 +371,7 @@ async def shuffle(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def replay(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
@@ -392,7 +392,7 @@ async def skip(ctx: lightbulb.Context) -> None:
     skip = await music_plugin.d.lavalink.skip(ctx.guild_id)
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -418,7 +418,7 @@ async def skip(ctx: lightbulb.Context) -> None:
 async def pause(ctx: lightbulb.Context) -> None:
     await music_plugin.d.lavalink.pause(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -442,7 +442,7 @@ async def pause(ctx: lightbulb.Context) -> None:
 async def resume(ctx: lightbulb.Context) -> None:
     await music_plugin.d.lavalink.resume(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -465,7 +465,7 @@ async def resume(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def now_playing(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -491,7 +491,7 @@ async def now_playing(ctx: lightbulb.Context) -> None:
 async def queue(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
@@ -535,7 +535,7 @@ async def queue(ctx: lightbulb.Context) -> None:
 @filament.utils.pass_options
 async def remove(ctx: lightbulb.Context, index) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -571,7 +571,7 @@ async def remove(ctx: lightbulb.Context, index) -> None:
 @filament.utils.pass_options
 async def skipto(ctx: lightbulb.Context, position: int) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -610,7 +610,7 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def loop(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
@@ -640,7 +640,7 @@ async def loop(ctx: lightbulb.Context) -> None:
 @filament.utils.pass_options
 async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
@@ -675,7 +675,7 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def empty(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
+    voice_state = [state async for state in states.iterator().take_while(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         return await ctx.respond(embed=embed)
