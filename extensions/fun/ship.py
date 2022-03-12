@@ -11,22 +11,39 @@ from lightbulb.ext import filament
 
 ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?", include_datastore=True)
 
-def image_processing(user1: BytesIO, user2: BytesIO):
-    bg = Image.open("res/ship.png")
-    bg.convert("RGBA")
-    pfp1 = Image.open(user1)
-    pfp1.convert("RGBA")
-    pfp1 = pfp1.resize((200, 200), reducing_gap=3.0)
-    pfp2 = Image.open(user2)
-    pfp2.convert("RGBA")
-    pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0)
-    
+def image_processing(user1: BytesIO, user2: BytesIO, love: int) -> BytesIO:
+    with Image.open(user1) as pfp1:
+        pfp1.convert("RGBA")
+        pfp1 = pfp1.resize((200, 200), reducing_gap=3.0, resample=Image.ANTIALIAS)
+        
+    with Image.open(user2) as pfp2:
+        pfp2.convert("RGBA")
+        pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0, resample=Image.ANTIALIAS)
+
     mask = ellipse(pfp1.size)
     
-    bg.paste(pfp1, (30, 30), mask)
-    bg.paste(pfp2, (bg.width - pfp1.width - 30, 30), mask)
+    if 0 <= love <= 36:
+        with Image.open("res/ship/heart_broken.png") as heart:
+            heart.convert("RGBA")
+            heart = heart.resize((200, 200), reducing_gap=3.0)
+            color = (139, 0, 0)
+    elif 36 <= love <= 69:
+        with Image.open("res/ship/heart_normal.png") as heart:
+            heart.convert("RGBA")
+            heart = heart.resize((200, 200), reducing_gap=3.0)
+            color = (34, 139, 34)
+    elif 70 <= love <= 100:
+        with Image.open("res/ship/heart_absolute.png") as heart:
+            heart.convert("RGBA")
+            heart = heart.resize((200, 200), reducing_gap=3.0)
+            color = (128, 0, 128)        
     
-    return bg
+    with Image.new(mode = "RGBA", size = (800, 250), color = color) as base:
+        base.paste(pfp1, (25, 25), mask) 
+        base.paste(pfp2, (base.width - pfp1.width - 25, 25), mask)
+        base.alpha_composite(heart, (300, 25))
+    
+    return base
 
 @ship_plugin.command()
 @lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
@@ -157,10 +174,10 @@ async def ship(ctx: lightbulb.Context, user1, user2) -> None:
     
     with concurrent.futures.ProcessPoolExecutor() as pool:
         loop = asyncio.get_running_loop()
-        img = await loop.run_in_executor(pool, image_processing, user1_pfp, user2_pfp)
+        img = await loop.run_in_executor(pool, image_processing, user1_pfp, user2_pfp, shipnumber)
         
     with BytesIO() as image_binary:
-        img.save(image_binary, format="PNG", optimize=True, quality=80)
+        img.save(image_binary, format="PNG", optimize=True, quality=100)
         image_binary.seek(0)
         await ctx.respond(embed=emb, attachment=image_binary, content = "Here is the result!")
 
