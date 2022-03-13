@@ -69,7 +69,7 @@ class EventHandler:
         except AttributeError:
             loop_enabled = False
         
-        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0 and not users and not loop_enabled:
+        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0 and not users:
             await music_plugin.d.lavalink.destroy(event.guild_id)
             await music_plugin.d.lavalink.leave(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
