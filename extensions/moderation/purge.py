@@ -23,7 +23,7 @@ async def purge_messages(ctx: lightbulb.Context, amount) -> None:
     if isinstance(ctx, lightbulb.PrefixContext):
         await ctx.event.message.delete()
 
-    messages = await ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=28))
+    messages = await ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
     await ctx.bot.rest.delete_messages(channel, messages)
 
     await ctx.respond(f"**{len(messages)} messages deleted**", delete_after=5)
