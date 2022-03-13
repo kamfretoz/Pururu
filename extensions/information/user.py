@@ -120,14 +120,14 @@ async def user_banner(ctx: lightbulb.Context, target: hikari.User):
         await ctx.respond(embed=hikari.Embed(description="This User has no banner set."))
         
 @user_plugin.command
-@lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = True)
+@lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = False)
 @lightbulb.option("target", "The member to get the avatar.", hikari.User , required=False)
 @lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"], ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def user_avatar(ctx: lightbulb.Context, target: hikari.User, server: bool):
     """Show avatar of a user, if any"""
-    target = target or ctx.user
+    target =  await ctx.bot.rest.fetch_user(target or ctx.user)
 
     if not target:
         await ctx.respond("That user is not in the server.")
