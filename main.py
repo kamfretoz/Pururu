@@ -12,7 +12,7 @@ TOKEN = os.environ["BOT_TOKEN"]
 
 bot = lightbulb.BotApp(
     TOKEN.strip(),
-    default_enabled_guilds=(875986914367385600), # <- Example
+    default_enabled_guilds=(875986914367385600, 617173140476395542), # <- Example
     prefix=os.environ["PREFIX"],
     intents=hikari.Intents.ALL,
     ignore_bots=True,
