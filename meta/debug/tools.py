@@ -28,6 +28,38 @@ async def clear(ctx: lightbulb.Context):
     await ctx.respond("Console cleared successfully.")
 
 @tools_plugin.command()
+@lightbulb.option("url", "The Avatar's URL you want to use!", str, required = False)
+@lightbulb.command("setbotavatar","Set the bot's avatar", aliases=["botava"], auto_defer = True)
+@lightbulb.implements(lightbulb.PrefixCommand)
+@filament.utils.pass_options
+async def setbotavatar(ctx: lightbulb.PrefixCommand, url: str):
+    if ctx.attachments:
+        url = await ctx.attachments[0].read()
+    elif url is None:
+        await ctx.respond("Please specify an avatar url if you did not attach a file")
+        return
+    try:
+        await ctx.bot.rest.edit_my_user(avatar=url)
+    except Exception as e:
+        await ctx.respond("Unable to change avatar: {}".format(e))
+        return
+    await ctx.respond(":eyes:")
+    
+@tools_plugin.command()
+@lightbulb.option("name", "The name you want to change to!", str, required = True)
+@lightbulb.command("setbotname","Set the bot's name", aliases=["botname"], auto_defer = True)
+@lightbulb.implements(lightbulb.PrefixCommand)
+@filament.utils.pass_options
+async def setbotname(ctx: lightbulb.PrefixCommand, name: str):
+    try:
+        await ctx.bot.rest.edit_my_user(username=name)
+    except Exception as e:
+        await ctx.respond("Unable to change the name: {}".format(e))
+        return
+    await ctx.respond(f"I now identify as `{name}`")
+    
+
+@tools_plugin.command()
 @lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = True, default = False)
 @lightbulb.option("guild","The ID of the target guild", str, required = True)
 @lightbulb.command("clearcmd", "purge all slash commands from specified guild")
