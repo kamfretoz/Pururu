@@ -60,6 +60,9 @@ async def makequote(ctx: lightbulb.Context) -> None:
     pfp = reply.author.avatar_url
     content = reply.content
     
+    if content is None:
+        content = ""
+    
     user_pfp = BytesIO(await pfp.read())
     
     with concurrent.futures.ProcessPoolExecutor() as pool:
