@@ -52,7 +52,7 @@ def image_processing(user1: BytesIO, user2: BytesIO, love: int) -> BytesIO:
 @lightbulb.command("ship", "Ship somebody with someone else!", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def ship(ctx: lightbulb.Context, user1, user2) -> None:
+async def ship(ctx: lightbulb.Context, user1: hikari.Member, user2: hikari.Member) -> None:
     shipnumber = randint(0, 100)
     if 0 <= shipnumber <= 10:
         status = "Really low! {}".format(choice(["Friendzone ;(",

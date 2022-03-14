@@ -32,7 +32,7 @@ async def clear(ctx: lightbulb.Context):
 @lightbulb.command("setbotavatar","Set the bot's avatar", aliases=["botava"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def setbotavatar(ctx: lightbulb.PrefixCommand, url: str):
+async def setbotavatar(ctx: lightbulb.Context, url: str):
     if ctx.attachments:
         url = await ctx.attachments[0].read()
     elif url is None:
@@ -50,7 +50,7 @@ async def setbotavatar(ctx: lightbulb.PrefixCommand, url: str):
 @lightbulb.command("setbotname","Set the bot's name", aliases=["botname"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def setbotname(ctx: lightbulb.PrefixCommand, name: str):
+async def setbotname(ctx: lightbulb.Context, name: str):
     try:
         await ctx.bot.rest.edit_my_user(username=name)
     except Exception as e:
