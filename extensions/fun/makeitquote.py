@@ -4,7 +4,8 @@ import concurrent.futures
 from io import BytesIO
 from utils.masks import ellipse
 from textwrap import fill, shorten
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageFont
+from pilmoji import Pilmoji
 
 def image_processing(pfp: BytesIO, name: str , content: str, ):
     with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
@@ -29,15 +30,15 @@ def image_processing(pfp: BytesIO, name: str , content: str, ):
     
         font_content = ImageFont.truetype("res/quote/PTSans-Regular.ttf", size)
         font_name = ImageFont.truetype("res/quote/PTSans-BoldItalic.ttf", 24)
-        draw = ImageDraw.Draw(base)
         
         if len(content) > 256:
-            content = shorten(content, width=250,placeholder=" ... [DATA_EXPUNGED]")
+            content = shorten(content, width=250, placeholder=" ... [DATA_EXPUNGED]")
         
-        text = fill(content, width=40)
+        text = fill(content, width=42)
         
-        draw.multiline_text((250, 20), text, fill=(255,255,255,255), font=font_content, align = "left")
-        draw.text((250, 200), f" - {name}", fill=(255,255,255,255), font=font_name, align = "center")
+        with Pilmoji(base) as final:
+            final.text((250, 20), text, fill=(255,255,255,255), font=font_content, align = "left", emoji_scale_factor=1.2)
+            final.text((250, 200), f" — {name}", fill=(255,255,255,255), font=font_name, align = "center", emoji_scale_factor=1.2)
         
     return base
         
