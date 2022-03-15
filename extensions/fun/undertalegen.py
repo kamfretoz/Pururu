@@ -1,6 +1,7 @@
 import lightbulb
-from io import BytesIO
+import hikari
 from lightbulb.ext import filament
+from yarl import URL
 
 undertale_plugin = lightbulb.Plugin("undertale", "Generates custom undertale textbox!", include_datastore=True)
 
@@ -44,12 +45,13 @@ async def undertale(ctx: lightbulb.Context, character, text) -> None:
         "message": text,
         "character": character
     }
-
-    async with ctx.bot.d.aio_session.get(f"https://demirramon.com/utgen.png", params=parameters) as resp:
-        image_data = await resp.read()
-    img = BytesIO(image_data)
-    img.seek(0)
-    await ctx.respond("Here you go!",attachment = img)
+    url = URL.build(scheme="https", host="demirramon.com", path="/utgen.png", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    await ctx.respond("Here you go!", embed=em)
 
 
 def load(bot):

@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
-import io
 from lightbulb.ext import filament
+from yarl import URL
 
 
 img_plugin = lightbulb.Plugin("images", "Images manipulation related command")
@@ -133,18 +133,13 @@ async def horny(ctx: lightbulb.Context, user):
     parameters = {
         "avatar" : str(user.avatar_url)
     }
-    
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/horny', params = parameters) as af:
-        if 300 > af.status >= 200:
-            fp = io.BytesIO(await af.read())
-            fp.seek(0)
-            em = hikari.Embed(
-                    color=0xf1f1f1,
-                )
-            em.set_image(fp)
-            await ctx.respond(embed=em)
-        else:
-            await ctx.respond('No horny :(')
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/horny", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    await ctx.respond(embed=em)
             
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -160,14 +155,13 @@ async def tweet(ctx: lightbulb.Context, member: hikari.Member, message: str):
         "displayname" : member.display_name or member.username,
         "comment" : message
     }
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/tweet', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        imageData.seek(0)
-        em = hikari.Embed(
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/tweet", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    await ctx.respond(embed=em) # sending the file
     
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -182,14 +176,13 @@ async def yt(ctx:lightbulb.Context, member: hikari.Member, message: str):
         "username" : member.username,
         "comment" : message
     }
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/youtube-comment', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        imageData.seek(0)
-        em = hikari.Embed(
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/youtube-comment", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -201,15 +194,14 @@ async def comrade(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/comrade", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
     
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/comrade', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -221,15 +213,14 @@ async def gay(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/gay", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
     
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/gay', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -243,14 +234,13 @@ async def stupid(ctx:lightbulb.Context, member, text):
         "avatar" : str(member.avatar_url),
         "dog" : text
     }
-
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/its-so-stupid', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/its-so-stupid", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -262,14 +252,14 @@ async def lolipolice(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/lolice', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/lolice", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    
+    await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -281,15 +271,15 @@ async def simpcard(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/simpcard', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                title=f"what a simp, {member.username}.",
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/simpcard", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            title=f"what a simp, {member.username}.",
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    
+    await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -301,16 +291,15 @@ async def jail(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
-
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/jail', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                title=f"{member.username} have been jailed.",
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/jail", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            title=f"{member.username} has been jailed.",
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    
+    await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -322,37 +311,36 @@ async def wasted(ctx: lightbulb.Context, member):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/wasted', params=parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                title=f"{member.username} has died",
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/wasted", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            title=f"{member.username} has died",
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    
+    await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("missionpass", "Mission Passed! Respect++", auto_defer = True)
+@lightbulb.command("missionpass", "Mission Passed! Respect++", aliases=["pass"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def passed(ctx: lightbulb.Context, member):
     parameters = {
-        "avatar" : str(member.avatar_url)
+        "avatar": str(member.avatar_url)
     }
-
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/passed', params = parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                title=f"Mission passed",
-                description="Respect +100",
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/passed", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            title=f"Mission passed",
+            description="Respect +100",
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    
+    await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -362,17 +350,17 @@ async def passed(ctx: lightbulb.Context, member):
 @filament.utils.pass_options
 async def triggered(ctx: lightbulb.Context, member):
     parameters = {
-        "avatar" : str(member.avatar_url)
+        "avatar": str(member.avatar_url)
     }
-    async with ctx.bot.d.aio_session.get(f'https://some-random-api.ml/canvas/triggered', params = parameters) as resp:
-        imageData = io.BytesIO(await resp.read()) # read the image/bytes
-        em = hikari.Embed(
-                title=f"{member.username} have been triggered!",
-                color=0xf1f1f1,
-            )
-        em.set_image(imageData)
-        
-        await ctx.respond(embed=em) # sending the file          
+    url = URL.build(scheme="https", host="some-random-api.ml", path="/canvas/triggered", query=parameters)
+    imageData = hikari.URL(str(url))
+    em = hikari.Embed(
+            title=f"{member.username} have been triggered!",
+            color=0xf1f1f1,
+        )
+    em.set_image(imageData)
+    
+    await ctx.respond(embed=em) # sending the file          
 
 def load(bot):
     bot.add_plugin(img_plugin)
