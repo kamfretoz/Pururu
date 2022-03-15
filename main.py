@@ -3,6 +3,7 @@ import aiohttp
 import dotenv
 import hikari
 import lightbulb
+import miru
 from random import choice
 from utils.quotes import statuses
 
@@ -26,6 +27,8 @@ bot = lightbulb.BotApp(
         },
     },
 )
+
+miru.load(bot)
 
 @bot.listen()
 async def on_starting(event: hikari.StartingEvent) -> None:

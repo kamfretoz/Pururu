@@ -1,9 +1,28 @@
 import hikari
 import lightbulb
+import miru
 from lightbulb.ext import filament
 from datetime import datetime, timedelta, timezone
 
 purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
+
+class ConfirmButton(miru.Button):
+    def __init__(self) -> None:
+        super().__init__(style=hikari.ButtonStyle.DANGER, label="Confirm")
+    async def callback(self, ctx: miru.Context) -> None:
+        # You can access the view an item is attached to by accessing it's view property
+        self.view.accepted = True
+        self.view.stop()
+    
+class CancelButton(miru.Button):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(style=hikari.ButtonStyle.SUCCESS, label="Cancel")
+
+    async def callback(self, ctx: miru.Context) -> None:
+        self.view.accepted = False
+        self.view.stop()
+
+
 
 @purge_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
@@ -23,11 +42,26 @@ async def purge_messages(ctx: lightbulb.Context, amount) -> None:
     if isinstance(ctx, lightbulb.PrefixContext):
         await ctx.event.message.delete()
 
-    messages = await ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
-    await ctx.bot.rest.delete_messages(channel, messages)
-
-    await ctx.respond(f"**{len(messages)} messages deleted**", delete_after=5)
-
+    pruneview = miru.View(timeout=30)
+    pruneview.add_item(ConfirmButton())
+    pruneview.add_item(CancelButton())
+    
+    prompt = await ctx.respond("Are you sure you want to continue the prune operation? **__This Action are irreversible.__**", components=pruneview.build(), flags=hikari.MessageFlag.EPHEMERAL)
+    msg = await prompt.message()
+    pruneview.start(msg)
+    await pruneview.wait()
+    
+    if hasattr(pruneview, "accepted"):
+        if pruneview.accepted is True:
+            messages = await ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
+            await ctx.bot.rest.delete_messages(channel, messages)
+            await ctx.respond(f"**{len(messages)} messages deleted**", delete_after=5)
+        elif pruneview.accepted is False:
+            await ctx.respond(f"**Prune Operation has been cancelled.**", delete_after=7)
+            await prompt.delete()
+    else:
+        await ctx.respond(f"**Prune Operation has been cancelled due to inactivity.**", delete_after=7)
+        await prompt.delete()
 
 def load(bot: lightbulb.BotApp) -> None:
     bot.add_plugin(purge_plugin)

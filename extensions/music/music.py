@@ -13,7 +13,6 @@ from datetime import date
 import dotenv
 from lightbulb.ext import filament
 from lightbulb.utils import nav
-import miru
 
 dotenv.load_dotenv()
 
@@ -747,7 +746,6 @@ if HIKARI_VOICE:
 
 
 def load(bot: lightbulb.BotApp) -> None:
-    miru.load(bot)
     bot.add_plugin(music_plugin)
 
 
