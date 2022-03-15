@@ -5,7 +5,7 @@ import base64
 base64_plugin = lightbulb.Plugin("base64", "Base64 Conversion tool")
 
 @base64_plugin.command()
-@lightbulb.command("base64", "Allows you to encode or decode base64")
+@lightbulb.command("b64", "Allows you to encode or decode base64")
 @lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
 async def base64_(ctx: lightbulb.Context) -> None:
     pass

@@ -10,7 +10,7 @@ from lightbulb.ext import filament
 mal_plugin = lightbulb.Plugin("myanimelist", "Weebs Only")
 
 @mal_plugin.command()
-@lightbulb.command("myanimelist", "Allows you to look up anime informations!", aliases=["mal"])
+@lightbulb.command("mal", "Allows you to look up anime informations!", aliases=["myanimelist"])
 @lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
 async def myanimelist(ctx: lightbulb.Context) -> None:
     pass
@@ -101,7 +101,7 @@ async def myanimelist_anime(ctx: lightbulb.Context, name) -> None:
 @myanimelist.child
 @lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
 @lightbulb.option("name", "The manga you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("manga", "Find the information of an manga", aliases=["man"], auto_defer = True)
+@lightbulb.command("manga", "Find the information of a manga", aliases=["man"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 @filament.utils.pass_options
 async def myanimelist_manga(ctx: lightbulb.Context, name):
