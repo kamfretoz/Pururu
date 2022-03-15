@@ -37,8 +37,8 @@ def image_processing(pfp: BytesIO, name: str , content: str, ):
         text = fill(content, width=42)
         
         with Pilmoji(base) as final:
-            final.text((250, 20), text, fill=(255,255,255,255), font=font_content, align = "left", emoji_scale_factor=1.2)
-            final.text((250, 200), f" — {name}", fill=(255,255,255,255), font=font_name, align = "center", emoji_scale_factor=1.2)
+            final.text((250, 20), text, fill=(255,255,255,255), font=font_content, align = "left")
+            final.text((250, 200), f" — {name}", fill=(255,255,255,255), font=font_name, align = "center")
         
     return base
         
