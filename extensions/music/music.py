@@ -31,7 +31,7 @@ LAVALINK_PORT=os.getenv("LAVA_PORT")
 LAVALINK_PASSWORD=os.getenv("LAVA_PASS")
 LAVALINK_SSL=os.getenv("LAVA_SSL")
 
-class EventHandler:
+class LavalinkEventHandler:
     async def track_start(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         logging.info(f"Track started on guild: {event.guild_id}")
         guild_node = await lavalink.get_guild_node(event.guild_id)
@@ -132,7 +132,7 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     
     if HIKARI_VOICE:
         builder.set_start_gateway(False)
-    lava_client = await builder.build(EventHandler())
+    lava_client = await builder.build(LavalinkEventHandler())
     music_plugin.d.lavalink = lava_client
 
 @music_plugin.command()
