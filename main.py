@@ -10,12 +10,14 @@ from utils.quotes import statuses
 dotenv.load_dotenv()
 
 TOKEN = os.environ["BOT_TOKEN"]
+PREFIX = os.environ["PREFIX"]
 
 bot = lightbulb.BotApp(
     TOKEN.strip(),
     default_enabled_guilds=(875986914367385600, 617173140476395542), # <- Example
-    prefix=os.environ["PREFIX"],
+    prefix=lightbulb.when_mentioned_or(PREFIX),
     intents=hikari.Intents.ALL,
+    help_slash_command=True,
     ignore_bots=True,
     case_insensitive_prefix_commands=True,
     logs={
@@ -47,7 +49,6 @@ bot.load_extensions("lightbulb.ext.filament.exts.superuser")
 if __name__ == "__main__":
     if os.name != "nt":
         import uvloop
-
         uvloop.install()
 
     bot.run(
