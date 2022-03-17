@@ -20,17 +20,16 @@ async def pingstorm(ctx: lightbulb.Context, amount: int, user: hikari.Member) ->
         await ctx.respond("HA! You think it'll work against me?? Nice Try.")
         user = ctx.author
         await asyncio.sleep(2)
-    async with pingstorm_plugin.d.lock:
-        await ctx.respond("Ping Machine Initializing in 3 seconds!")                
-        await asyncio.sleep(3)
-        await ctx.respond("Begin!")
-        ping = 0
-        while ping < int(amount):
-            await ctx.respond(f"{user.mention} - {ping + 1}/{amount}", delete_after=60)
-            ping += 1
-            await asyncio.sleep(1)
-        await ctx.respond("Finished!")
-        await ctx.delete_last_response()
+    await ctx.respond("Ping Machine Initializing in 3 seconds!")                
+    await asyncio.sleep(3)
+    await ctx.respond("Begin!")
+    ping = 0
+    while ping < int(amount):
+        await ctx.respond(f"{user.mention} - {ping + 1}/{amount}", delete_after=60)
+        ping += 1
+        await asyncio.sleep(1)
+    await ctx.respond("Finished!")
+    await ctx.delete_last_response()
 
 
 def load(bot):
