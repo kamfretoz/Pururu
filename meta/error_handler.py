@@ -16,7 +16,8 @@ error_message = {
             "NoPrivateMessage": "This command cannot be used in DMs!",
             "NSFWChannelRequired": "You can only use this command on channels that are marked as NSFW.",
             "CheckFailure": "Command Check Failure, You are not authorized to use this command!",
-            "ForbiddenError": "I'm not allowed to do that!"
+            "ForbiddenError": "I'm not allowed to do that!",
+            "ConcurrencyLimit": "Please wait until the previous command execution has completed!",
         }
 
 async def send_embed(name, code, event, *args):
@@ -47,7 +48,7 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
     elif isinstance(exception, lightbulb.errors.NotEnoughArguments):
         await send_embed("MissingRequiredArgument", 410, event, exception.missing_options)
     elif isinstance(exception, lightbulb.CommandIsOnCooldown):
-        await send_embed("CommandOnCooldown", 429, event, int(exception.retry_after))
+        await send_embed("CommandOnCooldown", 420, event, int(exception.retry_after))
     elif isinstance(exception, lightbulb.errors.BotMissingRequiredPermission):
         await send_embed("BotMissingPermissions", 403, event, exception.missing_perms)
     elif isinstance(exception, lightbulb.errors.NotOwner):
@@ -60,6 +61,8 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         await send_embed("NSFWChannelRequired", 423, event)
     elif isinstance(exception, lightbulb.errors.CheckFailure):
         await send_embed("CheckFailure", 401, event)
+    elif isinstance(exception, lightbulb.errors.MaxConcurrencyLimitReached):
+        await send_embed("ConcurrencyLimit", 429, event)
     
 def load(bot):
     bot.subscribe(lightbulb.CommandErrorEvent, on_error)
