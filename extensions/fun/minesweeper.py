@@ -6,7 +6,7 @@ from lightbulb.ext import filament
 minesweeper_plugin = lightbulb.Plugin("minesweeper", "\U0001F642 Minesweeper \U0001F635")
 
 @minesweeper_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("bombs", "The amount of bombs you want", int, required=True, min_value = 1)
 @lightbulb.option("rows", "The amount of rows you want", int, required=True, min_value = 1, max_value = 13)
 @lightbulb.option("columns", "The amount of colom that you want", int, required=True, min_value = 1, max_value = 13)

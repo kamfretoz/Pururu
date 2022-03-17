@@ -46,7 +46,7 @@ def image_processing(pfp: BytesIO, name: str , content: str, ):
 aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True)
 
 @aquote_plugin.command()
-@lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.MessageCommand)
 @lightbulb.set_help(text="Please pick a message by replying to them whilst running this command")
 @lightbulb.command("makequote", "Create a quote from someone's message", auto_defer = True, aliases=["mq"])

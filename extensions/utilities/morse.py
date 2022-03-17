@@ -60,7 +60,7 @@ async def morse(ctx: lightbulb.Context) -> None:
     pass
 
 @morse.child()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("input", "the morse code you want to decode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("decode", "to decode the morse code")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
@@ -80,7 +80,7 @@ async def morse_decode(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=hikari.Embed(title="Morse to ASCII Conversion:", description=decodeMessage))
 
 @morse.child()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("input", "the text you want to encode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "to encode the ASCII text")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)

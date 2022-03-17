@@ -11,7 +11,7 @@ from lightbulb.ext import filament
 weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 
 @weather_plugin.command()
-@lightbulb.add_cooldown(3, 2, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 2, lightbulb.UserBucket)
 @lightbulb.option("city", "the city you want to check", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("weather", "See the weather of a given city", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

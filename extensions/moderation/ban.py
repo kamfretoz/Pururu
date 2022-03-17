@@ -10,7 +10,7 @@ ban_plugin.add_checks(
     )
 
 @ban_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", int, min_value = 0, max_value = 7, default = 0 ,required=False)
 @lightbulb.option("user", "the user you want to ban", hikari.User , required=True)
@@ -25,7 +25,7 @@ async def ban(ctx: lightbulb.Context, user, delete_message, reason):
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
     
 @ban_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for unbanning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.Snowflake, required=True)
 @lightbulb.command("unban", "unban a member")
@@ -38,7 +38,7 @@ async def unban(ctx: lightbulb.Context, user, reason):
     await ctx.edit_last_response(f"Succesfully unbanned the ID of `{user}` for `{res}`!")
     
 @ban_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("banlist", "see the list of banned members in this server", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def banlist(ctx: lightbulb.Context):

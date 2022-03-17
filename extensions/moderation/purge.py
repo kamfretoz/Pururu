@@ -27,7 +27,7 @@ class CancelButton(miru.Button):
         self.view.stop()
 
 @purge_plugin.command
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.add_checks(
     lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
     lightbulb.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES)

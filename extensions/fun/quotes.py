@@ -4,7 +4,7 @@ import hikari
 quote_plugin = lightbulb.Plugin("quote", "Some quotes that you might find useful :)")
 
 @quote_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("quote", "Send quotes!.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def dad(ctx: lightbulb.Context) -> None:

@@ -30,7 +30,7 @@ def image_processing(expression: str, text: str):
                 return template
 
 @oneshot_plugin.command()
-@lightbulb.add_cooldown(1, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(1, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "The text you want to write", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=oneshot_plugin.d.faces)
 @lightbulb.command("oneshot", "Generate a custom OneShot Textbox", auto_defer=True)

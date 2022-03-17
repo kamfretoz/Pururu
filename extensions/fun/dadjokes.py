@@ -4,7 +4,7 @@ import hikari
 dad_plugin = lightbulb.Plugin("dadjokes", "OK Boomer.")
 
 @dad_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("dadjokes", "Send dadjokes.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def dad(ctx: lightbulb.Context) -> None:

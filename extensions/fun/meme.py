@@ -4,7 +4,7 @@ import lightbulb
 meme_plugin = lightbulb.Plugin("meme", "moar meeemeees")
 
 @meme_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("meme", "Get a funni meme", auto_defer = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def meme(ctx: lightbulb.Context) -> None:

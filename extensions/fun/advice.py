@@ -5,7 +5,7 @@ import json
 advice_plugin = lightbulb.Plugin("advices", "Some advices that might aid you in your journey of life! :)")
 
 @advice_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("advice", "Send useful advices!.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def dad(ctx: lightbulb.Context) -> None:

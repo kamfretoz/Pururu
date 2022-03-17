@@ -11,7 +11,7 @@ async def base64_(ctx: lightbulb.Context) -> None:
     pass
 
 @base64_.child()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("input", "the value to decode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("decode", "to decode the base64 value")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
@@ -27,7 +27,7 @@ async def base64_decode(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=hikari.Embed(description=f"⚠️ Unable to decode the text, possible unsupported characters are found."))
 
 @base64_.child()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("input", "the text you want to encode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "to encode the ASCII text")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)

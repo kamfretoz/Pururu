@@ -70,7 +70,7 @@ async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
         pass
         
 @sniper.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("snipe", "Allows you to see recently deleted message in the current channel.", aliases=["s","delsnipe"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def deletesnipe(ctx: lightbulb.Context) -> None:
@@ -108,7 +108,7 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"), delete_after=3)
 
 @sniper.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("editsnipe", "Similar to deletesnipe, this command allows you to see edited message.", aliases=["es","esnipe"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def editsnipe(ctx: lightbulb.Context) -> None:

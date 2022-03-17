@@ -4,7 +4,7 @@ import hikari
 chuck_plugin = lightbulb.Plugin("chucknorris", "You Didn't run this command, Chuck Norris throw this command at your face.")
 
 @chuck_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("chucknorris", "Chuck Norris Jokes.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def chuck(ctx: lightbulb.Context) -> None:

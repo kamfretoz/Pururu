@@ -6,7 +6,7 @@ from lightbulb.ext import filament
 randint_plugin = lightbulb.Plugin("randint", "Gimme random number!")
 
 @randint_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("end", "The start of the range", int, required=True, default=420)
 @lightbulb.option("begin", "The start of the range", int, required=True, default=69)
 @lightbulb.command("randint", "Give you a randomized number between a range", aliases=["randnum"], auto_defer=True)

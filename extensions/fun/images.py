@@ -7,7 +7,7 @@ from yarl import URL
 img_plugin = lightbulb.Plugin("images", "Images manipulation related command")
 
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("wink", "*wink*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def wink(ctx: lightbulb.Context):
@@ -19,7 +19,7 @@ async def wink(ctx: lightbulb.Context):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to hug!", hikari.User , required = True)
 @lightbulb.command("hug", "*hugs you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -34,7 +34,7 @@ async def hugs(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to snuggles!", hikari.User , required = True)
 @lightbulb.command("snuggle", "*snuggles you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -49,7 +49,7 @@ async def snug(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to kiss!", hikari.User , required = True)
 @lightbulb.command("kiss", "*kisses you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -64,7 +64,7 @@ async def kiss(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to tickle!", hikari.User , required = True)
 @lightbulb.command("tickle", "*tickles you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -79,7 +79,7 @@ async def tick(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to slap!", hikari.User , required = True)
 @lightbulb.command("slap", "*slaps you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -94,7 +94,7 @@ async def slapping(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to poke!", hikari.User , required = True)
 @lightbulb.command("poke", "*pokes you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -109,7 +109,7 @@ async def poking(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to cuddle!", hikari.User , required = True)
 @lightbulb.command("pat", "*pats you*", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -124,7 +124,7 @@ async def pats(ctx: lightbulb.Context, user):
         await ctx.respond(embed=embed)
         
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the horny one!", hikari.User , required = True)
 @lightbulb.command("horny", "Horny card for u", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -142,7 +142,7 @@ async def horny(ctx: lightbulb.Context, user):
     await ctx.respond(embed=em)
             
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "the name of the user!", hikari.Member , required = True)
 @lightbulb.command("tweet", "create a fake tweet", auto_defer = True)
@@ -164,7 +164,7 @@ async def tweet(ctx: lightbulb.Context, member: hikari.Member, message: str):
     await ctx.respond(embed=em) # sending the file
     
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "the name of the user!", hikari.Member , required = True)
 @lightbulb.command("ytcomment", "create a youtube comment", auto_defer = True)
@@ -185,7 +185,7 @@ async def yt(ctx:lightbulb.Context, member: hikari.Member, message: str):
     await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("comrade", "☭", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -204,7 +204,7 @@ async def comrade(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("gay", "the gay-laser", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -223,7 +223,7 @@ async def gay(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "the name of the user!", hikari.User , required = True)
 @lightbulb.command("stupid", "Oh no its stupid", auto_defer = True, aliases = ["sputid"])
@@ -243,7 +243,7 @@ async def stupid(ctx:lightbulb.Context, member, text):
     await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("lolipolice", "the police coming to your house", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -262,7 +262,7 @@ async def lolipolice(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("simpcard", "this is certified simp moment", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -282,7 +282,7 @@ async def simpcard(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("jail", "Welcome to the Jail", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -302,7 +302,7 @@ async def jail(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("kill", "You Died", auto_defer = True, aliases=["wasted"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -322,7 +322,7 @@ async def wasted(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
 
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("missionpass", "Mission Passed! Respect++", aliases=["pass"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -343,7 +343,7 @@ async def passed(ctx: lightbulb.Context, member):
     await ctx.respond(embed=em) # sending the file
             
 @img_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
 @lightbulb.command("triggered", "TRIGGERED", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

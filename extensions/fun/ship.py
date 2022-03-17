@@ -46,7 +46,7 @@ def image_processing(user1: BytesIO, user2: BytesIO, love: int) -> BytesIO:
     return base
 
 @ship_plugin.command()
-@lightbulb.add_cooldown(2, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
 @lightbulb.option("user2", "The other one you want to ship", hikari.Member, required=True)
 @lightbulb.option("user1", "The one you want to ship", hikari.Member, required=True)
 @lightbulb.command("ship", "Ship somebody with someone else!", auto_defer = True)

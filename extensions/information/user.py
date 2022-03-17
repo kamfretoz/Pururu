@@ -92,7 +92,7 @@ async def  user_info(ctx: lightbulb.Context, target) -> None:
     await ctx.respond(embed=emb)
 
 @user_plugin.command
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("target", "The member to get the banner.", hikari.User, required=False)
 @lightbulb.command("banner", "Get a member's banner.", auto_defer = True, ephemeral = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

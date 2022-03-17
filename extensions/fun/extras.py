@@ -7,7 +7,7 @@ from lightbulb.ext import filament
 ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i dont know where to put them", include_datastore=True)
 
 @ext_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("why", "Askin the real question here", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def whytho(ctx: lightbulb.Context):
@@ -19,7 +19,7 @@ async def whytho(ctx: lightbulb.Context):
         await ctx.respond(embed=embed)
         
 @ext_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("name", "A random name generator", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def namedeez(ctx: lightbulb.Context):
@@ -31,7 +31,7 @@ async def namedeez(ctx: lightbulb.Context):
             await ctx.respond(embed=embed)
             
 @ext_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("rickroll", "You have been rickrolled!")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def rickroll(ctx: lightbulb.Context):
@@ -63,7 +63,7 @@ ext_plugin.d.ps = {
 }
 
 @ext_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("8ball", "Ask a question to the 8Ball!")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -83,7 +83,7 @@ async def eball(ctx: lightbulb.Context, question: str):
     await ctx.respond(embed=eightball)
 
 @ext_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("f", "Press F to pay respect.")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

@@ -8,7 +8,7 @@ from lightbulb.ext import filament
 hex_color_plugin = lightbulb.Plugin("color", "#RGBforLyfe")
 
 @hex_color_plugin.command()
-@lightbulb.add_cooldown(3, 1, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 1, lightbulb.UserBucket)
 @lightbulb.option("colour_code", "HEX Code for the color", hikari.Color, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("color", "Posts color of given hex code", aliases=["getcolor", "colour", "getcolour"])
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)

@@ -5,7 +5,7 @@ from lightbulb.ext import filament
 joke_plugin = lightbulb.Plugin("joke", "Jokes! But be wary for the offensive ones!")
 
 @joke_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("lang", "The language of the joke", str, required=False, default = "en", choices = ["cs","de","en","es","fr","pt"])
 @lightbulb.command("joke", "For all kinds of jokes! (Some might be offensive, be careful.)", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

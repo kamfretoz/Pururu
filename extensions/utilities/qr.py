@@ -13,7 +13,7 @@ async def qr(ctx: lightbulb.Context) -> None:
     pass
 
 @qr.child()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("data", "The text you want to encode", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("create", "Encodes a text into a QR Code", aliases=["make"])
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
@@ -33,7 +33,7 @@ async def qr_maker(ctx: lightbulb.Context, data):
             await ctx.respond(f"Here is your QR Code:", attachment=file)
             
 @qr.child()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("temporary", "set if you want the member joined to be temporary", bool, required=False, default = False)
 @lightbulb.option("max_use", "The limit of the invite usage", int, required=False, default=0)
 @lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", int, required=False, default=86400)

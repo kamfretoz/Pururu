@@ -17,7 +17,7 @@ ANIMALS = {
 animal_plugin = lightbulb.Plugin("animal", "For cute animals!")
 
 @animal_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("animal", "Get a fact + picture of a cute animal :3")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def animal(ctx: lightbulb.Context) -> None:

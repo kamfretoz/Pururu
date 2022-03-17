@@ -10,7 +10,7 @@ timeout_plugin.add_checks(
 )
 
 @timeout_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for the timeout", str, required=False,modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("days", "the duration of the timeout (days)", int, required=False, default=0)
 @lightbulb.option("hour", "the duration of the timeout (hour)", int, required=False, default=0)

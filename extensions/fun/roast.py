@@ -5,7 +5,7 @@ from lightbulb.ext import filament
 roast_plugin = lightbulb.Plugin("roast", "Has been roastin since 2011!")
 
 @roast_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "The user you want to roast!", hikari.Member, required=True)
 @lightbulb.command("roast", "For all kinds of jokes! (Some might be offensive, be careful.)", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

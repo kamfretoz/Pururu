@@ -9,7 +9,7 @@ slowmode_plugin.add_checks(
     )
 
 @slowmode_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("interval", "The interval amount (in seconds)", int, min_value = 0, max_value = 21600, required=False)
 @lightbulb.option("channel", "The channel you want to set", hikari.GuildChannel, required=True)
 @lightbulb.command("slowmode", "Set the slowmode interval for a channel")

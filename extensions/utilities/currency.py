@@ -12,7 +12,7 @@ dotenv.load_dotenv()
 curr_key = os.environ["GEO_CURR_API"]
 
 @curr_plugin.command()
-@lightbulb.add_cooldown(3, 3, lightbulb.cooldowns.UserBucket)
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("val", "The amount you want to convert", int, required=True)
 @lightbulb.option("to", "The currency you want to convert to", str, required=True)
 @lightbulb.option("origin", "The currency you want to convert from", str, required=True)
