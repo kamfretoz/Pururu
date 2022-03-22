@@ -90,13 +90,16 @@ async def weather(ctx: lightbulb.Context, city) -> None:
         
         code = data["cod"]
         if code != 200:
-            msg = data.message
-            if code == 404:
-                raise ValueError("City cannot be found!")
-            elif code == 401:
-                raise ValueError("Invalid API Key!")
-            else:
-                raise ValueError(f"An Error Occured! `{msg.capitalize()}` (Code: `{code}`)")
+            try:
+                msg = data["message"]
+                if code == 404:
+                    raise ValueError("City cannot be found!")
+                elif code == 401:
+                    raise ValueError("Invalid API Key!")
+                else:
+                    raise ValueError(f"An Error Occured! '{msg.capitalize()}' (Code: '{code}')")
+            except AttributeError:
+                raise ValueError("Fatal Error Occured, Please try again later!")
 
         cityname = data["name"]
         countryid = data["sys"]["country"]
