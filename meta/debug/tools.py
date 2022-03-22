@@ -35,12 +35,12 @@ async def clear(ctx: lightbulb.Context):
 @filament.utils.pass_options
 async def setbotavatar(ctx: lightbulb.Context, url: str):
     if ctx.attachments:
-        url = await ctx.attachments[0].url()
+        url = ctx.attachments[0].url
     elif url is None:
         await ctx.respond("Please specify an avatar url if you did not attach a file")
         return
     try:
-        await ctx.bot.rest.edit_my_user(avatar=hikari.URL(url))
+        await ctx.bot.rest.edit_my_user(avatar=str(hikari.URL(url)))
     except Exception as e:
         await ctx.respond("Unable to change avatar: {}".format(e))
         return
