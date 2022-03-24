@@ -7,29 +7,14 @@ import lavasnek_rs
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import re
-import os
 import random
 from datetime import date
-import dotenv
 from lightbulb.ext import filament
 from lightbulb.utils import nav
 
-dotenv.load_dotenv()
+from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN, HIKARI_VOICE
 
 music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
-
-# If True connect to voice with the hikari gateway instead of lavasnek_rs's
-HIKARI_VOICE = True
-
-URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-TIME_REGEX = r"([0-9]{1,2})[:ms](([0-9]{1,2})s?)?"
-SPOTCLIENT_ID=os.getenv("SPOTID")
-SPOTCLIENT_SECRET=os.getenv("SPOTSECRET")
-TOKEN=os.getenv("BOT_TOKEN")
-LAVALINK_SERVER=os.getenv("LAVA_SRV")
-LAVALINK_PORT=os.getenv("LAVA_PORT")
-LAVALINK_PASSWORD=os.getenv("LAVA_PASS")
-LAVALINK_SSL=os.getenv("LAVA_SSL")
 
 class LavalinkEventHandler:
     async def track_start(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
@@ -39,24 +24,23 @@ class LavalinkEventHandler:
         chanid = guild_node.get_data().get("ChannelID")
         firsttrack = guild_node.get_data().get("First")
         loop_enabled = guild_node.get_data().get("loop")
+        
         if firsttrack == False:
-            embed=hikari.Embed(title="**Playing the next track.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
-            if loop_enabled: 
-                embed=hikari.Embed(title="**Replaying the track.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
+            embed=hikari.Embed(title="**Playing the next track.**", description=song.title, color=0x00FF00)
+            embed.add_field(name="Artist", value=song.author, inline=False)
+        elif loop_enabled: 
+            embed=hikari.Embed(title="**Replaying the track.**", description=song.title, color=0x00FF00)
+            embed.add_field(name="Artist", value=song.author, inline=False)
         else:
-            embed=hikari.Embed(title="**Now Playing.**", description=f"**{song.title}** - **{song.author}**", color=0x00FF00)
-            embed.add_field(name="Artist", value=f"{song.author}", inline=False)
+            embed=hikari.Embed(title="**Now Playing.**", description=song.title, color=0x00FF00)
+            embed.add_field(name="Artist", value=song.author, inline=False)
+        
         resp = await music_plugin.bot.rest.create_message(chanid, embed=embed)
-        await asyncio.sleep(10)
+        await asyncio.sleep(15)
         await resp.delete()
 
     async def track_finish(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
-
         guild_node = await lavalink.get_guild_node(event.guild_id)
-
-        states = music_plugin.bot.cache.get_voice_states_view_for_guild(event.guild_id)
-        users = [state async for state in states.iterator().filter(lambda i: i.user_id != music_plugin.bot.application.id)]
-        
         try:
             loop_enabled = guild_node.get_data().get("loop")
             
@@ -68,9 +52,14 @@ class LavalinkEventHandler:
         except AttributeError:
             loop_enabled = False
         
-        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0 and not users:
+        if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0:
+            if HIKARI_VOICE:
+                if event.guild_id is not None:
+                    await music_plugin.bot.update_voice_state(event.guild_id, None)
+                    await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
+            else:
+                await music_plugin.d.lavalink.leave(event.guild_id)
             await music_plugin.d.lavalink.destroy(event.guild_id)
-            await music_plugin.d.lavalink.leave(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
             logging.info(f"Track finished on guild: {event.guild_id}")
@@ -212,7 +201,12 @@ async def play(ctx: lightbulb.Context, query) -> None:
         result = f"ytmsearch:{trackname}"
         query_information = await music_plugin.d.lavalink.get_tracks(result)   
         await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
-        return await ctx.respond(embed=hikari.Embed(title="Added Song To The Queue",color=ctx.author.accent_color) ) 
+        emb = hikari.Embed(title="Added Song To The Queue", color=ctx.author.accent_color)
+        emb.add_field(name="Name", value=f"{query_information.tracks[0].info.title}", inline=False)
+        emb.add_field(name="Artist", value=f"{query_information.tracks[0].info.author}", inline=False)
+        length = divmod(query_information.tracks[0].info.length, 60000)
+        emb.add_field(name="Duration", value=f"{int(length[0])}:{round(length[1]/1000):02}")
+        return await ctx.respond(embed=emb) 
     
     if not re.match(URL_REGEX, query):
         result = f"ytsearch:{query}"
@@ -463,10 +457,6 @@ async def resume(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def now_playing(ctx: lightbulb.Context) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
@@ -488,12 +478,6 @@ async def now_playing(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def queue(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
-        return None
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         await ctx.respond(embed=embed)
