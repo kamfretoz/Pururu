@@ -14,7 +14,7 @@ PREFIX = os.environ["PREFIX"]
 
 bot = lightbulb.BotApp(
     TOKEN.strip(),
-    default_enabled_guilds=(875986914367385600, 617173140476395542, 535677066138353674, 393724666474135552), # <- Example
+    default_enabled_guilds=(875986914367385600, 617173140476395542, 535677066138353674, 393724666474135552, 793239269723471902), # <- Example
     prefix=lightbulb.when_mentioned_or(PREFIX),
     intents=hikari.Intents.ALL,
     help_slash_command=True,
