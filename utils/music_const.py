@@ -14,6 +14,3 @@ LAVALINK_SERVER=os.getenv("LAVA_SRV")
 LAVALINK_PORT=os.getenv("LAVA_PORT")
 LAVALINK_PASSWORD=os.getenv("LAVA_PASS")
 LAVALINK_SSL=os.getenv("LAVA_SSL")
-
-# If True connect to voice with the hikari gateway instead of lavasnek_rs's
-HIKARI_VOICE = True

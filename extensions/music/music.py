@@ -12,7 +12,10 @@ from datetime import date
 from lightbulb.ext import filament
 from lightbulb.utils import nav
 
-from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN, HIKARI_VOICE
+from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
+
+# If True connect to voice with the hikari gateway instead of lavasnek_rs's
+HIKARI_VOICE = True
 
 music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 
@@ -50,7 +53,7 @@ class LavalinkEventHandler:
                 await lavalink.play(event.guild_id, result.tracks[0]).queue()
                 return
         except AttributeError:
-            loop_enabled = False
+            return
         
         if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0:
             if HIKARI_VOICE:
