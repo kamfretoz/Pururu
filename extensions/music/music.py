@@ -7,10 +7,12 @@ import lavasnek_rs
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import re
+import json
 import random
 from datetime import date
 from lightbulb.ext import filament
 from lightbulb.utils import nav
+from yarl import URL
 
 from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
 
@@ -71,7 +73,17 @@ class LavalinkEventHandler:
 
     async def track_exception(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackException) -> None:
         logging.warning(f"Track exception event happened on guild: {event.guild_id}")
-
+        
+        
+        guild_node = await lavalink.get_guild_node(event.guild_id)
+        chanid = guild_node.get_data().get("ChannelID")
+        
+        emb = hikari.Embed(title=f"An Exception Occured while trying to play the song {event.track}.", description=event.exception_message)
+        emb.add_field(name="Cause", value=event.exception_cause)
+        emb.add_field(name="Exception Severity", value=event.exception_severity)
+        
+        await music_plugin.bot.rest.create_message(chanid, embed=emb)
+        
         # If a track was unable to be played, skip it
         skip = await lavalink.skip(event.guild_id)
         node = await lavalink.get_guild_node(event.guild_id)
@@ -715,6 +727,28 @@ async def trending(ctx: lightbulb.Context) -> None:
     except:
         pass
     await ctx.respond(embed=embed)
+    
+@music_plugin.command()
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.option("artist", "The song's artist.", str, required = True)
+@lightbulb.option("title", "The song's title.", str, required = True)
+@lightbulb.command("lyrics", "See the lyrics of a song.", auto_defer=True)
+@lightbulb.implements(lightbulb.SlashCommand)
+@filament.utils.pass_options
+async def lyrics(ctx: lightbulb.Context, artist: str, title: str) -> None:
+    url = URL.build(scheme="https", host="api.lyrics.ovh", path=f"/v1/{artist}/{title}")
+    async with ctx.bot.d.aio_session.get(url) as resp:
+        data = json.loads(await resp.read())
+    
+    try:
+        ly = data["lyrics"]
+    except KeyError:
+        ly = data["error"]
+        
+    emb = hikari.Embed(title=f"Lyrics result for: {artist} - {title}", description=ly)
+    
+    await ctx.respond(embed=emb)
+
 
 if HIKARI_VOICE:
 
