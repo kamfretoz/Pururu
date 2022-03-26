@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import aiohttp
 import dotenv
@@ -24,8 +26,8 @@ bot = lightbulb.BotApp(
         "version": 1,
         "incremental": True,
         "loggers": {
-            "hikari": {"level": "INFO"},
-            "lightbulb": {"level": "INFO"},
+            "hikari": {"level": "DEBUG"},
+            "lightbulb": {"level": "DEBUG"},
         },
     },
 )
