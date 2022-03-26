@@ -22,6 +22,8 @@ timeout_plugin.add_checks(
 @filament.utils.pass_options
 async def timeout(ctx: lightbulb.Context, user, second, minute, hour, days, reason):
     
+    res = reason or "No Reason Provided."
+    
     now = datetime.now(timezone.utc)
     then = now + timedelta(days=days, hours=hour, minutes=minute, seconds=second)
     
@@ -33,7 +35,7 @@ async def timeout(ctx: lightbulb.Context, user, second, minute, hour, days, reas
         await ctx.respond(f"Removing timeout from **{user}**")
     else:
         await ctx.respond(f"Attempting to timeout **{user}**")
-    await ctx.bot.rest.edit_member(user = user, guild = ctx.get_guild(), communication_disabled_until=then, reason=reason)
+    await ctx.bot.rest.edit_member(user = user, guild = ctx.get_guild(), communication_disabled_until=then, reason=res)
     await ctx.edit_last_response("Task finished successfully!")
     
 def load(bot):
