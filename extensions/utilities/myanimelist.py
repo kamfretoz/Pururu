@@ -9,17 +9,11 @@ from lightbulb.ext import filament
 
 mal_plugin = lightbulb.Plugin("myanimelist", "Weebs Only")
 
-@mal_plugin.command()
-@lightbulb.command("mal", "Allows you to look up anime informations!", aliases=["myanimelist"])
-@lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
-async def myanimelist(ctx: lightbulb.Context) -> None:
-    pass
-
-@myanimelist.child
+@mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("name", "The anime you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("anime", "Find the information of an Anime", aliases=["ani"], auto_defer = True)
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def myanimelist_anime(ctx: lightbulb.Context, name) -> None:
     parameters = {
@@ -98,11 +92,11 @@ async def myanimelist_anime(ctx: lightbulb.Context, name) -> None:
     emb.add_field(name="💳 ID", value=anime_id, inline=True)
     await ctx.respond(embed=emb)
     
-@myanimelist.child
+@mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("name", "The manga you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("manga", "Find the information of a manga", aliases=["man"], auto_defer = True)
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def myanimelist_manga(ctx: lightbulb.Context, name):
     parameters = {
@@ -162,11 +156,11 @@ async def myanimelist_manga(ctx: lightbulb.Context, name):
     emb.add_field(name="💳 ID", value=manga_id, inline=True)
     await ctx.respond(embed=emb)
 
-@myanimelist.child
+@mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("name", "The character name you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("character", "Find the information of an anime character", aliases=["chara"], auto_defer = True)
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def myanimelist_chara(ctx: lightbulb.Context, name):
     parameters = {
