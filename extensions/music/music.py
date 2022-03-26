@@ -31,8 +31,7 @@ class LavalinkEventHandler:
             embed=hikari.Embed(title="**Playing the next track.**", description=song.title, color=0x00FF00)
             embed.add_field(name="Artist", value=song.author, inline=False)
         elif loop_enabled: 
-            embed=hikari.Embed(title="**Replaying the track.**", description=song.title, color=0x00FF00)
-            embed.add_field(name="Artist", value=song.author, inline=False)
+            return
         else:
             embed=hikari.Embed(title="**Now Playing.**", description=song.title, color=0x00FF00)
             embed.add_field(name="Artist", value=song.author, inline=False)
