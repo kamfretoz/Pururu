@@ -7,15 +7,12 @@ anifinder_plugin = lightbulb.Plugin("animefinder", "Anime Lookup with screenshot
 
 @anifinder_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("image", "The image you want to lookup", hikari.Attachment, required=False)
-@lightbulb.command("anifinder", "Find anime by screenshot", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand)
-async def anifinder(ctx: lightbulb.Context) -> None:
+@lightbulb.option("image", "The image you want to lookup", hikari.Attachment, required=True)
+@lightbulb.command("anifinder", "Find anime by screenshot", auto_defer=True, pass_options = True)
+@lightbulb.implements(lightbulb.SlashCommand)
+async def anifinder(ctx: lightbulb.Context, image: hikari.Attachment) -> None:
     # First we get the image from the attachment
-    try:
-        attachment = ctx.attachments[0].url
-    except IndexError:
-        raise ValueError("⚠ You haven't supplied any image!")
+    attachment = image.url
     
     # Then we send the image to the API
     parameters = {
@@ -32,7 +29,7 @@ async def anifinder(ctx: lightbulb.Context) -> None:
         start = data["result"][0]["from"]
         end = data["result"][0]["to"]
         similarity = data["result"][0]["similarity"]
-        image = data["result"][0]["image"]
+        thumb = data["result"][0]["image"]
     except:
         await ctx.respond(embed=hikari.Embed(description="⚠ An Error occured while parsing the data, Please try again later."))
     
@@ -43,9 +40,9 @@ async def anifinder(ctx: lightbulb.Context) -> None:
     emb.add_field(name="Start", value=format_seconds(start))
     emb.add_field(name="End", value=format_seconds(end))
     emb.add_field(name="Similarity Score", value=similarity)
-    emb.set_image(image)
+    emb.set_image(hikari.URL(thumb))
     
-    # Then we send it
+    # Then we send the result
     await ctx.respond(embed=emb)
 
 def load(bot):
