@@ -14,8 +14,8 @@ def solveunit(input):
 
 @stats_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.command("stats", "Get statistics info of the bot.", auto_defer = True, ephemeral=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.command("stats", "Get statistics info of the bot.", auto_defer = True)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def stats(ctx: lightbulb.Context) -> None:
     """Bot stats."""
     try:
