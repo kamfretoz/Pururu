@@ -7,6 +7,7 @@ anifinder_plugin = lightbulb.Plugin("animefinder", "Anime Lookup with screenshot
 
 @anifinder_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
+@lightbulb.option("image", "The image you want to lookup", hikari.Attachment, required=False)
 @lightbulb.command("anifinder", "Find anime by screenshot", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def anifinder(ctx: lightbulb.Context) -> None:
