@@ -5,8 +5,8 @@ import datetime
 ping_plugin = lightbulb.Plugin("ping")
 
 @ping_plugin.command()
-@lightbulb.command("ping", "measure the ping of the bot", ephemeral = True, auto_defer=True, aliases=["pong"])
-@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
+@lightbulb.command("ping", "measure the ping of the bot", auto_defer=True, aliases=["pong"])
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def ping(ctx: lightbulb.Context) -> None:
     heartbeat = ctx.bot.heartbeat_latency * 1000
     txt = (f":ping_pong: Pong!")
