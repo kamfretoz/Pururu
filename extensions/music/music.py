@@ -16,9 +16,6 @@ from yarl import URL
 
 from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
 
-# If True connect to voice with the hikari gateway instead of lavasnek_rs's
-HIKARI_VOICE = True
-
 music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 
 class LavalinkEventHandler:
@@ -58,12 +55,9 @@ class LavalinkEventHandler:
             return
         
         if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0:
-            if HIKARI_VOICE:
-                if event.guild_id is not None:
-                    await music_plugin.bot.update_voice_state(event.guild_id, None)
-                    await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
-            else:
-                await music_plugin.d.lavalink.leave(event.guild_id)
+            if event.guild_id is not None:
+                await music_plugin.bot.update_voice_state(event.guild_id, None)
+                await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
             await music_plugin.d.lavalink.destroy(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
@@ -106,19 +100,9 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
         return None
 
     channel_id = voice_state[0].channel_id
-
-    if HIKARI_VOICE:
-        assert ctx.guild_id is not None
-
-        await music_plugin.bot.update_voice_state(ctx.guild_id, channel_id, self_deaf=True, self_mute=False)
-        connection_info = await music_plugin.d.lavalink.wait_for_full_connection_info_insert(ctx.guild_id)
-
-    else:
-        try:
-            connection_info = await music_plugin.d.lavalink.join(ctx.guild_id, channel_id)
-        except TimeoutError:
-            await ctx.respond("It seems that there's an issue. Please try again later")
-            return None
+    
+    await music_plugin.bot.update_voice_state(ctx.guild_id, channel_id, self_deaf=True, self_mute=False)
+    connection_info = await music_plugin.d.lavalink.wait_for_full_connection_info_insert(ctx.guild_id)
 
     await music_plugin.d.lavalink.create_session(connection_info)
 
@@ -134,8 +118,7 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
         .set_is_ssl(bool(LAVALINK_SSL))
     )
     
-    if HIKARI_VOICE:
-        builder.set_start_gateway(False)
+    builder.set_start_gateway(False)
     lava_client = await builder.build(LavalinkEventHandler())
     music_plugin.d.lavalink = lava_client
 
@@ -164,12 +147,9 @@ async def leave(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=embed)
         return
 
-    if HIKARI_VOICE:
-        if ctx.guild_id is not None:
-            await music_plugin.bot.update_voice_state(ctx.guild_id, None)
-            await music_plugin.d.lavalink.wait_for_connection_info_remove(ctx.guild_id)
-    else:
-        await music_plugin.d.lavalink.leave(ctx.guild_id)
+    if ctx.guild_id is not None:
+        await music_plugin.bot.update_voice_state(ctx.guild_id, None)
+        await music_plugin.d.lavalink.wait_for_connection_info_remove(ctx.guild_id)
     
     await music_plugin.d.lavalink.remove_guild_from_loops(ctx.guild_id)
     await music_plugin.d.lavalink.remove_guild_node(ctx.guild_id)
@@ -178,7 +158,7 @@ async def leave(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True)
+@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True, autocomplete=True)
 @lightbulb.command("play", "searches for your song.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
@@ -250,6 +230,11 @@ async def play(ctx: lightbulb.Context, query) -> None:
         await ctx.respond(embed=emb)
     except lavasnek_rs.NoSessionPresent as e:
         raise e
+    
+@play.autocomplete("query")
+async def play_autocomplete(options: hikari.AutocompleteInteractionOption, interactions: hikari.AutocompleteInteraction):
+    query = await music_plugin.d.lavalink.auto_search_tracks(options.value)
+    return [track.info.title for track in query.tracks[:5]]
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -512,8 +497,8 @@ async def queue(ctx: lightbulb.Context) -> None:
             texts.append(f"**{i}.** {track}")
             i += 1
         lists = "\n".join(texts)
-        songs.add_field(name="Current Queue:", value=lists)
-        embeds.append(songs)
+    songs.add_field(name="Current Queue:", value=lists)
+
         
         
     if isinstance(ctx, lightbulb.PrefixCommand):
@@ -750,20 +735,18 @@ async def lyrics(ctx: lightbulb.Context, artist: str, title: str) -> None:
     await ctx.respond(embed=emb)
 
 
-if HIKARI_VOICE:
+@music_plugin.listener(hikari.VoiceStateUpdateEvent)
+async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
+    music_plugin.d.lavalink.raw_handle_event_voice_state_update(
+        event.state.guild_id,
+        event.state.user_id,
+        event.state.session_id,
+        event.state.channel_id,
+    )
 
-    @music_plugin.listener(hikari.VoiceStateUpdateEvent)
-    async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
-        music_plugin.d.lavalink.raw_handle_event_voice_state_update(
-            event.state.guild_id,
-            event.state.user_id,
-            event.state.session_id,
-            event.state.channel_id,
-        )
-
-    @music_plugin.listener(hikari.VoiceServerUpdateEvent)
-    async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
-        await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
+@music_plugin.listener(hikari.VoiceServerUpdateEvent)
+async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
+    await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
 
 
 def load(bot: lightbulb.BotApp) -> None:
