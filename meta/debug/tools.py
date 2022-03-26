@@ -1,4 +1,5 @@
 import os
+import sys
 import lightbulb
 import hikari
 from lightbulb.ext import filament
@@ -106,6 +107,23 @@ async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
 async def extension_load(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.load_extensions(f"extensions.{category}.{name}")
     await ctx.respond(f"Successfully loaded `{name}`!")
+    
+@tools_plugin.command()
+@lightbulb.command("shutdown", "Power Off the bot.", aliases=["poweroff", "shutdown", "kms", "altf4", "fuckmylife", "fml", "fuckoff"])
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def shutdown(ctx: lightbulb.Context) -> None:
+    await ctx.respond("Shutting Down...")
+    await ctx.bot.close()
+    sys.exit()
+
+@tools_plugin.command()
+@lightbulb.command("restart", "Restart the bot.")
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def shutdown(ctx: lightbulb.Context) -> None:
+    await ctx.respond("Restarting...")
+    await ctx.bot.close()
+    os.system("clear")
+    os.execv(sys.executable, ['python3'] + sys.argv)
 
 def load(bot):
     bot.add_plugin(tools_plugin)
