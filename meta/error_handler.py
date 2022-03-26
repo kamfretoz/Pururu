@@ -44,17 +44,17 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
     if isinstance(exception, lightbulb.errors.CommandNotFound):
         await send_embed("CommandNotFound", 404, event, exception.invoked_with)
     elif isinstance(exception, lightbulb.errors.MissingRequiredPermission):
-        await send_embed("MissingPermissions", 403, event, exception.missing_perms)
+        await send_embed("MissingPermissions", 403, event, exception.missing_perms.name)
     elif isinstance(exception, lightbulb.errors.NotEnoughArguments):
-        await send_embed("MissingRequiredArgument", 410, event, exception.missing_options)
+        await send_embed("MissingRequiredArgument", 410, event, ", ".join(arg.name for arg in exception.missing_options))
     elif isinstance(exception, lightbulb.CommandIsOnCooldown):
         await send_embed("CommandOnCooldown", 420, event, int(exception.retry_after))
     elif isinstance(exception, lightbulb.errors.BotMissingRequiredPermission):
-        await send_embed("BotMissingPermissions", 403, event, exception.missing_perms)
+        await send_embed("BotMissingPermissions", 403, event, exception.missing_perms.name)
     elif isinstance(exception, lightbulb.errors.NotOwner):
         await send_embed("NotOwner", 401, event)
     elif isinstance(exception, lightbulb.errors.ConverterFailure):
-        await send_embed("ConversionError", 400, event, exception.option)
+        await send_embed("ConversionError", 400, event, exception.option.name)
     elif isinstance(exception, lightbulb.OnlyInGuild):
         await send_embed("NoPrivateMessage", 423, event)
     elif isinstance(exception, lightbulb.errors.NSFWChannelOnly):
