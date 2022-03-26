@@ -1,6 +1,7 @@
 from datetime import datetime
 import hikari
 import lightbulb
+from lightbulb.utils import pag, nav
 
 server_plugin = lightbulb.Plugin("server", "Server info commands")
 
@@ -26,6 +27,7 @@ async def serverinfo(ctx: lightbulb.Context):
                     colour=ctx.author.accent_color,
                     timestamp=datetime.now().astimezone()
                     )
+    
     emb.set_thumbnail(guild.icon_url)
     emb.set_image(guild.banner_url)
     emb.add_field(name="ID", value=id, inline=False)
@@ -48,6 +50,26 @@ async def serverinfo(ctx: lightbulb.Context):
     emb.add_field(name=f"Roles ({role_count})", value=", ".join(all_roles) if len(all_roles) < 10 else f"{len(all_roles)} roles", inline=False)
     await ctx.respond(embed=emb)
 
+@server_plugin.command
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.option("role", "The role you want to view", hikari.Role)
+@lightbulb.command("inrole", "Shows the list of member on a particular role", aliases=["roles","inr"], auto_defer=True, pass_options=True)
+@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
+async def inrole(ctx: lightbulb.Context, role: hikari.Role) -> None:
+    lst = pag.EmbedPaginator()
+            
+    @lst.embed_factory()
+    def build_embed(page_index,page_content):
+        emb = hikari.Embed(title=f"List of members on the '{role.name}' Role.", description=page_content, color=role.color)
+        return emb
+    
+    for member_id in ctx.get_guild().get_members():
+        member = ctx.get_guild().get_member(member_id)
+        if role.id in member.role_ids:
+            lst.add_line(member)
+            
+    navigator = nav.ButtonNavigator(lst.build_pages())
+    await navigator.run(ctx)
 
 def load(bot) -> None:
     bot.add_plugin(server_plugin)
