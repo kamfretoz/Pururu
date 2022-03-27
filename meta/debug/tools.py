@@ -30,6 +30,7 @@ async def clear(ctx: lightbulb.Context):
     await ctx.respond("Console cleared successfully.")
 
 @tools_plugin.command()
+@lightbulb.add_cooldown(3600, 3, lightbulb.GlobalBucket)
 @lightbulb.option("url", "The Avatar's URL you want to use!", str, required = False)
 @lightbulb.command("setbotavatar","Set the bot's avatar", aliases=["botava"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
@@ -48,6 +49,7 @@ async def setbotavatar(ctx: lightbulb.Context, url: str):
     await ctx.respond(":eyes:")
     
 @tools_plugin.command()
+@lightbulb.add_cooldown(3600, 3, lightbulb.GlobalBucket)
 @lightbulb.option("name", "The name you want to change to!", str, required = True)
 @lightbulb.command("setbotname","Set the bot's name", aliases=["botname"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
