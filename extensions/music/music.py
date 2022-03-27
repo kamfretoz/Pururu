@@ -11,7 +11,7 @@ import json
 import random
 from datetime import date
 from lightbulb.ext import filament
-from lightbulb.utils import nav
+from lightbulb.utils import nav, pag
 from yarl import URL
 
 from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
@@ -67,12 +67,12 @@ class LavalinkEventHandler:
     async def track_exception(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackException) -> None:
         logging.warning(f"Track exception event happened on guild: {event.guild_id}")
         
-        
         guild_node = await lavalink.get_guild_node(event.guild_id)
         chanid = guild_node.get_data().get("ChannelID")
         
-        emb = hikari.Embed(title=f"An Exception Occured while trying to play the song {event.track}.", description=event.exception_message)
+        emb = hikari.Embed(title=f"An Exception Occured while trying to play the song.", description=event.exception_message, colour=0xC80000)
         emb.add_field(name="Cause", value=event.exception_cause)
+        emb.add_field(name="Track Exception Type", value=event.track_exception_type)
         emb.add_field(name="Exception Severity", value=event.exception_severity)
         
         await music_plugin.bot.rest.create_message(chanid, embed=emb)
@@ -120,6 +120,19 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     builder.set_start_gateway(False)
     lava_client = await builder.build(LavalinkEventHandler())
     music_plugin.d.lavalink = lava_client
+
+@music_plugin.listener(hikari.VoiceStateUpdateEvent)
+async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
+    music_plugin.d.lavalink.raw_handle_event_voice_state_update(
+        event.state.guild_id,
+        event.state.user_id,
+        event.state.session_id,
+        event.state.channel_id,
+    )
+
+@music_plugin.listener(hikari.VoiceServerUpdateEvent)
+async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
+    await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -459,16 +472,23 @@ async def now_playing(ctx: lightbulb.Context) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)	
-    embed=hikari.Embed(title="**Currently Playing**",color=ctx.author.accent_color)
-    embed.add_field(name="Name", value=f"{node.now_playing.track.info.title}", inline=False)
-    embed.add_field(name="Artist", value=f"{node.now_playing.track.info.author}", inline=False)
+        return await ctx.respond(embed=embed)
+    
+    if node.is_paused:
+        status = "**⏸ Paused**"
+    else:
+        status = "**▶ Currently Playing**"
+    
+    embed=hikari.Embed(title=status,color=ctx.author.accent_color)
+    embed.add_field(name="Name", value=f"[{node.now_playing.track.info.title}]({node.now_playing.track.info.uri})", inline=False)
+    embed.add_field(name="Artist", value=node.now_playing.track.info.author, inline=False)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
         position = divmod(node.now_playing.track.info.position, 60000)
         embed.add_field(name="Duration Played", value=f"{int(position[0])}:{round(position[1]/1000):02}/{int(length[0])}:{round(length[1]/1000):02}")
     except:
         pass
+    embed.add_field(name="Volume", value=f"{node.volume}%")
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
@@ -485,28 +505,23 @@ async def queue(ctx: lightbulb.Context) -> None:
         embed = hikari.Embed(title="**The queue is currently empty.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return None
-    songs = [f'{tq.track.info.title} - {tq.track.info.author} ({int(divmod(tq.track.info.length, 60000)[0])}:{round(divmod(tq.track.info.length, 60000)[1]/1000):02})' for i, tq in enumerate(node.queue[1:], start=1)]
-    chunks = [songs[i : i + 10] for i in range(0, len(songs), 10)]
-    embeds = []
-    i = 1
-    songs = hikari.Embed(title="**The Queue**", color=ctx.author.accent_color)
-    for chunk in chunks:
-        texts = []
-        for track in chunk:
-            texts.append(f"**{i}.** {track}")
-            i += 1
-        lists = "\n".join(texts)
-    songs.add_field(name="Current Queue:", value=lists)
 
-        
-        
-    if isinstance(ctx, lightbulb.PrefixCommand):
-        navigator = nav.ReactionNavigator(pages=embeds)
-        await navigator.run(ctx)
-    else:
-        navigator = nav.ButtonNavigator(pages=embeds)
-        await navigator.run(ctx)
-        
+    songs = [f'{tq.track.info.title} - {tq.track.info.author} ({int(divmod(tq.track.info.length, 60000)[0])}:{round(divmod(tq.track.info.length, 60000)[1]/1000):02})' for i, tq in enumerate(node.queue[1:], start=1)]
+    
+    lst = pag.EmbedPaginator()
+    
+    @lst.embed_factory()
+    def build_embed(page_index,page_content):
+        emb = hikari.Embed(title=f"Current Queue (Page {page_index})", description=page_content, color=ctx.author.accent_color)
+        return emb
+
+    i = 1
+    for track in songs:
+        lst.add_line(f"**{i}.** {track}")
+        i += 1
+
+    navigator = nav.ButtonNavigator(lst.build_pages())
+    await navigator.run(ctx)
     
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -732,20 +747,6 @@ async def lyrics(ctx: lightbulb.Context, artist: str, title: str) -> None:
     emb = hikari.Embed(title=f"Lyrics result for: {artist} - {title}", description=ly)
     
     await ctx.respond(embed=emb)
-
-
-@music_plugin.listener(hikari.VoiceStateUpdateEvent)
-async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
-    music_plugin.d.lavalink.raw_handle_event_voice_state_update(
-        event.state.guild_id,
-        event.state.user_id,
-        event.state.session_id,
-        event.state.channel_id,
-    )
-
-@music_plugin.listener(hikari.VoiceServerUpdateEvent)
-async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
-    await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
 
 
 def load(bot: lightbulb.BotApp) -> None:
