@@ -1,5 +1,5 @@
 aiohttp[speedups] == 3.8.1
-hikari[speedups] == 2.0.0.dev107
+hikari[speedups] == 2.0.0.dev108
 hikari-lightbulb == 2.2.1
 # lightbulb-ext-filament == 0.1.2 (we temporarily build from source directly until thommo fix deps on pypi
 lavasnek-rs == 0.1.0a4
