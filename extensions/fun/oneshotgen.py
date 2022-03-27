@@ -1,6 +1,5 @@
 import lightbulb
 import asyncio
-import concurrent.futures
 from lightbulb.ext import filament
 from PIL import Image, ImageFont, ImageDraw
 from textwrap import fill
@@ -14,6 +13,8 @@ oneshot_plugin.d.faces = []
 for path in Path("./res/oneshot/faces/").glob("*.png"):
     oneshot_plugin.d.faces.append(path.name[:-4])
     
+font = ImageFont.truetype("res/oneshot/font-b.ttf", 24)
+    
 def image_processing(expression: str, text: str):
     with Image.open("res/oneshot/template.png") as template:
         template = template.convert("RGBA")
@@ -23,11 +24,14 @@ def image_processing(expression: str, text: str):
             with Image.open(f"res/oneshot/faces/{expression}.png") as sprite:
                 sprite = sprite.convert("RGBA")
                 template.alpha_composite(sprite, (496, 16))
-                font = ImageFont.truetype("res/oneshot/font-b.ttf", 24)
                 draw = ImageDraw.Draw(template)
                 stuff = fill(text ,width=40)
                 draw.multiline_text((20, 8), stuff, fill=(255,255,255,255), font=font, align = "left")
-                return template
+                
+                img = BytesIO()
+                template.save(img, format="PNG", quality = 100, optimize = True)
+                img.seek(0)
+                return img
 
 @oneshot_plugin.command()
 @lightbulb.add_cooldown(1, 3, lightbulb.UserBucket)
@@ -38,14 +42,9 @@ def image_processing(expression: str, text: str):
 @filament.utils.pass_options
 async def oneshotgen(ctx: lightbulb.Context, expression, text) -> None:
     loop = asyncio.get_running_loop()
-    
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        img = await loop.run_in_executor(pool, image_processing, expression, text)
+    img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, expression, text)
         
-    with BytesIO() as image_binary:
-        img.save(image_binary, format="PNG")
-        image_binary.seek(0)
-        await ctx.respond("Here you go!",attachment = image_binary)
+    await ctx.respond("Here you go!", attachment = img)
     
 def load(bot):
     bot.add_plugin(oneshot_plugin)

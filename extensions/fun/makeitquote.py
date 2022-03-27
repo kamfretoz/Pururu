@@ -1,6 +1,5 @@
 import lightbulb
 import asyncio
-import concurrent.futures
 from io import BytesIO
 from utils.masks import ellipse
 from textwrap import fill, shorten
@@ -39,8 +38,11 @@ def image_processing(pfp: BytesIO, name: str , content: str, ):
         with Pilmoji(base) as final:
             final.text((250, 20), text, fill=(255,255,255,255), font=font_content, align = "left")
             final.text((250, 200), f" — {name}", fill=(255,255,255,255), font=font_name, align = "center")
-        
-    return base
+    
+    image = BytesIO()
+    base.save(image, format="PNG", optimize=True, quality=100)
+    image.seek(0)
+    return image
         
 
 aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True)
@@ -64,16 +66,16 @@ async def makequote(ctx: lightbulb.Context) -> None:
     if content is None:
         content = ""
     
-    user_pfp = BytesIO(await pfp.read())
+    user_pfp = BytesIO()
     
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        loop = asyncio.get_running_loop()
-        img = await loop.run_in_executor(pool, image_processing, user_pfp, name, content)
-        
-    with BytesIO() as image_binary:
-        img.save(image_binary, format="PNG", optimize=True, quality=100)
-        image_binary.seek(0)
-        await ctx.respond(attachment=image_binary, content = "Here is the quote!")
+    async with pfp.stream() as reader:
+        async for chunk in reader:
+            user_pfp.write(chunk)
+    
+    loop = asyncio.get_running_loop()
+    img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, user_pfp, name, content)
+
+    await ctx.respond(attachment=img, content = "Here is the quote!")
 
 def load(bot):
     bot.add_plugin(aquote_plugin)

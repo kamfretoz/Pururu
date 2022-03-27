@@ -1,7 +1,6 @@
 import lightbulb
 import hikari
 import asyncio
-import concurrent.futures
 from random import randint, choice
 from io import BytesIO
 from datetime import datetime
@@ -43,7 +42,10 @@ def image_processing(user1: BytesIO, user2: BytesIO, love: int) -> BytesIO:
         base.paste(pfp2, (base.width - pfp1.width - 25, 25), mask)
         base.alpha_composite(heart, (300, 25))
     
-    return base
+        img = BytesIO()
+        base.save(img, format="PNG", optimize=True, quality=100)
+        img.seek(0)
+        return img
 
 @ship_plugin.command()
 @lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
@@ -168,18 +170,22 @@ async def ship(ctx: lightbulb.Context, user1: hikari.Member, user2: hikari.Membe
     emb.add_field(name="Love Meter:", value=meter, inline=False)
     
     user1_asset = user1.avatar_url
-    user1_pfp = BytesIO(await user1_asset.read())
+    user1_pfp = BytesIO()
     user2_asset = user2.avatar_url
-    user2_pfp = BytesIO(await user2_asset.read())
+    user2_pfp = BytesIO()
     
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        loop = asyncio.get_running_loop()
-        img = await loop.run_in_executor(pool, image_processing, user1_pfp, user2_pfp, shipnumber)
+    async with user1_asset.stream() as reader1:
+        async for chunk1 in reader1:
+            user1_pfp.write(chunk1)
+            
+    async with user2_asset.stream() as reader2:
+        async for chunk2 in reader2:
+            user2_pfp.write(chunk2)
+    
+    loop = asyncio.get_running_loop()
+    img = await loop.run_in_executor(ctx.bot.d.process_poll, image_processing, user1_pfp, user2_pfp, shipnumber)
         
-    with BytesIO() as image_binary:
-        img.save(image_binary, format="PNG", optimize=True, quality=100)
-        image_binary.seek(0)
-        await ctx.respond(embed=emb, attachment=image_binary, content = "Here is the result!")
+    await ctx.respond(embed=emb, attachment=img, content = "Here is the result!")
 
 def load(bot):
     bot.add_plugin(ship_plugin)
