@@ -178,7 +178,8 @@ error_quotes = [
     "You think this is funny?!",
     "im scared mom hold my hand",
     "Watch the road, there are kids around here!",
-    "Say the magic word!"
+    "Say the magic word!",
+    "no... No... NO... NOOOOOOOOOOOOOO!!!!!!!!!!!"
 ]
 
 
@@ -196,5 +197,6 @@ statuses = ["this Society.",
             "光",
             "your mom",
             "from the distance...",
-            "deez giga nuts"
+            "deez giga nuts",
+            "𝓻𝓮𝓼𝓸𝓷𝓪𝓷𝓬𝓮 𝓬𝓪𝓼𝓬𝓪𝓭𝓮"
         ]

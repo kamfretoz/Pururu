@@ -35,10 +35,10 @@ async def hex_decode(ctx:lightbulb.Context, value):
 @lightbulb.option("value", "the value to decode", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "convert ascii to hex")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
-async def hex_encode(ctx:lightbulb.Context):
-    txt = ctx.options.value
+@filament.utils.pass_options
+async def hex_encode(ctx:lightbulb.Context, value: str):
     try:
-        hexoutput = " ".join("{:02x}".format(ord(c)) for c in txt)
+        hexoutput = " ".join("{:02x}".format(ord(c)) for c in value)
     except Exception as e:
         await ctx.respond(f"**Error: `{e}`. This probably means the text is malformed. Sorry, you can always try here: http://www.unit-conversion.info/texttools/hexadecimal/#data**")
     if len(hexoutput) <= 479:

@@ -4,13 +4,13 @@ import base64
 
 base64_plugin = lightbulb.Plugin("base64", "Base64 Conversion tool")
 
-@base64_plugin.command()
+@base64_plugin.command
 @lightbulb.command("b64", "Allows you to encode or decode base64")
 @lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
 async def base64_(ctx: lightbulb.Context) -> None:
     pass
 
-@base64_.child()
+@base64_.child
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("input", "the value to decode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("decode", "to decode the base64 value")
@@ -26,7 +26,7 @@ async def base64_decode(ctx: lightbulb.Context) -> None:
     except UnicodeEncodeError:
         await ctx.respond(embed=hikari.Embed(description=f"⚠️ Unable to decode the text, possible unsupported characters are found."))
 
-@base64_.child()
+@base64_.child
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("input", "the text you want to encode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "to encode the ASCII text")

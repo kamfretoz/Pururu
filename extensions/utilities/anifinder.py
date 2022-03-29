@@ -32,6 +32,7 @@ async def anifinder(ctx: lightbulb.Context, image: hikari.Attachment) -> None:
         thumb = data["result"][0]["image"]
     except:
         await ctx.respond(embed=hikari.Embed(description="⚠ An Error occured while parsing the data, Please try again later."))
+        return
     
     emb = hikari.Embed(title="Anime Finder")
     emb.add_field(name="AniList ID", value=anilist)

@@ -33,7 +33,8 @@ async def joke(ctx: lightbulb.Context, lang) -> None:
         joke = data["joke"]
         emb.add_field(name=f"Category: **{jokecategory}**", value=joke)
     if data["error"] == "true":
-        return await ctx.reply("An Error has occured!")
+        await ctx.respond("An Error has occured!")
+        return
         
     await ctx.respond(embed=emb)
     

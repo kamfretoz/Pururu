@@ -65,11 +65,11 @@ async def setbotname(ctx: lightbulb.Context, name: str):
 
 @tools_plugin.command()
 @lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = True, default = False)
-@lightbulb.option("guild","The ID of the target guild", str, required = True)
+@lightbulb.option("guild","The ID of the target guild", hikari.Snowflake, required = True)
 @lightbulb.command("clearcmd", "purge all slash commands from specified guild")
 @lightbulb.implements(lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def purge_cmd(ctx: lightbulb.Context, guild: str, globals: bool):
+async def purge_cmd(ctx: lightbulb.Context, guild: hikari.Snowflake, globals: bool):
     await ctx.bot.purge_application_commands(guild, global_commands=globals)
     await ctx.respond("Task Completed Successfully!")
 
@@ -77,20 +77,20 @@ async def purge_cmd(ctx: lightbulb.Context, guild: str, globals: bool):
 @lightbulb.add_checks(lightbulb.checks.owner_only)
 @lightbulb.command("extension", "manage an extension")
 @lightbulb.implements(lightbulb.PrefixCommandGroup)
-async def extension_manager(ctx:lightbulb.Context):
+async def extension_manager():
     pass
 
-@extension_manager.child()
+@extension_manager.child
 @lightbulb.option("name", "the extension you want to reload", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
 @lightbulb.command("reload", "Reload an extension", inherit_checks=True)
 @lightbulb.implements(lightbulb.PrefixSubCommand)
 @filament.utils.pass_options
-async def extension_reload(ctx:lightbulb.Context, name, category):
+async def extension_reload(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.reload_extensions(f"extensions.{category}.{name}")
     await ctx.respond(f"Successfully reloaded `{name}`!")
     
-@extension_manager.child()
+@extension_manager.child
 @lightbulb.option("name", "the extension you want to unload", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
 @lightbulb.command("unload", "Unload an extension", inherit_checks=True)
@@ -100,7 +100,7 @@ async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.unload_extensions(f"extensions.{category}.{name}")
     await ctx.respond(f"Successfully unloaded `{name}`!")
     
-@extension_manager.child()
+@extension_manager.child
 @lightbulb.option("name", "the extension you want to load", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
 @lightbulb.command("load", "Load an extension", inherit_checks=True)
@@ -121,7 +121,7 @@ async def shutdown(ctx: lightbulb.Context) -> None:
 @tools_plugin.command()
 @lightbulb.command("restart", "Restart the bot.")
 @lightbulb.implements(lightbulb.PrefixCommand)
-async def shutdown(ctx: lightbulb.Context) -> None:
+async def restart(ctx: lightbulb.Context) -> None:
     await ctx.respond("Restarting...")
     await ctx.bot.close()
     os.system("clear")

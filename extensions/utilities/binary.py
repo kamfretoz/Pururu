@@ -35,7 +35,7 @@ async def bin_decode(ctx:lightbulb.Context):
 @lightbulb.option("value", "the value to encode", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("encode", "convert ASCII to binary")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
-async def bin_decode(ctx:lightbulb.Context):
+async def bin_encode(ctx:lightbulb.Context):
     txt = ctx.options.value
     try:
         bin = ' '.join(format(ord(x), 'b') for x in txt)

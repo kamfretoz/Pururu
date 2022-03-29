@@ -14,7 +14,7 @@ from lightbulb.ext import filament
 from lightbulb.utils import nav, pag
 from yarl import URL
 
-from utils.music_const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
+from utils.const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
 
 music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 
@@ -28,13 +28,19 @@ class LavalinkEventHandler:
         loop_enabled = guild_node.get_data().get("loop")
         
         if firsttrack == False:
-            embed=hikari.Embed(title="**Playing the next track.**", description=song.title, color=0x00FF00)
+            embed=hikari.Embed(title="**Playing the next track.**", description=f"[{song.title}]({song.uri})", color=0x00FF00)
             embed.add_field(name="Artist", value=song.author, inline=False)
+            identifier = song.identifier
+            thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
+            embed.set_thumbnail(thumb)
         elif loop_enabled: 
             return
         else:
-            embed=hikari.Embed(title="**Now Playing.**", description=song.title, color=0x00FF00)
+            embed=hikari.Embed(title="**Now Playing.**", description=f"[{song.title}]({song.uri})", color=0x00FF00)
             embed.add_field(name="Artist", value=song.author, inline=False)
+            identifier = song.identifier
+            thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
+            embed.set_thumbnail(thumb)
         
         resp = await music_plugin.bot.rest.create_message(chanid, embed=embed)
         await asyncio.sleep(15)
@@ -149,6 +155,7 @@ async def join(ctx: lightbulb.Context) -> None:
 @lightbulb.command("leave", "leaves your voice channel.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def leave(ctx: lightbulb.Context) -> None:
+    assert(ctx.get_guild)
     await music_plugin.d.lavalink.destroy(ctx.guild_id)
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     node.set_data({"loop": False})
@@ -196,7 +203,8 @@ async def play(ctx: lightbulb.Context, query) -> None:
         node.set_data({"ChannelID": ID, "First": False})   
 
     if "https://open.spotify.com/playlist/" in query:
-        return await ctx.respond(embed=hikari.Embed(title="Spotify Playlist are not currently supported.",color=ctx.author.accent_color))
+        await ctx.respond(embed=hikari.Embed(title="Spotify Playlist are not currently supported.",color=ctx.author.accent_color))
+        return
     
     if "https://open.spotify.com/track" in query:
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
@@ -209,11 +217,15 @@ async def play(ctx: lightbulb.Context, query) -> None:
         query_information = await music_plugin.d.lavalink.get_tracks(result)   
         await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
         emb = hikari.Embed(title="Added Song To The Queue", color=ctx.author.accent_color)
-        emb.add_field(name="Name", value=f"{query_information.tracks[0].info.title}", inline=False)
+        emb.add_field(name="Name", value=f"[{query_information.tracks[0].info.title}]({query_information.tracks[0].info.uri})", inline=False)
         emb.add_field(name="Artist", value=f"{query_information.tracks[0].info.author}", inline=False)
+        identifier = query_information.tracks[0].info.identifier
+        thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
+        emb.set_thumbnail(thumb)
         length = divmod(query_information.tracks[0].info.length, 60000)
         emb.add_field(name="Duration", value=f"{int(length[0])}:{round(length[1]/1000):02}")
-        return await ctx.respond(embed=emb) 
+        await ctx.respond(embed=emb)
+        return
     
     if not re.match(URL_REGEX, query):
         result = f"ytsearch:{query}"
@@ -238,8 +250,8 @@ async def play(ctx: lightbulb.Context, query) -> None:
     emb.set_thumbnail(thumb)
     
     try:
-        await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
         await ctx.respond(embed=emb)
+        await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
     except lavasnek_rs.NoSessionPresent as e:
         raise e
     
@@ -258,11 +270,12 @@ async def stop(ctx: lightbulb.Context) -> None:
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
-        return None
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     embed = hikari.Embed(title=f"**Stopped {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
@@ -284,11 +297,13 @@ async def volume(ctx: lightbulb.Context, percentage: int) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     
     embed=hikari.Embed(title=f"**Volume is now at {percentage}%**", color=ctx.author.accent_color)
     
@@ -314,14 +329,17 @@ async def seek(ctx: lightbulb.Context, time) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     if not (match := re.match(TIME_REGEX, time)):
             embed = hikari.Embed(title="**Invalid time entered.**", colour=0xC80000)
-            return await ctx.respond(embed=embed)
+            await ctx.respond(embed=embed)
+            return
     if match.group(3):
             secs = (int(match.group(1)) * 60) + (int(match.group(3)))
     else:
@@ -357,7 +375,8 @@ async def shuffle(ctx: lightbulb.Context) -> None:
         return
     if not len(node.queue) > 1:
         embed = hikari.Embed(title="**There is only 1 song in the queue.**", color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     
     queue = node.queue[1:] # Because Index 0 is currently playing song and we don't wanna shuffle that!
     random.shuffle(queue) # Randomly shuffling the queue!
@@ -379,11 +398,12 @@ async def replay(ctx: lightbulb.Context) -> None:
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
-        return None
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     await music_plugin.d.lavalink.seek_millis(ctx.guild_id, 0000)
     embed = hikari.Embed(title=f"**Replaying {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
     await ctx.respond(embed=embed)
@@ -399,10 +419,12 @@ async def skip(ctx: lightbulb.Context) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     if not skip:
         embed = hikari.Embed(title="**There are no more tracks left in the queue.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     else:
         # If the queue is empty, the next track won't start playing (because there isn't any),
         # so we stop the player.
@@ -421,15 +443,18 @@ async def skip(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def pause(ctx: lightbulb.Context) -> None:
     await music_plugin.d.lavalink.pause(ctx.guild_id)
+    assert(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     embed = hikari.Embed(title=f"**Paused {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
@@ -449,11 +474,13 @@ async def resume(ctx: lightbulb.Context) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)	
+        await ctx.respond(embed=embed)	
+        return
     embed = hikari.Embed(title=f"**Resumed {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
@@ -468,11 +495,11 @@ async def resume(ctx: lightbulb.Context) -> None:
 @lightbulb.command("nowplaying", "See what's currently playing.", auto_defer=True, aliases=["np","playing"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def now_playing(ctx: lightbulb.Context) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     
     if node.is_paused:
         status = "**⏸ Paused**"
@@ -482,6 +509,9 @@ async def now_playing(ctx: lightbulb.Context) -> None:
     embed=hikari.Embed(title=status,color=ctx.author.accent_color)
     embed.add_field(name="Name", value=f"[{node.now_playing.track.info.title}]({node.now_playing.track.info.uri})", inline=False)
     embed.add_field(name="Artist", value=node.now_playing.track.info.author, inline=False)
+    identifier = node.now_playing.track.info.identifier
+    thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
+    embed.set_thumbnail(thumb)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
         position = divmod(node.now_playing.track.info.position, 60000)
@@ -506,7 +536,7 @@ async def queue(ctx: lightbulb.Context) -> None:
         await ctx.respond(embed=embed)
         return None
 
-    songs = [f'{tq.track.info.title} - {tq.track.info.author} ({int(divmod(tq.track.info.length, 60000)[0])}:{round(divmod(tq.track.info.length, 60000)[1]/1000):02})' for i, tq in enumerate(node.queue[1:], start=1)]
+    songs = [f'[{tq.track.info.title} - {tq.track.info.author}]({tq.track.info.uri}) ({int(divmod(tq.track.info.length, 60000)[0])}:{round(divmod(tq.track.info.length, 60000)[1]/1000):02})' for i, tq in enumerate(node.queue[1:], start=1)]
     
     lst = pag.EmbedPaginator()
     
@@ -534,22 +564,26 @@ async def remove(ctx: lightbulb.Context, index) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
 
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if index == 0:
         embed = hikari.Embed(title=f"**You cannot remove a song that is currently playing.**",color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     try:
         queue = node.queue
         song_to_be_removed = queue[index]
     except:
         embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     try:
         queue.pop(index)
     except:
@@ -570,27 +604,32 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
 
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     index = position
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if index == 0:
         embed = hikari.Embed(title=f"**You cannot move to a song that is currently playing.**",color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     if index == 1:
         embed = hikari.Embed(title=f"**Skipping to the next song.**",color=0xC80000)
+        await ctx.respond(embed=embed)
         await music_plugin.d.lavalink.skip(ctx.guild_id)
-        return await ctx.respond(embed=embed)
+        return
     try:
         queue = node.queue
         song_to_be_skipped = queue[index]
     except:
         embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     queue.insert(1, queue[index])
     queue.pop(index)
     queue.pop(index)
@@ -639,7 +678,8 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
 
     if not node or not node.now_playing:
@@ -651,7 +691,8 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not len(node.queue) >= 1:
         embed = hikari.Embed(title=f"**There is only 1 song in the queue.**",color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     queue = node.queue
     song_to_be_moved = queue[old_index]
     try:
@@ -659,7 +700,8 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
         queue.insert(new_index, song_to_be_moved)
     except:
         embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node.queue = queue
     await music_plugin.d.lavalink.set_guild_node(ctx.guild_id, node)
     embed = hikari.Embed(title=f"**Moved {song_to_be_moved.track.info.title} to position {new_index}.**", color=ctx.author.accent_color)
@@ -670,18 +712,20 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
 @lightbulb.command("empty", "Clear the queue.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def empty(ctx: lightbulb.Context) -> None:
+    assert(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
-        return await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed)
+        return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     await music_plugin.d.lavalink.stop(ctx.guild_id)
-    await music_plugin.d.lavalink.leave(ctx.guild_id)
     await music_plugin.d.lavalink.remove_guild_node(ctx.guild_id)
     await music_plugin.d.lavalink.remove_guild_from_loops(ctx.guild_id)
     await music_plugin.bot.update_voice_state(ctx.guild_id, None)

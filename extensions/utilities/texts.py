@@ -39,7 +39,7 @@ async def expand(ctx:lightbulb.Context, gap: int, text: str):
         if len(result) <= 1000:
             await ctx.respond(result)
         else:
-            await ctx.respond(f"**{ctx.author.mentiona}, The output too was too large!")
+            await ctx.respond(f"**{ctx.author.mention}, The output too was too large!")
     else:
         await ctx.respond("```Error: The number can only be from 1 to 5```")
 

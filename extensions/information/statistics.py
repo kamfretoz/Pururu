@@ -96,12 +96,12 @@ async def stats(ctx: lightbulb.Context) -> None:
         inline=False
     )
     em.add_field(
-        name="🚩 Channels",
+        name="🚩 Channels (Cached)",
         value=str(len(channels)),
         inline=False
     )
     em.add_field(
-        name="👥 Users",
+        name="👥 Users (Cached)",
         value=str(len(users)),
         inline=False
     )

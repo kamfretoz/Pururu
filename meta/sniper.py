@@ -146,7 +146,6 @@ async def clear_sniper():
 
 def load(bot) -> None:
     bot.add_plugin(sniper)
-    tasks.load(bot)
 
 def unload(bot) -> None:
     sniper.d.clear()
