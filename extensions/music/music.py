@@ -177,21 +177,30 @@ async def leave(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = True, autocomplete=True)
-@lightbulb.command("play", "searches for your song.", auto_defer=True)
+@lightbulb.option("file", "The audio file you want to play (.mp3 files only)", hikari.Attachment, required = False)
+@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = False)
+@lightbulb.command("play", "searches for your song. (Please choose one type only.)", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def play(ctx: lightbulb.Context, query) -> None:
+async def play(ctx: lightbulb.Context, query: str, file: hikari.Attachment) -> None:
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return None
-    if not query:
+
+    if file:
+        if file.url.endswith("mp3"):
+            query = file.url
+        else:
+            embed = hikari.Embed(title="**Only .mp3 files are allowed.**", colour=0xC80000)
+            await ctx.respond(embed=embed)
+            return
+    elif not query and not file:
         embed = hikari.Embed(title="**Please enter a song to play.**", colour=0xC80000)
         await ctx.respond(embed=embed)
-        return None
+        return
 
     await _join(ctx)
 
@@ -254,11 +263,6 @@ async def play(ctx: lightbulb.Context, query) -> None:
         await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
     except lavasnek_rs.NoSessionPresent as e:
         raise e
-    
-@play.autocomplete("query")
-async def play_autocomplete(options: hikari.AutocompleteInteractionOption, interactions: hikari.AutocompleteInteraction):
-    query = await music_plugin.d.lavalink.auto_search_tracks(options.value)
-    return [track.info.title for track in query.tracks[:5]]
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
