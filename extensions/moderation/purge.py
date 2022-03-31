@@ -8,7 +8,7 @@ purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
 
 class PromptView(miru.View):
     async def view_check(self, ctx: miru.Context) -> bool:
-        return ctx.user == ctx.message.interaction.user
+        return ctx.user.id == ctx.message.interaction.user.id
 
 class ConfirmButton(miru.Button):
     def __init__(self) -> None:
