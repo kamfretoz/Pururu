@@ -10,7 +10,7 @@ import concurrent.futures
 from random import choice
 from utils.quotes import statuses
 from lightbulb.ext import tasks
-from utils.const import INTENTS, GUILDS, TOKEN, PREFIX
+from utils.const import INTENTS, GUILDS, CACHE, TOKEN, PREFIX
 
 dotenv.load_dotenv()
 
@@ -19,6 +19,7 @@ bot = lightbulb.BotApp(
     default_enabled_guilds=GUILDS,
     prefix=lightbulb.when_mentioned_or(PREFIX),
     intents=INTENTS,
+    cache_settings=CACHE,
     help_slash_command=True,
     ignore_bots=True,
     case_insensitive_prefix_commands=True,
@@ -43,7 +44,7 @@ async def on_starting(event: hikari.StartingEvent) -> None:
 @bot.listen()
 async def on_stopping(event: hikari.StoppingEvent) -> None:
     await bot.d.aio_session.close()
-    bot.d.process_pool.shutdown(wait=False)
+    bot.d.process_pool.shutdown(wait=True)
 
 bot.load_extensions_from("./extensions/", must_exist=True, recursive=True)
 bot.load_extensions_from("./meta/", must_exist=True, recursive=True)

@@ -10,10 +10,10 @@ server_plugin = lightbulb.Plugin("server", "Server info commands")
 @lightbulb.command("serverinfo", "Show's the information of the current server", aliases=["si","servinfo"], auto_defer=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def serverinfo(ctx: lightbulb.Context):
-    guild = ctx.bot.cache.get_guild(ctx.guild_id)
+    guild = ctx.bot.cache.get_guild(ctx.guild_id) or await ctx.bot.rest.fetch_guild(ctx.guild_id)
     roles = await guild.fetch_roles()
     all_roles = [r.mention for r in roles]
-    id = guild.id
+    id = str(guild.id)
     created = int(guild.created_at.timestamp())
     owner = await guild.fetch_owner()
     members = len(guild.get_members().keys())
@@ -49,6 +49,16 @@ async def serverinfo(ctx: lightbulb.Context):
 
     emb.add_field(name=f"Roles ({role_count})", value=", ".join(all_roles) if len(all_roles) < 10 else f"{len(all_roles)} roles", inline=False)
     await ctx.respond(embed=emb)
+
+@server_plugin.command
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.command("servericon", "Shows the list of member on a particular role", aliases=["si_icon"], auto_defer=True)
+@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
+async def server_icon(ctx: lightbulb.Context):
+    guild = ctx.bot.cache.get_guild(ctx.guild_id) or await ctx.bot.rest.fetch_guild(ctx.guild_id)
+    embed = hikari.Embed(title=f"Server Icon for {guild.name}")
+    embed.set_image(guild.icon_url)
+    await ctx.respond(embed=embed)
 
 @server_plugin.command
 @lightbulb.add_checks(lightbulb.guild_only)

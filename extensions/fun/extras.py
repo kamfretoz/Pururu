@@ -32,7 +32,7 @@ async def namedeez(ctx: lightbulb.Context):
             
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.command("rickroll", "You have been rickrolled!")
+@lightbulb.command("rickroll", "You have been rickrolled!", aliases = ["rr"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def rickroll(ctx: lightbulb.Context):
     rick = hikari.Embed()
@@ -68,7 +68,7 @@ ext_plugin.d.ps = {
 @lightbulb.command("8ball", "Ask a question to the 8Ball!")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def eball(ctx: lightbulb.Context, question: str):
+async def eightball(ctx: lightbulb.Context, question: str):
     choices = choice(choice(list(ext_plugin.d.ps.values())))
     if choices in ext_plugin.d.ps["psbad"]:
         color = hikari.Color(0xFF0000)
@@ -92,6 +92,27 @@ async def respect(ctx: lightbulb.Context, text: str):
     hearts = ['❤', '💛', '💚', '💙', '💜', '♥']
     reason = f"for **{text}** " if text else ""
     await ctx.respond(f"**{ctx.author.username}** has paid their respect {reason}{choice(hearts)}")
+
+@ext_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
+@lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("user", "the user you want to ban", hikari.Member , required=True)
+@lightbulb.command("fakeban", "ban a member (Or is it?)", aliases=["fban"])
+@lightbulb.implements(lightbulb.PrefixCommand)
+@filament.utils.pass_options
+async def fakeban(ctx: lightbulb.Context, user: hikari.Member, reason: str):
+    await ctx.respond(f"Succesfully banned {user.mention} for `{reason}`!")
+    
+@ext_plugin.command()
+@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
+@lightbulb.option("reason", "the reason for muting the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("user", "the user you want to mute", hikari.Member , required=True)
+@lightbulb.command("fakemute", "mute a member (Or is it?)", aliases=["fmute"])
+@lightbulb.implements(lightbulb.PrefixCommand)
+@filament.utils.pass_options
+async def fakemute(ctx: lightbulb.Context, user: hikari.Member, reason: str):
+    await ctx.respond(f"Succesfully muted {user.mention} for `{reason}`!")
+    
 
 def load(bot):
     bot.add_plugin(ext_plugin)

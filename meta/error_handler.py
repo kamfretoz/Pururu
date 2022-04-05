@@ -27,14 +27,14 @@ async def send_embed(name, code, event, *args):
     err = hikari.Embed(description=f"**:warning: {message}**", timestamp=datetime.datetime.now().astimezone(), color=0xFF0000)
     if code:
         err.set_image(f"https://http.cat/{code}.jpg")
-    await event.bot.rest.create_message(event.context.channel_id, content=random.choice(error_quotes), embed=err)
+    await event.context.respond(content=random.choice(error_quotes), embed=err)
 
 async def on_error(event: lightbulb.CommandErrorEvent) -> None:
     if isinstance(event.exception, lightbulb.CommandInvocationError):
         errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
         errormsg.set_image("https://http.cat/500.jpg")
         errormsg.add_field(name="📜 **__Error Log__**:", value=f"```py\n{event.exception.__cause__}```")
-        await event.bot.rest.create_message(event.context.channel_id, content=random.choice(error_quotes), embed=errormsg)
+        await event.context.respond(content=random.choice(error_quotes), embed=errormsg)
         logging.error(event.exception)
         raise(event.exception)
 

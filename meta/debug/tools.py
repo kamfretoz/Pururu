@@ -3,6 +3,7 @@ import sys
 import lightbulb
 import hikari
 from lightbulb.ext import filament
+from lightbulb.utils import pag, nav
 
 tools_plugin = lightbulb.Plugin("toolbox", "Authorized Personel Only")
 tools_plugin.add_checks(lightbulb.checks.owner_only)
@@ -64,14 +65,42 @@ async def setbotname(ctx: lightbulb.Context, name: str):
     
 
 @tools_plugin.command()
-@lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = True, default = False)
+@lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = False, default = False)
 @lightbulb.option("guild","The ID of the target guild", hikari.Snowflake, required = True)
-@lightbulb.command("clearcmd", "purge all slash commands from specified guild")
+@lightbulb.command("clearcmd", "purge all slash commands from specified guild", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 @filament.utils.pass_options
 async def purge_cmd(ctx: lightbulb.Context, guild: hikari.Snowflake, globals: bool):
+    await ctx.respond("Purging application commands...")
     await ctx.bot.purge_application_commands(guild, global_commands=globals)
-    await ctx.respond("Task Completed Successfully!")
+    await ctx.edit_last_response("Task Completed Successfully!")
+    
+@tools_plugin.command()
+@lightbulb.command("synccmd", "purge all slash commands from specified guild", auto_defer = True)
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def sync_cmd(ctx: lightbulb.Context):
+    await ctx.respond("Sycn In Progress...")
+    await ctx.bot.sync_application_commands()
+    await ctx.edit_last_response("Task Completed Successfully!")
+    
+@tools_plugin.command()
+@lightbulb.command("serverlist", "Show the list of server im in", auto_defer = True, aliases=["servlist"])
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def serverlist(ctx: lightbulb.Context):
+    guilds = ctx.bot.cache.get_guilds_view().values()
+    lst = pag.EmbedPaginator()
+    
+    @lst.embed_factory()
+    def build_embed(page_index,page_content):
+        emb = hikari.Embed(title="List of Servers i'm in", description=page_content)
+        emb.set_footer(f"{len(guilds)} Servers in total.")
+        return emb
+    
+    for servers in guilds:
+            lst.add_line(f"{servers.name}({servers.id})")
+            
+    navigator = nav.ButtonNavigator(lst.build_pages())
+    await navigator.run(ctx)
 
 @tools_plugin.command()
 @lightbulb.add_checks(lightbulb.checks.owner_only)

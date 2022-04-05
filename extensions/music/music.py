@@ -188,7 +188,7 @@ async def play(ctx: lightbulb.Context, query: str, file: hikari.Attachment) -> N
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
-        return None
+        return
 
     if file:
         if file.url.endswith("mp3"):
@@ -417,14 +417,14 @@ async def replay(ctx: lightbulb.Context) -> None:
 @lightbulb.command("skip", "skips to the next song (if any).", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def skip(ctx: lightbulb.Context) -> None:
-    skip = await music_plugin.d.lavalink.skip(ctx.guild_id)
-    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
         embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return
+    skip = await music_plugin.d.lavalink.skip(ctx.guild_id)
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not skip:
         embed = hikari.Embed(title="**There are no more tracks left in the queue.**", colour=0xC80000)
         await ctx.respond(embed=embed)
@@ -446,7 +446,6 @@ async def skip(ctx: lightbulb.Context) -> None:
 @lightbulb.command("pause", "Pauses the currently playing track.", auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def pause(ctx: lightbulb.Context) -> None:
-    await music_plugin.d.lavalink.pause(ctx.guild_id)
     assert(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
@@ -459,6 +458,7 @@ async def pause(ctx: lightbulb.Context) -> None:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return
+    await music_plugin.d.lavalink.pause(ctx.guild_id)
     embed = hikari.Embed(title=f"**Paused {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)
@@ -473,7 +473,6 @@ async def pause(ctx: lightbulb.Context) -> None:
 @lightbulb.command("resume", "Resumes playing the currently playing track.", auto_defer=True, aliases=["unpause"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def resume(ctx: lightbulb.Context) -> None:
-    await music_plugin.d.lavalink.resume(ctx.guild_id)
     states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
     voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
     if not voice_state:
@@ -485,6 +484,7 @@ async def resume(ctx: lightbulb.Context) -> None:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         await ctx.respond(embed=embed)	
         return
+    await music_plugin.d.lavalink.resume(ctx.guild_id)
     embed = hikari.Embed(title=f"**Resumed {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
     try:
         length = divmod(node.now_playing.track.info.length, 60000)

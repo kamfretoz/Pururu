@@ -4,42 +4,39 @@ import base64
 
 base64_plugin = lightbulb.Plugin("base64", "Base64 Conversion tool")
 
-@base64_plugin.command
-@lightbulb.command("b64", "Allows you to encode or decode base64")
-@lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
-async def base64_(ctx: lightbulb.Context) -> None:
-    pass
+def encode(value: str):
+    sample_string = value
+    sample_string_bytes = sample_string.encode("ascii")
+    base64_bytes = base64.b64encode(sample_string_bytes)
+    base64_string = base64_bytes.decode("ascii")
+    return base64_string
+    
 
-@base64_.child
+def decode(value: str):
+    base64_string = value
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    return sample_string
+
+
+@base64_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("input", "the value to decode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("decode", "to decode the base64 value")
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
-async def base64_decode(ctx: lightbulb.Context) -> None:
-    text = ctx.options.input
+@lightbulb.option("input", "the value to decode", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("mode", "the conversion", str, required = True, choices=["encode", "decode"])
+@lightbulb.command("base64", "to decode or encode a base64 value", pass_options = True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def base64(ctx: lightbulb.Context, mode:str, input: str) -> None:
     try:
-        base64_string = text
-        base64_bytes = base64_string.encode("ascii")
-        sample_string_bytes = base64.b64decode(base64_bytes)
-        sample_string = sample_string_bytes.decode("ascii")
-        await ctx.respond(embed=hikari.Embed(description=f"```{sample_string}```"))
+        if mode == "decode":
+            direction = "Base64 🡪 ASCII"
+            final = decode(input)
+        else:
+            direction = "Base64 🡨 ASCII"
+            final = encode(input)
+        await ctx.respond(embed=hikari.Embed(title =f"{direction} Conversion:", description=f"```{final}```"))
     except UnicodeEncodeError:
         await ctx.respond(embed=hikari.Embed(description=f"⚠️ Unable to decode the text, possible unsupported characters are found."))
-
-@base64_.child
-@lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("input", "the text you want to encode", type = str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("encode", "to encode the ASCII text")
-@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
-async def base64_encode(ctx: lightbulb.Context) -> None:
-    sample_string = ctx.options.input
-    try:
-        sample_string_bytes = sample_string.encode("ascii")
-        base64_bytes = base64.b64encode(sample_string_bytes)
-        base64_string = base64_bytes.decode("ascii")
-        await ctx.respond(embed=hikari.Embed(description=f"```{base64_string}```"))
-    except UnicodeEncodeError:
-        await ctx.respond(embed=hikari.Embed(description=f"⚠️ Unable to encode the text, possible unsupported characters are found."))
 
 def load(bot) -> None:
     bot.add_plugin(base64_plugin)

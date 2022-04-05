@@ -17,7 +17,7 @@ ban_plugin.add_checks(
 @lightbulb.command("ban", "ban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def ban(ctx: lightbulb.Context, user, delete_message, reason):
+async def ban(ctx: lightbulb.Context, user: hikari.User, delete_message: int, reason: str):
     res = reason or f"'No Reason Provided.' By {ctx.author.username}"
     delete = delete_message or 0
     await ctx.respond(f"Banning **{user.username}**")
@@ -31,7 +31,7 @@ async def ban(ctx: lightbulb.Context, user, delete_message, reason):
 @lightbulb.command("unban", "unban a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def unban(ctx: lightbulb.Context, user, reason):
+async def unban(ctx: lightbulb.Context, user: hikari.Snowflake, reason: str):
     res = reason or f"'No Reason Provided.' By {ctx.author.username}"
     await ctx.respond(f"Unbanning the user ID of **{user}**")
     await ctx.bot.rest.unban_member(user = user, guild = ctx.get_guild(), reason = res)
@@ -55,7 +55,6 @@ async def banlist(ctx: lightbulb.Context):
             lst.add_line(str(users.user))
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
-    
     
 
 def load(bot):

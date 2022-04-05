@@ -179,7 +179,8 @@ error_quotes = [
     "im scared mom hold my hand",
     "Watch the road, there are kids around here!",
     "Say the magic word!",
-    "no... No... NO... NOOOOOOOOOOOOOO!!!!!!!!!!!"
+    "no... No... NO... NOOOOOOOOOOOOOO!!!!!!!!!!!",
+    "The following message has been terminated and deemed illgal, if you are viewing this classified content any further, we suggest you to stop."
 ]
 
 

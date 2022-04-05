@@ -16,11 +16,11 @@ timeout_plugin.add_checks(
 @lightbulb.option("hour", "the duration of the timeout (hour)", int, required=False, default=0)
 @lightbulb.option("minute", "the duration of the timeout (minute)", int, required=False, default=0)
 @lightbulb.option("second", "the duration of the timeout (second)", int, required=False, default=0)
-@lightbulb.option("user", "the user you want to be put in timeout", hikari.User , required=True)
+@lightbulb.option("user", "the user you want to be put in timeout", hikari.Member , required=True)
 @lightbulb.command("timeout", "Timeout a member")
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 @filament.utils.pass_options
-async def timeout(ctx: lightbulb.Context, user, second, minute, hour, days, reason):
+async def timeout(ctx: lightbulb.Context, user: hikari.Member, second: int, minute: int, hour: int , days: int, reason: str):
     
     res = reason or "No Reason Provided."
     
@@ -33,10 +33,12 @@ async def timeout(ctx: lightbulb.Context, user, second, minute, hour, days, reas
     
     if days == 0 and hour == 0 and minute == 0 and second == 0:
         await ctx.respond(f"Removing timeout from **{user}**")
+        txt = f"Timeout for {user.mention} has been removed successfully!"
     else:
         await ctx.respond(f"Attempting to timeout **{user}**")
+        txt = f"The user {user.mention} has been timed out for {then.strftime('%B %d, %Y at %I:%M:%S %p')}"
     await ctx.bot.rest.edit_member(user = user, guild = ctx.get_guild(), communication_disabled_until=then, reason=res)
-    await ctx.edit_last_response("Task finished successfully!")
+    await ctx.edit_last_response(txt)
     
 def load(bot):
     bot.add_plugin(timeout_plugin)

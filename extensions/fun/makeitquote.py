@@ -6,6 +6,9 @@ from textwrap import fill, shorten
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
+font_content = ImageFont.truetype("res/quote/PTSans-Regular.ttf", 20)
+font_name = ImageFont.truetype("res/quote/PTSans-BoldItalic.ttf", 24)
+
 def image_processing(pfp: BytesIO, name: str , content: str, ):
     with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
         icon = Image.open(pfp)
@@ -15,20 +18,6 @@ def image_processing(pfp: BytesIO, name: str , content: str, ):
         mask = ellipse(icon.size)
         
         base.paste(icon, (30, 30), mask)
-        
-        if len(content) > 50:
-            size = 20
-        elif len(content) > 100:
-            size = 16
-        elif len(content) > 200:
-            size = 14
-        elif len(content) > 250:
-            size = 12
-        else:
-            size = 24
-    
-        font_content = ImageFont.truetype("res/quote/PTSans-Regular.ttf", size)
-        font_name = ImageFont.truetype("res/quote/PTSans-BoldItalic.ttf", 24)
         
         if len(content) > 256:
             content = shorten(content, width=250, placeholder=" ... [DATA_EXPUNGED]")
@@ -52,18 +41,32 @@ aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.MessageCommand)
 @lightbulb.set_help(text="Please pick a message by replying to them whilst running this command")
 @lightbulb.command("makequote", "Create a quote from someone's message", auto_defer = True, aliases=["mq"])
-@lightbulb.implements(lightbulb.PrefixCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.MessageCommand)
 async def makequote(ctx: lightbulb.Context) -> None:
-    if ctx.event.message.referenced_message is None:
-        await ctx.respond("❌ You haven't picked any message to create a quote from. **Please pick a message by replying to them whilst running this command**.")
-        return
+    if isinstance(ctx, lightbulb.PrefixContext):
+        if ctx.event.message.referenced_message is None:
+            await ctx.respond("❌ You haven't picked any message to create a quote from. **Please pick a message by replying to them whilst running this command**.")
+            return
 
-    reply = ctx.event.message.referenced_message
-
-    name = reply.author.username
-    pfp = reply.author.avatar_url
-    content = reply.content
     
+    if isinstance(ctx, lightbulb.PrefixContext):
+        reply = ctx.event.message.referenced_message
+        author = reply.author
+
+        user = ctx.bot.cache.get_member(ctx.get_guild(), author)
+        
+        content = reply.content 
+    else:
+        message = ctx.options.target
+        author = message.author
+        
+        user = ctx.bot.cache.get_member(ctx.get_guild(), author)
+        
+        content = message.content
+
+    name = user.nickname or user.username
+    pfp = user.guild_avatar_url or user.avatar_url or user.default_avatar_url   
+
     if content is None:
         content = ""
     
@@ -76,7 +79,7 @@ async def makequote(ctx: lightbulb.Context) -> None:
     loop = asyncio.get_running_loop()
     img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, user_pfp, name, content)
 
-    await ctx.respond(attachment=img, content = "Here is the quote!")
+    await ctx.respond(attachment=img, content = f"Here is the quote! {ctx.author.mention}")
 
 def load(bot):
     bot.add_plugin(aquote_plugin)

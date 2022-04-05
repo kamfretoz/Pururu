@@ -1,7 +1,9 @@
 
 import os
-from hikari import Intents
 import dotenv
+from hikari import Intents
+from hikari.impl.config import CacheSettings
+from hikari.api.config import CacheComponents
 
 dotenv.load_dotenv()
 
@@ -9,22 +11,34 @@ dotenv.load_dotenv()
 # MAIN BOT RELATED
 #
 
-INTENTS = (
-    Intents.GUILDS               |
-    Intents.GUILD_VOICE_STATES   |
-    Intents.GUILD_MESSAGES       |
-    Intents.MESSAGE_CONTENT
-)
-
 GUILDS = (
-    393724666474135552,
-    535677066138353674,
-    617173140476395542,
-    793239269723471902,
-    875986914367385600
+        875986914367385600,
+        617173140476395542,
+        793239269723471902,
+        535677066138353674,
+        570976409452019722
 )
 
-TOKEN=os.getenv("BOT_TOKEN")
+INTENTS = (
+        Intents.GUILDS                      |
+        Intents.GUILD_MEMBERS               |
+        Intents.GUILD_MESSAGES              |
+        Intents.GUILD_VOICE_STATES          |
+        Intents.MESSAGE_CONTENT             
+)
+
+
+CACHE = CacheSettings(components=
+        CacheComponents.GUILDS              |
+        CacheComponents.GUILD_CHANNELS      |
+        CacheComponents.ME                  |
+        CacheComponents.MEMBERS             |
+        CacheComponents.MESSAGES            |
+        CacheComponents.ROLES               |
+        CacheComponents.VOICE_STATES    
+)
+
+TOKEN = os.getenv("BOT_TOKEN")
 PREFIX = os.environ["PREFIX"]
 
 
@@ -34,9 +48,9 @@ PREFIX = os.environ["PREFIX"]
 
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 TIME_REGEX = r"([0-9]{1,2})[:ms](([0-9]{1,2})s?)?"
-SPOTCLIENT_ID=os.getenv("SPOTID")
-SPOTCLIENT_SECRET=os.getenv("SPOTSECRET")
-LAVALINK_SERVER=os.getenv("LAVA_SRV")
-LAVALINK_PORT=os.getenv("LAVA_PORT")
-LAVALINK_PASSWORD=os.getenv("LAVA_PASS")
-LAVALINK_SSL=os.getenv("LAVA_SSL")
+SPOTCLIENT_ID = os.getenv("SPOTID")
+SPOTCLIENT_SECRET = os.getenv("SPOTSECRET")
+LAVALINK_SERVER = os.getenv("LAVA_SRV")
+LAVALINK_PORT = os.getenv("LAVA_PORT")
+LAVALINK_PASSWORD = os.getenv("LAVA_PASS")
+LAVALINK_SSL = os.getenv("LAVA_SSL")

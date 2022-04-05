@@ -6,6 +6,23 @@ from lightbulb.ext import filament
 
 calc_plugin = lightbulb.Plugin("calculator", "It's a simple calculator, what did you expect?")
 
+operators = {
+    '+' : add,
+    '-' : sub,
+    '*' : mul,
+    '/' : truediv,
+    '//': floordiv,
+    '^' : pow
+}
+
+def calculate(s):
+    if s.isdigit():
+        return float(s)
+    for c in operators.keys():
+        left, operator, right = s.partition(c)
+        if operator in operators:
+            return operators[operator](calculate(left), calculate(right))
+
 @calc_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.set_help(text="Simple calculator, From ℤ to ℤ only.")
@@ -18,22 +35,6 @@ async def calc(ctx: lightbulb.Context, calculation: str) -> None:
     calc_result = match(calc_regex, calculation)
     
     if calc_result:
-    
-        operators = {
-            '+' : add,
-            '-' : sub,
-            '*' : mul,
-            '/' : truediv,
-            '//': floordiv,
-            '^' : pow
-        }
-        def calculate(s):
-            if s.isdigit():
-                return float(s)
-            for c in operators.keys():
-                left, operator, right = s.partition(c)
-                if operator in operators:
-                    return operators[operator](calculate(left), calculate(right))
         em = hikari.Embed(color=0xD3D3D3, title="Calculator")
         try:
             em.add_field(name="Input:", value=calculation, inline=False,)
