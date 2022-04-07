@@ -22,7 +22,7 @@ async def slowmode(ctx: lightbulb.Context, channel: hikari.TextableGuildChannel,
     else:
         await ctx.respond(f"Attempting to set slowmode on the selected channel for **{time} seconds**")
     await ctx.bot.rest.edit_channel(channel, rate_limit_per_user=time)
-    await ctx.edit_last_response(f"Timeout of {time} second(s) has been set for {channel.mention}")
+    await ctx.edit_last_response(f"Slowmode of {time} second(s) has been set for {channel.mention}")
     
 def load(bot):
     bot.add_plugin(slowmode_plugin)
