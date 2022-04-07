@@ -72,7 +72,7 @@ async def eightball(ctx: lightbulb.Context, question: str):
     choices = choice(choice(list(ext_plugin.d.ps.values())))
     if choices in ext_plugin.d.ps["psbad"]:
         color = hikari.Color(0xFF0000)
-    elif choices in ext_plugin.d.ps["psgood"]:
+    else:
         color = hikari.Color(0x26D934)
     eightball = hikari.Embed(color=color)
     eightball.add_field(name="Question:", value=question.capitalize(), inline=False)
