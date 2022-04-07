@@ -35,7 +35,7 @@
 <h1 align="center">XJ9</h1>
 
   <p align="center">
-    A Multi-Purpose bot written in Hikari + Lightbulb!
+    A Multi-Purpose bot written with Hikari + Lightbulb!
   </p>
 </div>
 
@@ -67,7 +67,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 <p>
-This is a Multi-Purpose Bot written in Python, Hikari and Lightbulb. 
+This is a Multi-Purpose Bot written in Python and built with Hikari and Lightbulb. 
 A project that serves as a way for me to learn Python Programming.
 Feel free to explore it by yourself!
 </p>
