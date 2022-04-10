@@ -52,7 +52,7 @@ async def banlist(ctx: lightbulb.Context):
         return emb
     
     for n, users in enumerate(bans, start=1):
-        lst.add_line(f"**{n}. {users.user} ({users.reason or 'No Reason Provided.'})**")
+        lst.add_line(f"**{n}. {users.user}** ({users.reason or 'No Reason Provided.'})")
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
     
