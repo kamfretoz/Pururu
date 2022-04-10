@@ -61,8 +61,8 @@ async def curse(ctx: lightbulb.Context, user: hikari.Member, emoji: hikari.Emoji
             
 @curse_plugin.command
 @lightbulb.add_cooldown(60, 2, lightbulb.UserBucket)
-@lightbulb.option("user", "The user to curse", hikari.Member, required=True)
-@lightbulb.command("bless", "Curse someone with emoji!", auto_defer=True, pass_options=True, aliases=["ruqyah"])
+@lightbulb.option("user", "The user to bless", hikari.Member, required=True)
+@lightbulb.command("bless", "Cure someone from the curse!", auto_defer=True, pass_options=True, aliases=["ruqyah"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def bless(ctx: lightbulb.Context, user: hikari.Member):
     try:
