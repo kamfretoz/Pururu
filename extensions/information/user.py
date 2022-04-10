@@ -61,13 +61,12 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     await ctx.respond(emb)
     
 @user_plugin.command
-@lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on any user.", aliases=["ui","uprofile","uinfo"], ephemeral=True, auto_defer=True)
+@lightbulb.option("user", "The member to get information about.", hikari.User, required=False)
+@lightbulb.command("userinfo", "Get info on any user", aliases=["ui","uprofile","uinfo"], ephemeral=True, auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def  user_info(ctx: lightbulb.Context, target) -> None:
-    target = await ctx.bot.rest.fetch_user(user = target or ctx.user)
-    
+async def  user_info(ctx: lightbulb.Context, user) -> None:
+    target = await ctx.bot.rest.fetch_user(user = user or ctx.user)
     if not target:
         await ctx.respond("Cannot find that user.")
         return
