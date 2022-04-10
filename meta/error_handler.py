@@ -18,6 +18,7 @@ error_message = {
             "CheckFailure": "Command Check Failure, You are not authorized to use this command!",
             "ForbiddenError": "I'm not allowed to perform that action! Permission Denied.",
             "ConcurrencyLimit": "Please wait until the previous command execution has completed!",
+            "BadRequest": "Malformed Request! Please re-check your input for any errors and try again!"
         }
 
 async def send_embed(name, code, event, *args):
@@ -57,6 +58,8 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         await send_embed("ConcurrencyLimit", 429, event)
     elif isinstance(event.exception.__cause__, hikari.ForbiddenError):
         await send_embed("ForbiddenError", 403, event)
+    elif isinstance(event.exception.__cause__, hikari.BadRequestError):
+        await send_embed("BadRequest", 400, event)
     else:
         if isinstance(event.exception, lightbulb.CommandInvocationError):
             errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
