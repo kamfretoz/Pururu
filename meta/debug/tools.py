@@ -92,12 +92,12 @@ async def serverlist(ctx: lightbulb.Context):
     
     @lst.embed_factory()
     def build_embed(page_index,page_content):
-        emb = hikari.Embed(title="List of Servers i'm in", description=page_content)
+        emb = hikari.Embed(title=f"List of Servers i'm in (Page {page_index})", description=page_content)
         emb.set_footer(f"{len(guilds)} Servers in total.")
         return emb
     
-    for servers in guilds:
-            lst.add_line(f"{servers.name}({servers.id})")
+    for n, guild in enumerate(guilds, start=1):
+        lst.add_line(f"**{n}.** **{guild.name}** ({guild.id})")
             
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)

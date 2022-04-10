@@ -51,8 +51,8 @@ async def banlist(ctx: lightbulb.Context):
         emb.set_footer(f"{len(bans)} Members in total.")
         return emb
     
-    for users in bans:
-            lst.add_line(str(users.user))
+    for n, users in enumerate(bans, start=1):
+        lst.add_line(f"**{n}. {users.user} ({users.reason or 'No Reason Provided.'})**")
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
     
