@@ -1,6 +1,7 @@
 import hikari
 import lightbulb
 import miru
+import asyncio
 from lightbulb.ext import filament
 from datetime import datetime, timedelta, timezone
 
@@ -56,9 +57,10 @@ async def purge_messages(ctx: lightbulb.Context, amount) -> None:
     if hasattr(pruneview, "accepted"):
         if pruneview.accepted is True:
             await prompt.delete()
-            messages = await ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
-            await ctx.bot.rest.delete_messages(channel, messages)
-            await ctx.respond(f"**{len(messages)} messages deleted**", delete_after=5)
+            iterator = ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
+            async for messages in iterator.chunk(100):
+                await ctx.bot.rest.delete_messages(channel, messages)
+            await ctx.respond(f"**Messages has been sucessfully deleted.**", delete_after=5)
         elif pruneview.accepted is False:
             await prompt.delete()
             await ctx.respond(f"**Prune Operation has been cancelled.**", delete_after=7)
