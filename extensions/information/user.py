@@ -62,7 +62,7 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on a server member.", aliases=["ui","uprofile","uinfo"], ephemeral=True, auto_defer=True)
+@lightbulb.command("userinfo", "Get info on any user.", aliases=["ui","uprofile","uinfo"], ephemeral=True, auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def  user_info(ctx: lightbulb.Context, target) -> None:
