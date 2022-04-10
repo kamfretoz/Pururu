@@ -21,7 +21,7 @@ async def whytho(ctx: lightbulb.Context):
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("name", "A random name generator", auto_defer = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def namedeez(ctx: lightbulb.Context):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/name') as name:
             data = await name.json()
@@ -33,7 +33,7 @@ async def namedeez(ctx: lightbulb.Context):
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("rickroll", "You have been rickrolled!", aliases = ["rr"])
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def rickroll(ctx: lightbulb.Context):
     rick = hikari.Embed()
     rick.set_image("https://i.kym-cdn.com/photos/images/original/000/041/494/1241026091_youve_been_rickrolled.gif")
@@ -66,7 +66,7 @@ ext_plugin.d.ps = {
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("8ball", "Ask a question to the 8Ball!")
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 @filament.utils.pass_options
 async def eightball(ctx: lightbulb.Context, question: str):
     choices = choice(choice(list(ext_plugin.d.ps.values())))
@@ -86,7 +86,7 @@ async def eightball(ctx: lightbulb.Context, question: str):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("f", "Press F to pay respect.")
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 @filament.utils.pass_options
 async def respect(ctx: lightbulb.Context, text: str):
     hearts = ['❤', '💛', '💚', '💙', '💜', '♥']

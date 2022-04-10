@@ -741,7 +741,7 @@ async def empty(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("newreleases", "See the latest releases for the day.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def newreleases(ctx: lightbulb.Context) -> None:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
     response = sp.new_releases(limit=21)
@@ -759,7 +759,7 @@ async def newreleases(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("trending", "See the latest trending tracks.", auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def trending(ctx: lightbulb.Context) -> None:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
     playlist_URI = "37i9dQZF1DXcBWIGoYBM5M"
