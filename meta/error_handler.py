@@ -16,7 +16,7 @@ error_message = {
             "NoPrivateMessage": "This command cannot be used in DMs!",
             "NSFWChannelRequired": "You can only use this command on channels that are marked as NSFW.",
             "CheckFailure": "Command Check Failure, You are not authorized to use this command!",
-            "ForbiddenError": "I'm not allowed to do that!",
+            "ForbiddenError": "I'm not allowed to perform that action! Permission Denied.",
             "ConcurrencyLimit": "Please wait until the previous command execution has completed!",
         }
 
@@ -30,14 +30,6 @@ async def send_embed(name, code, event, *args):
     await event.context.respond(content=random.choice(error_quotes), embed=err)
 
 async def on_error(event: lightbulb.CommandErrorEvent) -> None:
-    if isinstance(event.exception, lightbulb.CommandInvocationError):
-        errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
-        errormsg.set_image("https://http.cat/500.jpg")
-        errormsg.add_field(name="📜 **__Error Log__**:", value=f"```py\n{event.exception.__cause__}```")
-        await event.context.respond(content=random.choice(error_quotes), embed=errormsg)
-        logging.error(event.exception)
-        raise(event.exception)
-
     # Unwrap the exception to get the original cause
     exception = event.exception.__cause__ or event.exception
     
@@ -63,6 +55,16 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
         await send_embed("CheckFailure", 401, event)
     elif isinstance(exception, lightbulb.errors.MaxConcurrencyLimitReached):
         await send_embed("ConcurrencyLimit", 429, event)
+    elif isinstance(event.exception.__cause__, hikari.ForbiddenError):
+        await send_embed("ForbiddenError", 403, event)
+    else:
+        if isinstance(event.exception, lightbulb.CommandInvocationError):
+            errormsg = hikari.Embed(title=f"🛑 An error occurred with the `{event.context.command.name}` command.", color=0xFF0000, timestamp=datetime.datetime.now().astimezone())
+            errormsg.set_image("https://http.cat/500.jpg")
+            errormsg.add_field(name="📜 **__Error Log__**:", value=f"```py\n{exception}```")
+            await event.context.respond(content=random.choice(error_quotes), embed=errormsg)
+            logging.error(event.exception)
+            raise(event.exception)
     
 def load(bot):
     bot.subscribe(lightbulb.CommandErrorEvent, on_error)
