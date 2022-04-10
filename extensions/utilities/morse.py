@@ -79,13 +79,15 @@ def decode(value: str):
 @lightbulb.command("morse", "to encode or decode morse code", pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def morse(ctx: lightbulb.Context, mode:str, input: str) -> None:
-    
     if mode == "encode":
         direction = "ASCII 🡪 Morse"
         result = encode(input)
-    else:
+    elif mode == "decode":
         direction = "ASCII 🡨 Morse"
         result = decode(input)
+    else:
+        await ctx.respond("Invalid Mode Entered.")
+        return
             
     await ctx.respond(embed=hikari.Embed(title=f"{direction} Conversion:", description=result))
         
