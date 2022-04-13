@@ -9,7 +9,7 @@ ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.command("why", "Askin the real question here", auto_defer = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def whytho(ctx: lightbulb.Context):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/why') as why:
         data = await why.json()
