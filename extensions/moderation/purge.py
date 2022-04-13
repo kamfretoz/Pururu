@@ -37,7 +37,11 @@ class CancelButton(miru.Button):
 @lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear","prune"], auto_defer = True)
 @lightbulb.implements(lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def purge_messages(ctx: lightbulb.Context, amount) -> None:
+async def purge_messages(ctx: lightbulb.Context, amount: int) -> None:
+    if amount > 500:
+        await ctx.respond(":x: **You can only purge 500 messages at once, max**")
+        return
+    
     channel = ctx.channel_id
 
     # If the command was invoked using the PrefixCommand, it will create a message
