@@ -57,8 +57,6 @@ def encode(value: str):
     for char in value[:]:
         if char.upper() in morseAlphabet:
             encodedMessage += morseAlphabet[char.upper()] + " "
-        else:
-            encodedMessage += '<???>'
     return encodedMessage
 
 def decode(value: str):
@@ -68,8 +66,6 @@ def decode(value: str):
     for char in messageSeparated:
         if char in inverseMorseAlphabet:
             decodedMessage += inverseMorseAlphabet[char]
-        else:
-            decodedMessage += '<ERROR>'
     return decodedMessage
 
 @morse_plugin.command
