@@ -10,6 +10,68 @@ from lightbulb.ext import filament
 
 weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 
+dotenv.load_dotenv()
+weather_key = os.environ.get("WEATHER_API_KEY")
+
+def degToCompass(deg):
+    val = int((deg/22.5)+.5)
+    arr = [
+        "North (N)",
+        "North-Northeast (NNE)",
+        "Northeast (NE)",
+        "East-Northeast (ENE)",
+        "East (E)",
+        "East-Southeast (ESE)",
+        "Southeast (SE)",
+        "South-Southeast (SSE)",
+        "South (S)",
+        "South-Southwest (SSW)",
+        "Southwest (SW)",
+        "West-Southwest (WSW)",
+        "West (W)",
+        "West-Northwest (WNW)",
+        "Northwest (NW)",
+        "North-Northwest (NNW)"
+    ]
+    return arr[(val % 16)]
+def metertokilometer(meter):  # https://www.asknumbers.com/meters-to-km.aspx
+    km = meter * 0.001
+    trc = trunc(km)
+    return trc
+def mpstokmh(mtr):  # https://www.mathworksheets4kids.com/solve/speed/conversion2.php
+    mul = mtr * 18
+    div = mul / 5
+    trc = trunc(div)
+    return trc
+# In Meter/second https://www.windfinder.com/wind/windspeed.htm
+def wind_condition(wind_speed):
+    if wind_speed >= 0 and wind_speed <= 0.2:
+        return "Calm"
+    elif wind_speed >= 0.2 and wind_speed <= 1.5:
+        return "Light Air"
+    elif wind_speed >= 1.5 and wind_speed <= 3.3:
+        return "Light Breeze"
+    elif wind_speed >= 3.3 and wind_speed <= 5.4:
+        return "Gentle Breeze"
+    elif wind_speed >= 5.4 and wind_speed <= 7.9:
+        return "Moderate Breeze"
+    elif wind_speed >= 7.9 and wind_speed <= 10.7:
+        return "Fresh Breeze"
+    elif wind_speed >= 10.7 and wind_speed <= 13.8:
+        return "Strong Breeze"
+    elif wind_speed >= 13.8 and wind_speed <= 17.1:
+        return "Near Gale"
+    elif wind_speed >= 17.1 and wind_speed <= 20.7:
+        return "Gale"
+    elif wind_speed >= 20.7 and wind_speed <= 24.4:
+        return "Severe Gale"
+    elif wind_speed >= 24.4 and wind_speed <= 28.4:
+        return "Strong Storm"
+    elif wind_speed >= 28.4 and wind_speed <= 32.6:
+        return "Violent Storm"
+    elif wind_speed >= 32.6:
+        return "Hurricane"
+
 @weather_plugin.command()
 @lightbulb.add_cooldown(3, 2, lightbulb.UserBucket)
 @lightbulb.option("city", "the city you want to check", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
@@ -18,71 +80,11 @@ weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 @filament.utils.pass_options
 async def weather(ctx: lightbulb.Context, city) -> None:
     # To retrieve the API KEY
-    dotenv.load_dotenv()
-    key = os.environ.get("WEATHER_API_KEY")
     # https://stackoverflow.com/a/7490772 https://www.windfinder.com/wind/windspeed.htm
-    def degToCompass(deg):
-        val = int((deg/22.5)+.5)
-        arr = [
-            "North (N)",
-            "North-Northeast (NNE)",
-            "Northeast (NE)",
-            "East-Northeast (ENE)",
-            "East (E)",
-            "East-Southeast (ESE)",
-            "Southeast (SE)",
-            "South-Southeast (SSE)",
-            "South (S)",
-            "South-Southwest (SSW)",
-            "Southwest (SW)",
-            "West-Southwest (WSW)",
-            "West (W)",
-            "West-Northwest (WNW)",
-            "Northwest (NW)",
-            "North-Northwest (NNW)"
-        ]
-        return arr[(val % 16)]
-    def metertokilometer(meter):  # https://www.asknumbers.com/meters-to-km.aspx
-        km = meter * 0.001
-        trc = trunc(km)
-        return trc
-    def mpstokmh(mtr):  # https://www.mathworksheets4kids.com/solve/speed/conversion2.php
-        mul = mtr * 18
-        div = mul / 5
-        trc = trunc(div)
-        return trc
-    # In Meter/second https://www.windfinder.com/wind/windspeed.htm
-    def wind_condition(wind_speed):
-        if wind_speed >= 0 and wind_speed <= 0.2:
-            return "Calm"
-        elif wind_speed >= 0.2 and wind_speed <= 1.5:
-            return "Light Air"
-        elif wind_speed >= 1.5 and wind_speed <= 3.3:
-            return "Light Breeze"
-        elif wind_speed >= 3.3 and wind_speed <= 5.4:
-            return "Gentle Breeze"
-        elif wind_speed >= 5.4 and wind_speed <= 7.9:
-            return "Moderate Breeze"
-        elif wind_speed >= 7.9 and wind_speed <= 10.7:
-            return "Fresh Breeze"
-        elif wind_speed >= 10.7 and wind_speed <= 13.8:
-            return "Strong Breeze"
-        elif wind_speed >= 13.8 and wind_speed <= 17.1:
-            return "Near Gale"
-        elif wind_speed >= 17.1 and wind_speed <= 20.7:
-            return "Gale"
-        elif wind_speed >= 20.7 and wind_speed <= 24.4:
-            return "Severe Gale"
-        elif wind_speed >= 24.4 and wind_speed <= 28.4:
-            return "Strong Storm"
-        elif wind_speed >= 28.4 and wind_speed <= 32.6:
-            return "Violent Storm"
-        elif wind_speed >= 32.6:
-            return "Hurricane"
     try:
         parameters = {
             "q": city,
-            "appid": key,
+            "appid": weather_key,
             "units": "metric"
         }
         async with ctx.bot.d.aio_session.get("http://api.openweathermap.org/data/2.5/weather", params=parameters) as resp:
