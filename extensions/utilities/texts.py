@@ -1,8 +1,16 @@
 import lightbulb
 import random
+import unicodedata
 from lightbulb.ext import filament
+from textwrap import shorten
 
 text_plugin = lightbulb.Plugin("texts", "Many kind of text manipulation tools!")
+
+def char_format(c):
+    fmt = '`\\U{0:>08}`: `\\N{{{1}}}` - `{2}` -  http://www.fileformat.info/info/unicode/char/{0}'
+    digit = format(ord(c), 'x')
+    name = unicodedata.name(c, 'Name not found.')
+    return fmt.format(digit, name, c)
 
 @text_plugin.command
 @lightbulb.option("text", "The text you want to drunkify", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
@@ -66,6 +74,34 @@ async def codeblock(ctx: lightbulb.Context, text: str):
         await ctx.respond("```" + text.replace("`", "") + "```")
     else:
         await ctx.respond(f"**{ctx.author.mention}, The output too was too large!**")
+        
+@text_plugin.command
+@lightbulb.option("text", "the text to 🇧 🇮 🇬", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.command("bigtext", "Make your text 🇧 🇮 🇬", aliases=["bg"])
+@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
+@filament.utils.pass_options
+async def bigtext(ctx: lightbulb.Context, text: str):
+    s = ""
+    if len(text) >= 1024:
+        shorten(text, width=1024)
+    for char in text:
+        if char.isalpha():
+            s += f":regional_indicator_{char.lower()}: "
+        elif char.isspace():
+            s += "   "
+    await ctx.respond(s)
+
+@text_plugin.command
+@lightbulb.option("char", "the character to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.command("charinfo", "Look up information on a unicode character", aliases=["char"])
+@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
+@filament.utils.pass_options
+async def charinfo(ctx: lightbulb.Context, char: str):
+    """Shows you information about a number of characters."""
+    if len(char) > 15:
+        return await ctx.respond(f'Too many characters ({len(char)}/15)')
+    
+    await ctx.respond('\n'.join(map(char_format, char)))
 
 def load(bot):
     bot.add_plugin(text_plugin)
