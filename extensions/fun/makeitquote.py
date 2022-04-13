@@ -79,7 +79,7 @@ async def makequote(ctx: lightbulb.Context) -> None:
     loop = asyncio.get_running_loop()
     img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, user_pfp, name, content)
 
-    await ctx.respond(attachment=img, content = f"Here is the quote! {ctx.author.mention}")
+    await ctx.respond(attachment=img, content = f"Here is the quote! {ctx.author.mention}", user_mentions=True)
 
 def load(bot):
     bot.add_plugin(aquote_plugin)
