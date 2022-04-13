@@ -93,6 +93,19 @@ class LavalinkEventHandler:
         if skip and not node.queue and not node.now_playing:
             await lavalink.stop(event.guild_id)
 
+@music_plugin.listener(hikari.ShardReadyEvent)
+async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
+    builder = (
+        lavasnek_rs.LavalinkBuilder(event.my_user.id, TOKEN)
+        .set_host(LAVALINK_SERVER)
+        .set_port(int(LAVALINK_PORT))
+        .set_password(LAVALINK_PASSWORD)
+        .set_is_ssl(bool(LAVALINK_SSL))
+        .set_start_gateway(False)
+    )
+    lava_client = await builder.build(LavalinkEventHandler())
+    music_plugin.d.lavalink = lava_client
+
 async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None
 
@@ -112,20 +125,6 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     await music_plugin.d.lavalink.create_session(connection_info)
 
     return channel_id
-
-@music_plugin.listener(hikari.ShardReadyEvent)
-async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
-    builder = (
-        lavasnek_rs.LavalinkBuilder(event.my_user.id, TOKEN)
-        .set_host(LAVALINK_SERVER)
-        .set_port(int(LAVALINK_PORT))
-        .set_password(LAVALINK_PASSWORD)
-        .set_is_ssl(bool(LAVALINK_SSL))
-    )
-    
-    builder.set_start_gateway(False)
-    lava_client = await builder.build(LavalinkEventHandler())
-    music_plugin.d.lavalink = lava_client
 
 @music_plugin.listener(hikari.VoiceStateUpdateEvent)
 async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
@@ -179,7 +178,7 @@ async def leave(ctx: lightbulb.Context) -> None:
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("file", "The audio file you want to play (.mp3 files only)", hikari.Attachment, required = False)
 @lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = False)
-@lightbulb.command("play", "searches for your song. (Please choose one type only.)", auto_defer=True)
+@lightbulb.command("play", "searches for your song. (Please choose one type only.)", auto_defer=True, aliases=["p", "pl"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def play(ctx: lightbulb.Context, query: str, file: hikari.Attachment) -> None:
