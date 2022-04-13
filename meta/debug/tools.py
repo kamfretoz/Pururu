@@ -33,9 +33,8 @@ async def clear(ctx: lightbulb.Context):
 @tools_plugin.command()
 @lightbulb.add_cooldown(3600, 3, lightbulb.GlobalBucket)
 @lightbulb.option("url", "The Avatar's URL you want to use!", str, required = False)
-@lightbulb.command("setbotavatar","Set the bot's avatar", aliases=["botava"], auto_defer = True)
+@lightbulb.command("setbotavatar","Set the bot's avatar", aliases=["botava"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def setbotavatar(ctx: lightbulb.Context, url: str):
     if ctx.attachments:
         url = ctx.attachments[0].url
@@ -52,9 +51,8 @@ async def setbotavatar(ctx: lightbulb.Context, url: str):
 @tools_plugin.command()
 @lightbulb.add_cooldown(3600, 3, lightbulb.GlobalBucket)
 @lightbulb.option("name", "The name you want to change to!", str, required = True)
-@lightbulb.command("setbotname","Set the bot's name", aliases=["botname"], auto_defer = True)
+@lightbulb.command("setbotname","Set the bot's name", aliases=["botname"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def setbotname(ctx: lightbulb.Context, name: str):
     try:
         await ctx.bot.rest.edit_my_user(username=name)
@@ -67,9 +65,8 @@ async def setbotname(ctx: lightbulb.Context, name: str):
 @tools_plugin.command()
 @lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = False, default = False)
 @lightbulb.option("guild","The ID of the target guild", hikari.Snowflake, required = True)
-@lightbulb.command("clearcmd", "purge all slash commands from specified guild", auto_defer=True)
+@lightbulb.command("clearcmd", "purge all slash commands from specified guild", auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def purge_cmd(ctx: lightbulb.Context, guild: hikari.Snowflake, globals: bool):
     await ctx.respond("Purging application commands...")
     await ctx.bot.purge_application_commands(guild, global_commands=globals)
@@ -103,6 +100,19 @@ async def serverlist(ctx: lightbulb.Context):
     await navigator.run(ctx)
 
 @tools_plugin.command()
+@lightbulb.option("id", "The ID of the target server", hikari.Snowflake, required=False)
+@lightbulb.command("leaveserver", "Leave from a server", auto_defer = True, aliases=["lvserver"], pass_options = True)
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def leaveserver(ctx: lightbulb.Context, id: hikari.Snowflake):
+    if id is None:
+        guild = ctx.get_guild()
+    else:
+        guild = ctx.bot.cache.get_guild(id)
+    await ctx.respond(f"Leaving from **{guild.name}**...")
+    await ctx.bot.rest.leave_guild(guild)
+    await ctx.event.message.add_reaction("👍")
+
+@tools_plugin.command()
 @lightbulb.add_checks(lightbulb.checks.owner_only)
 @lightbulb.command("extension", "manage an extension")
 @lightbulb.implements(lightbulb.PrefixCommandGroup)
@@ -112,9 +122,8 @@ async def extension_manager():
 @extension_manager.child
 @lightbulb.option("name", "the extension you want to reload", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
-@lightbulb.command("reload", "Reload an extension", inherit_checks=True)
+@lightbulb.command("reload", "Reload an extension", inherit_checks=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand)
-@filament.utils.pass_options
 async def extension_reload(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.reload_extensions(f"extensions.{category}.{name}")
     await ctx.respond(f"Successfully reloaded `{name}`!")
@@ -122,9 +131,8 @@ async def extension_reload(ctx:lightbulb.Context, name: str, category: str):
 @extension_manager.child
 @lightbulb.option("name", "the extension you want to unload", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
-@lightbulb.command("unload", "Unload an extension", inherit_checks=True)
+@lightbulb.command("unload", "Unload an extension", inherit_checks=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand)
-@filament.utils.pass_options
 async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.unload_extensions(f"extensions.{category}.{name}")
     await ctx.respond(f"Successfully unloaded `{name}`!")
@@ -153,7 +161,7 @@ async def shutdown(ctx: lightbulb.Context) -> None:
 async def restart(ctx: lightbulb.Context) -> None:
     await ctx.respond("Restarting...")
     await ctx.bot.close()
-    os.system("clear")
+    os.system("clea=r")
     os.execv(sys.executable, ['python3'] + sys.argv)
 
 def load(bot):
