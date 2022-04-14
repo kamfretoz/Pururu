@@ -76,7 +76,7 @@ Feel free to explore it by yourself!
 
 ### Built With
 
-* [`Hikari`](https://github.com/hikari-py/hikari) - An opinionated, static typed Discord microframework for Python3 and asyncio that supports Discord's V8 REST API and Gateway.
+* [`hikari`](https://github.com/hikari-py/hikari) - An opinionated, static typed Discord microframework for Python3 and asyncio that supports Discord's V8 REST API and Gateway.
 * [`Lightbulb`](https://github.com/tandemdude/hikari-lightbulb/) - A flexible command framework designed to extend Hikari.
 
 
