@@ -2,14 +2,15 @@ aiohttp[speedups] == 3.8.1
 hikari[speedups] == 2.0.0.dev108
 hikari-lightbulb == 2.2.1
 # lightbulb-ext-filament == 0.1.2 (we temporarily build from source directly until thommo fix deps on pypi
-lavasnek-rs == 0.1.0a4
+lavasnek-rs == 0.1.0a5
 hikari-miru == 1.1.1
 ciso8601 == 2.2.0
 python-dotenv == 0.20.0
 uvloop == 0.16.0; sys_platform != "win32" 
 psutil == 5.9.0
-pillow == 9.0.1
+pillow == 9.1.0
 pilmoji == 2.0.1
 pytemperature == 1.1
 qrcode == 7.3.1
 spotipy == 2.19.0
+rapidfuzz == 2.0.8
