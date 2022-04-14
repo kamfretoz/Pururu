@@ -6,8 +6,8 @@ from textwrap import fill, shorten
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
-font_content = ImageFont.truetype("res/quote/PTSans-Regular.ttf", 20)
-font_name = ImageFont.truetype("res/quote/PTSans-BoldItalic.ttf", 24)
+font_content = ImageFont.truetype("res/quote/NotoSans-Regular.ttf", 20)
+font_name = ImageFont.truetype("res/quote/NotoSans-ThinItalic.ttf", 24)
 
 def image_processing(pfp: BytesIO, name: str , content: str, ):
     with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
