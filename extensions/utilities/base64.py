@@ -26,7 +26,7 @@ def decode(value: str):
 @lightbulb.option("mode", "the conversion", str, required = True, choices=["encode", "decode"])
 @lightbulb.command("base64", "to decode or encode a base64 value", pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def base64(ctx: lightbulb.Context, mode:str, input: str) -> None:
+async def b64(ctx: lightbulb.Context, mode:str, input: str) -> None:
     try:
         if mode == "decode":
             direction = "Base64 🡪 ASCII"
