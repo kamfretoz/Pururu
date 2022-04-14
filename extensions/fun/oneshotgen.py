@@ -1,17 +1,21 @@
+from functools import lru_cache
 import lightbulb
 import asyncio
-from lightbulb.ext import filament
+import hikari
 from PIL import Image, ImageFont, ImageDraw
 from textwrap import fill
 from io import BytesIO
 from pathlib import Path
+from rapidfuzz import fuzz, process
 
-oneshot_plugin = lightbulb.Plugin("oneshot", "OneShot TextBox Generator", include_datastore=True)
+oneshot_plugin = lightbulb.Plugin("oneshot", "OneShot TextBox Generator")
 
-oneshot_plugin.d.faces = []
-
-for path in Path("./res/oneshot/faces/").glob("*.png"):
-    oneshot_plugin.d.faces.append(path.name[:-4])
+@lru_cache(maxsize=100)
+def get_expression():
+    faces = []
+    for path in Path("./res/oneshot/faces/").glob("*.png"):
+        faces.append(path.name[:-4])
+    return faces
     
 font = ImageFont.truetype("res/oneshot/font-b.ttf", 24)
     
@@ -36,15 +40,23 @@ def image_processing(expression: str, text: str):
 @oneshot_plugin.command()
 @lightbulb.add_cooldown(1, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "The text you want to write", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("expression", "The expression you want Niko to be", str, required=True, choices=oneshot_plugin.d.faces)
-@lightbulb.command("oneshot", "Generate a custom OneShot Textbox", auto_defer=True)
+@lightbulb.option("face", "The expression you want Niko to be", str, required=True, autocomplete=True)
+@lightbulb.command("oneshot", "Generate a custom OneShot Textbox", auto_defer=True, pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def oneshotgen(ctx: lightbulb.Context, expression, text) -> None:
+async def oneshotgen(ctx: lightbulb.Context, face: str, text: str) -> None:
     loop = asyncio.get_running_loop()
-    img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, expression, text)
+    img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, face, text)
         
     await ctx.respond("Here you go!", attachment = img)
+    
+@oneshotgen.autocomplete("face")
+async def face_autocomplete(input: hikari.AutocompleteInteractionOption, interaction: hikari.AutocompleteInteraction):
+    result = process.extract(input.value, get_expression(), scorer=fuzz.QRatio, limit=5)
+    
+    if len(result) == 0:
+        return "Could not find anything. Sorry."
+    
+    return [r[0] for r in result]
     
 def load(bot):
     bot.add_plugin(oneshot_plugin)

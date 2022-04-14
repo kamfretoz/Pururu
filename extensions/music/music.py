@@ -9,10 +9,13 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import re
 import json
 import random
+import time
 from datetime import date
 from lightbulb.ext import filament
 from lightbulb.utils import nav, pag
 from yarl import URL
+from textwrap import dedent
+from utils.formats import format_seconds, get_printable_size
 
 from utils.const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET, LAVALINK_SERVER, LAVALINK_PASSWORD, LAVALINK_PORT, LAVALINK_SSL, TOKEN
 
@@ -106,6 +109,19 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     lava_client = await builder.build(LavalinkEventHandler())
     music_plugin.d.lavalink = lava_client
 
+@music_plugin.listener(hikari.VoiceStateUpdateEvent)
+async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
+    music_plugin.d.lavalink.raw_handle_event_voice_state_update(
+        event.state.guild_id,
+        event.state.user_id,
+        event.state.session_id,
+        event.state.channel_id,
+    )
+
+@music_plugin.listener(hikari.VoiceServerUpdateEvent)
+async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
+    await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
+
 async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None
 
@@ -125,19 +141,6 @@ async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     await music_plugin.d.lavalink.create_session(connection_info)
 
     return channel_id
-
-@music_plugin.listener(hikari.VoiceStateUpdateEvent)
-async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
-    music_plugin.d.lavalink.raw_handle_event_voice_state_update(
-        event.state.guild_id,
-        event.state.user_id,
-        event.state.session_id,
-        event.state.channel_id,
-    )
-
-@music_plugin.listener(hikari.VoiceServerUpdateEvent)
-async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
-    await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
@@ -177,7 +180,7 @@ async def leave(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("file", "The audio file you want to play (.mp3 files only)", hikari.Attachment, required = False)
-@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = False)
+@lightbulb.option("query", "The name of the song (or url) that you want to play", modifier=lightbulb.OptionModifier.CONSUME_REST, required = False, autocomplete=True)
 @lightbulb.command("play", "searches for your song. (Please choose one type only.)", auto_defer=True, aliases=["p", "pl"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
@@ -190,10 +193,10 @@ async def play(ctx: lightbulb.Context, query: str, file: hikari.Attachment) -> N
         return
 
     if file:
-        if file.url.endswith("mp3"):
+        if file.url.endswith("mp3") or file.url.endswith(".flac"):
             query = file.url
         else:
-            embed = hikari.Embed(title="**Only .mp3 files are allowed.**", colour=0xC80000)
+            embed = hikari.Embed(title="**Only .mp3 and .flac files are allowed.**", colour=0xC80000)
             await ctx.respond(embed=embed)
             return
     elif not query and not file:
@@ -262,6 +265,11 @@ async def play(ctx: lightbulb.Context, query: str, file: hikari.Attachment) -> N
         await music_plugin.d.lavalink.play(ctx.guild_id, query_information.tracks[0]).requester(ctx.author.id).queue()
     except lavasnek_rs.NoSessionPresent as e:
         raise e
+    
+@play.autocomplete("query")
+async def play_autocomplete(opt: hikari.AutocompleteInteractionOption, inter: hikari.AutocompleteInteraction):
+    query = await music_plugin.d.lavalink.auto_search_tracks(opt.value)
+    return [track.info.title for track in query.tracks[:5]]
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
