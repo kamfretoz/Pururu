@@ -36,8 +36,10 @@ async def curse(ctx: lightbulb.Context, user: hikari.Member, emoji: hikari.Emoji
                 return
         except KeyError:
             pass
+        
+        if isinstance(ctx, lightbulb.PrefixCommand):
+            await ctx.event.message.add_reaction(emoji)
             
-        await ctx.event.message.add_reaction(emoji)
         async def curse_task():
             with ctx.bot.stream(hikari.GuildMessageCreateEvent, timeout=1800).filter(lambda e: e.author.id == user.id) as curse:
                 async for event in curse:
