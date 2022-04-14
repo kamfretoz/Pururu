@@ -1,7 +1,7 @@
 import lightbulb
 import hikari
 import json
-from utils.time import format_seconds
+from utils.formats import format_seconds
 
 anifinder_plugin = lightbulb.Plugin("animefinder", "Anime Lookup with screenshot leveraging https://trace.moe/")
 
