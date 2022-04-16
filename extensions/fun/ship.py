@@ -6,7 +6,6 @@ from io import BytesIO
 from datetime import datetime
 from PIL import Image
 from utils.masks import ellipse
-from lightbulb.ext import filament
 
 ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?", include_datastore=True)
 
@@ -51,9 +50,8 @@ def image_processing(user1: BytesIO, user2: BytesIO, love: int) -> BytesIO:
 @lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
 @lightbulb.option("user2", "The other one you want to ship", hikari.Member, required=True)
 @lightbulb.option("user1", "The one you want to ship", hikari.Member, required=True)
-@lightbulb.command("ship", "Ship somebody with someone else!", auto_defer = True)
+@lightbulb.command("ship", "Ship somebody with someone else!", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def ship(ctx: lightbulb.Context, user1: hikari.Member, user2: hikari.Member) -> None:
     shipnumber = randint(0, 100)
     if 0 <= shipnumber <= 10:

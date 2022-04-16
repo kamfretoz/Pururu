@@ -6,14 +6,14 @@ from textwrap import fill, shorten
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
-font_content = ImageFont.truetype("res/quote/NotoSans-Regular.ttf", 20)
-font_name = ImageFont.truetype("res/quote/NotoSans-ThinItalic.ttf", 24)
+font_content = ImageFont.truetype("res/quote/NotoSansCJKjp-Regular.ttf", 20)
+font_name    = ImageFont.truetype("res/quote/NotoSansCJKjp-Thin.ttf", 24)
 
-def image_processing(pfp: BytesIO, name: str , content: str, ):
+def image_processing(pfp: BytesIO, name: str , content: str):
     with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
         icon = Image.open(pfp)
         icon.convert("RGBA")
-        icon = icon.resize((200, 200), reducing_gap=3.0, resample=Image.ANTIALIAS)
+        icon = icon.resize((200, 200), reducing_gap=3.0, resample=Image.LANCZOS)
         
         mask = ellipse(icon.size)
         
@@ -38,7 +38,7 @@ aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True
 
 @aquote_plugin.command()
 @lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.MessageCommand)
+@lightbulb.set_max_concurrency(2, lightbulb.GuildBucket)
 @lightbulb.set_help(text="Please pick a message by replying to them whilst running this command")
 @lightbulb.command("makequote", "Create a quote from someone's message", auto_defer = True, aliases=["mq"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.MessageCommand)

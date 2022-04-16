@@ -1,7 +1,6 @@
 import lightbulb
 import hikari
 from random import randint
-from lightbulb.ext import filament
 
 minesweeper_plugin = lightbulb.Plugin("minesweeper", "\U0001F642 Minesweeper \U0001F635")
 
@@ -10,9 +9,8 @@ minesweeper_plugin = lightbulb.Plugin("minesweeper", "\U0001F642 Minesweeper \U0
 @lightbulb.option("bombs", "The amount of bombs you want", int, required=True, min_value = 1)
 @lightbulb.option("rows", "The amount of rows you want", int, required=True, min_value = 1, max_value = 13)
 @lightbulb.option("columns", "The amount of colom that you want", int, required=True, min_value = 1, max_value = 13)
-@lightbulb.command("minesweeper", "Play minesweeper")
+@lightbulb.command("minesweeper", "Play minesweeper", pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def minesweeper(ctx: lightbulb.Context, columns, rows, bombs) -> None:      
         if bombs + 1 > columns * rows:
             await ctx.respond(':boom:**BOOM**, you have more bombs than spaces on the grid or you attempted to make all of the spaces bombs!')
