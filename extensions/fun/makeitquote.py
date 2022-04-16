@@ -2,7 +2,7 @@ import lightbulb
 import asyncio
 from io import BytesIO
 from utils.masks import ellipse
-from textwrap import fill, shorten
+from utils.text_wrapper import wrap_text
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
@@ -19,14 +19,11 @@ def image_processing(pfp: BytesIO, name: str , content: str):
         
         base.paste(icon, (30, 30), mask)
         
-        if len(content) > 256:
-            content = shorten(content, width=250, placeholder=" ... [DATA_EXPUNGED]")
-        
-        text = fill(content, width=42)
+        text = wrap_text(font=font_content, text=content, max_width=425, max_height=150)
         
         with Pilmoji(base) as final:
-            final.text((250, 20), text, fill=(255,255,255,255), font=font_content, align = "left")
-            final.text((250, 200), f" — {name}", fill=(255,255,255,255), font=font_name, align = "center")
+            final.text((250, 20), text, font=font_content, align = "left")
+            final.text((250, 200), f" - {name}", font=font_name, align = "center")
     
     image = BytesIO()
     base.save(image, format="PNG", optimize=True, quality=100)
