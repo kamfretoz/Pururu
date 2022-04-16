@@ -13,7 +13,7 @@ def image_processing(pfp: BytesIO, name: str , content: str):
     with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
         icon = Image.open(pfp)
         icon.convert("RGBA")
-        icon = icon.resize((200, 200), reducing_gap=3.0, resample=Image.LANCZOS)
+        icon = icon.resize((200, 200), reducing_gap=3.0, resample=Image.Resampling.LANCZOS)
         
         mask = ellipse(icon.size)
         
