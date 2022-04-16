@@ -24,30 +24,33 @@ async def ensure_user_in_vc(ctx: lightbulb.Context) -> bool:
 class LavalinkEventHandler:
     async def track_start(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         logging.info(f"Track started on guild: {event.guild_id}")
-        guild_node = await lavalink.get_guild_node(event.guild_id)
-        song = await music_plugin.d.lavalink.decode_track(event.track)
-        chanid = guild_node.get_data().get("ChannelID")
-        firsttrack = guild_node.get_data().get("First")
-        loop_enabled = guild_node.get_data().get("loop")
-        
-        if firsttrack == False:
-            embed=hikari.Embed(title="**Playing the next track.**", description=f"[{song.title}]({song.uri})", color=0x00FF00)
-            embed.add_field(name="Artist", value=song.author, inline=False)
-            identifier = song.identifier
-            thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
-            embed.set_thumbnail(thumb)
-        elif loop_enabled: 
-            return
-        else:
-            embed=hikari.Embed(title="**Now Playing.**", description=f"[{song.title}]({song.uri})", color=0x00FF00)
-            embed.add_field(name="Artist", value=song.author, inline=False)
-            identifier = song.identifier
-            thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
-            embed.set_thumbnail(thumb)
-        
-        resp = await music_plugin.bot.rest.create_message(chanid, embed=embed)
-        await asyncio.sleep(15)
-        await resp.delete()
+        try:
+            guild_node = await lavalink.get_guild_node(event.guild_id)
+            song = await music_plugin.d.lavalink.decode_track(event.track)
+            chanid = guild_node.get_data().get("ChannelID")
+            firsttrack = guild_node.get_data().get("First")
+            loop_enabled = guild_node.get_data().get("loop")
+
+            if firsttrack == False:
+                embed=hikari.Embed(title="**Playing the next track.**", description=f"[{song.title}]({song.uri})", color=0x00FF00)
+                embed.add_field(name="Artist", value=song.author, inline=False)
+                identifier = song.identifier
+                thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
+                embed.set_thumbnail(thumb)
+            elif loop_enabled: 
+                return
+            else:
+                embed=hikari.Embed(title="**Now Playing.**", description=f"[{song.title}]({song.uri})", color=0x00FF00)
+                embed.add_field(name="Artist", value=song.author, inline=False)
+                identifier = song.identifier
+                thumb = f"http://img.youtube.com/vi/{identifier}/0.jpg"
+                embed.set_thumbnail(thumb)
+
+            resp = await music_plugin.bot.rest.create_message(chanid, embed=embed)
+            await asyncio.sleep(15)
+            await resp.delete()
+        except:
+            pass
 
     async def track_finish(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
         guild_node = await lavalink.get_guild_node(event.guild_id)
