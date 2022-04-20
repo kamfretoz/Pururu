@@ -161,7 +161,7 @@ async def shutdown(ctx: lightbulb.Context) -> None:
 async def restart(ctx: lightbulb.Context) -> None:
     await ctx.respond("Restarting...")
     await ctx.bot.close()
-    os.system("clea=r")
+    os.system("clear")
     os.execv(sys.executable, ['python3'] + sys.argv)
 
 def load(bot):
