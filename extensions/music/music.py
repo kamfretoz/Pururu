@@ -102,7 +102,7 @@ class LavalinkEventHandler:
 @music_plugin.listener(hikari.ShardReadyEvent)
 async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     builder = (
-        lavasnek_rs.LavalinkBuilder(event.my_user.id, TOKEN)
+        lavasnek_rs.LavalinkBuilder(event.my_user.id, "")
         .set_host(LAVALINK_SERVER)
         .set_port(int(LAVALINK_PORT))
         .set_password(LAVALINK_PASSWORD)

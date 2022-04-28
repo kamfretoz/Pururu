@@ -11,7 +11,7 @@ nickname_plugin.add_checks(
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("nick", "the new nickname you want to set (leave empty to reset!)", str, required=False)
 @lightbulb.option("member", "The member you want to change the nickname", hikari.Member, required=True)
-@lightbulb.command("nickname", "Change the nickname of a member")
+@lightbulb.command("nickname", "Change the nickname of a member", pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def nickname(ctx: lightbulb.Context, member: hikari.Member, nick: str):
     await ctx.bot.rest.edit_member(ctx.guild_id, user=member, nickname=nick)

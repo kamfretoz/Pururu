@@ -21,6 +21,9 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     joined_at = int(target.joined_at.timestamp())
 
     roles = (await target.fetch_roles())[1:]  # All but @everyone
+    
+    
+    
     emb = hikari.Embed(
         title=f"User Info - {target.display_name}",
         description=f"ID: `{target.id}`",
@@ -49,7 +52,7 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     )
     emb.add_field(
         "Roles",
-        ", ".join(r.mention for r in roles),
+        ", ".join(r.mention for r in roles) or "No Roles.",
         inline=False,
     )
     emb.add_field(
