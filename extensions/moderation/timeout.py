@@ -1,7 +1,6 @@
 import lightbulb
 import hikari
 from datetime import datetime, timedelta, timezone
-from lightbulb.ext import filament
 
 timeout_plugin = lightbulb.Plugin("timeout", "timeout for a moment.")
 timeout_plugin.add_checks(

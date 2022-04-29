@@ -1,7 +1,6 @@
 import hikari
 import lightbulb
 import miru
-from lightbulb.ext import filament
 from datetime import datetime, timedelta, timezone
 
 purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
@@ -46,9 +45,8 @@ class CancelButton(miru.Button):
     lightbulb.guild_only
 )
 @lightbulb.option("amount", "The number of messages to purge.", type=int, required=True, max_value = 500)
-@lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear","prune"], auto_defer = True)
+@lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear","prune"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def purge(ctx: lightbulb.Context, amount: int) -> None:
     if amount > 500:
         await ctx.respond(":x: **You can only purge 500 messages at once, max**")

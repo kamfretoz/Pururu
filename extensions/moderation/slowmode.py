@@ -1,6 +1,5 @@
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 
 slowmode_plugin = lightbulb.Plugin("slowmode", "*talks in slow motion*")
 slowmode_plugin.add_checks(
@@ -12,9 +11,8 @@ slowmode_plugin.add_checks(
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("interval", "The interval amount (in seconds)", int, min_value = 0, max_value = 21600, required=False)
 @lightbulb.option("channel", "The channel you want to set", hikari.TextableGuildChannel, required=True)
-@lightbulb.command("slowmode", "Set the slowmode interval for a channel")
+@lightbulb.command("slowmode", "Set the slowmode interval for a channel", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def slowmode(ctx: lightbulb.Context, channel: hikari.TextableGuildChannel, interval: int):
     time = interval or 0
     if time == 0:
