@@ -1,5 +1,6 @@
 import hikari
 import lightbulb
+from datetime import datetime
 from lightbulb.ext import tasks
 
 sniper = lightbulb.Plugin("snipe", "snippin yo ass", include_datastore=True)
@@ -30,6 +31,7 @@ async def on_guild_message_delete(event: hikari.GuildMessageDeleteEvent):
             sniper.d.delsniped.update({
                 srvid: {
                     chid: {
+                        'Author': msg.author,
                         'Sender': auth_name,
                         'Mention': auth_mention,
                         'Content': content,
@@ -59,6 +61,7 @@ async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
             sniper.d.editsniped.update({
                 srvid: {
                     chid: {
+                        'Author': new_msg.author,
                         'Sender': auth_name,
                         'Mention': auth_mention,
                         'Before': old_message,
@@ -75,37 +78,30 @@ async def on_guild_message_edit(event: hikari.GuildMessageUpdateEvent):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def deletesnipe(ctx: lightbulb.Context) -> None:
     try:
-        author = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Sender"]
+        author = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Author"]
+        name = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Sender"]
         author_mention = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Mention"]
         msg = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Content"]
         attachment = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Attachment"]
-        name = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Filename"]
+        filename = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Filename"]
+        
         if isinstance(ctx, lightbulb.PrefixContext):
             await ctx.event.message.delete()
-        if msg:
-            emb = hikari.Embed(title="Sniped!",description=msg)
-            emb.add_field(name="Author:",value=author_mention, inline=False)
-            emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
-            if attachment:
-                emb.add_field(name="Attachments",value=f"[{name}]({attachment})")
-                if str(name).endswith(".png") or str(name).endswith(".gif") or str(name).endswith(".jpg") or str(name).endswith(".jpeg"):
-                    emb.set_image(attachment)
-            await ctx.respond(embed=emb, delete_after=5)
-        else:
-            emb = hikari.Embed(title="Sniped!")
-            emb.add_field(name="Author:", value=author, inline=False)
-            emb.add_field(name="Message:",value="Empty Message.", inline=False)
-            emb.set_footer(
-                text=f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
-            if attachment:
-                emb.add_field(name="Attachments",value=f"[{name}]({attachment})", inline=False)
-                if str(name).endswith(".png") or str(name).endswith(".gif"):
-                    emb.set_image(attachment)
-            await ctx.respond(embed=emb, delete_after=5)
-
-        del sniper.d.delsniped[ctx.guild_id][ctx.channel_id]
+            
+        emb = hikari.Embed(description=msg or "Empty Message", timestamp=datetime.now().astimezone())
+        emb.set_author(name="Sniped!", icon=author.avatar_url)
+        emb.add_field(name="Author:",value=f"{name} ({author_mention})", inline=False)
+        emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
+        if attachment:
+            emb.add_field(name="Attachments",value=f"[{name}]({attachment})")
+            if str(filename).endswith(".png") or str(filename).endswith(".gif") or str(name).endswith(".jpg") or str(name).endswith(".jpeg"):
+                emb.set_image(attachment)
+        await ctx.respond(embed=emb, delete_after=5)
+        
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"), delete_after=3)
+    finally:
+        del sniper.d.delsniped[ctx.guild_id][ctx.channel_id]
 
 @sniper.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
@@ -113,30 +109,25 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def editsnipe(ctx: lightbulb.Context) -> None:
     try:
-        author = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Sender"]
+        author = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Author"]
+        name = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Sender"]
         author_mention = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Mention"]
         before = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["Before"]
         after = sniper.d.editsniped[ctx.guild_id][ctx.channel_id]["After"]
         if isinstance(ctx, lightbulb.PrefixContext):
             await ctx.event.message.delete()
-        if before and after:
-            emb = hikari.Embed(title="Sniped!")
-            emb.add_field(name="Author:",value=author_mention, inline=False)
-            emb.add_field(name="Before:", value=before)
-            emb.add_field(name="After:", value=after)
-            emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
-            await ctx.respond(embed=emb, delete_after=5)
-        else:
-            emb = hikari.Embed(title="Sniped!")
-            emb.add_field(name="Author:", value=author, inline=False)
-            emb.add_field(name="Before:", value="Empty Message.")
-            emb.add_field(name="After:", value="Empty Message.")
-            emb.set_footer(
-                text=f"Sniped by: {ctx.message.author}", icon=ctx.author.avatar_url)
-            await ctx.respond(embed=emb, delete_after=5)
-        del sniper.d.editsniped[ctx.guild_id][ctx.channel_id]
+
+        emb = hikari.Embed(timestamp=datetime.now().astimezone())
+        emb.set_author(name="Sniped!", icon=author.avatar_url)
+        emb.add_field(name="Author:",value=f"{name} ({author_mention})", inline=False)
+        emb.add_field(name="Before:", value=before)
+        emb.add_field(name="After:", value=after)
+        emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
+        await ctx.respond(embed=emb, delete_after=5)
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"), delete_after=3)
+    finally:
+        del sniper.d.editsniped[ctx.guild_id][ctx.channel_id]
 
 @tasks.task(h=1, auto_start=True)
 async def clear_sniper():
