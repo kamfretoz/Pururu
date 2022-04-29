@@ -1,12 +1,23 @@
 import hikari
 import lightbulb
 import miru
-import asyncio
 from lightbulb.ext import filament
 from datetime import datetime, timedelta, timezone
 
 purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
 
+async def purge_messages(ctx: lightbulb.Context, amount: int, channel: hikari.Snowflakeish) -> None:
+    iterator = (
+                ctx.bot.rest.fetch_messages(channel)
+                .limit(amount)
+                .take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
+            )
+    if iterator:
+        async for messages in iterator.chunk(100):
+            await ctx.bot.rest.delete_messages(channel, messages)
+        await ctx.respond(f"**Messages has been sucessfully deleted.**", delete_after=5)
+    else:
+        await ctx.respond("Could not find any messages younger than 14 days!")
 class PromptView(miru.View):
     async def view_check(self, ctx: miru.Context) -> bool:
         return ctx.user.id == ctx.message.interaction.user.id
@@ -31,13 +42,14 @@ class CancelButton(miru.Button):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.add_checks(
     lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
-    lightbulb.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES)
+    lightbulb.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
+    lightbulb.guild_only
 )
 @lightbulb.option("amount", "The number of messages to purge.", type=int, required=True, max_value = 500)
 @lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear","prune"], auto_defer = True)
 @lightbulb.implements(lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def purge_messages(ctx: lightbulb.Context, amount: int) -> None:
+async def purge(ctx: lightbulb.Context, amount: int) -> None:
     if amount > 500:
         await ctx.respond(":x: **You can only purge 500 messages at once, max**")
         return
@@ -61,10 +73,7 @@ async def purge_messages(ctx: lightbulb.Context, amount: int) -> None:
     if hasattr(pruneview, "accepted"):
         if pruneview.accepted is True:
             await prompt.delete()
-            iterator = ctx.bot.rest.fetch_messages(channel).limit(amount).take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
-            async for messages in iterator.chunk(100):
-                await ctx.bot.rest.delete_messages(channel, messages)
-            await ctx.respond(f"**Messages has been sucessfully deleted.**", delete_after=5)
+            await purge_messages(ctx, amount, channel)
         elif pruneview.accepted is False:
             await prompt.delete()
             await ctx.respond(f"**Prune Operation has been cancelled.**", delete_after=7)
