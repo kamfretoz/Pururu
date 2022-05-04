@@ -19,8 +19,6 @@ from utils.const import URL_REGEX, TIME_REGEX, SPOTCLIENT_ID, SPOTCLIENT_SECRET,
 music_plugin = lightbulb.Plugin("music", "Music Related commands", include_datastore=True)
 music_plugin.add_checks(lightbulb.checks.guild_only)
 
-async def ensure_user_in_vc(ctx: lightbulb.Context) -> bool:
-    ...
 class LavalinkEventHandler:
     async def track_start(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         logging.info(f"Track started on guild: {event.guild_id}")
@@ -56,7 +54,6 @@ class LavalinkEventHandler:
         guild_node = await lavalink.get_guild_node(event.guild_id)
         try:
             loop_enabled = guild_node.get_data().get("loop")
-            
             if loop_enabled:
                 song = await music_plugin.d.lavalink.decode_track(event.track)
                 result = await music_plugin.d.lavalink.get_tracks(song.uri)
@@ -66,6 +63,7 @@ class LavalinkEventHandler:
             return
         
         if not guild_node or not guild_node.now_playing and len(guild_node.queue) == 0:
+            chanid = guild_node.get_data().get("ChannelID")
             if event.guild_id is not None:
                 await music_plugin.bot.update_voice_state(event.guild_id, None)
                 await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
@@ -73,6 +71,7 @@ class LavalinkEventHandler:
             await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
             await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
             logging.info(f"Track finished on guild: {event.guild_id}")
+            await music_plugin.bot.rest.create_message(chanid, embed=hikari.Embed(title="**Finished playing the queue!**", color=0xFFFF00))
             return
 
 
@@ -124,6 +123,41 @@ async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
 @music_plugin.listener(hikari.VoiceServerUpdateEvent)
 async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
     await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
+    
+#Use an event listener to listen to VC events
+@music_plugin.listener(hikari.VoiceStateUpdateEvent)
+async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
+    if not music_plugin.bot.cache.get_voice_state(event.guild_id, music_plugin.bot.application.id):
+        return #if the bot is not in the VC we don't care what's going on
+    member = event.state.member
+    old = event.old_state
+    new = event.state
+
+    #Real person did something
+    if not member.is_bot:
+        #Real person just joined
+        if not old:
+            pass
+            
+        #Person DC'd or switched VC
+        if (old and new) and old.channel_id != new.channel_id:
+            members = music_plugin.bot.cache.get_voice_states_view_for_channel(event.guild_id, old.channel_id)
+
+            #Check to see if all humans left the VC
+            if not [m for m in members if not members[m].member.is_bot]:
+                #do stuff knowing everyone has left the VC
+                guild_node = await music_plugin.d.lavalink.get_guild_node(event.guild_id)
+                chanid = guild_node.get_data().get("ChannelID")
+                
+                if event.guild_id is not None:
+                    await music_plugin.bot.update_voice_state(event.guild_id, None)
+                    await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
+                await music_plugin.d.lavalink.destroy(event.guild_id)
+                await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
+                await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
+                
+                await music_plugin.bot.rest.create_message(chanid, embed=hikari.Embed(title="**I have left from Voice channel since it is empty to save on resources.**", color=0xFFFF00))
+                
 
 async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None
