@@ -27,8 +27,8 @@ bot = lightbulb.BotApp(
         "version": 1,
         "incremental": True,
         "loggers": {
-            "hikari": {"level": "DEBUG"},
-            "lightbulb": {"level": "DEBUG"},
+            "hikari": {"level": "INFO"},
+            "lightbulb": {"level": "INFO"},
         },
     },
 )
@@ -60,5 +60,5 @@ if __name__ == "__main__":
         status=hikari.Status.ONLINE,
         activity=hikari.Activity(
             name=choice(statuses),
-            type=hikari.ActivityType.WATCHING,)
+            type=hikari.ActivityType.WATCHING)
     )

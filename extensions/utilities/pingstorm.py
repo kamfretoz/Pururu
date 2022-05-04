@@ -6,7 +6,7 @@ from lightbulb.buckets import GuildBucket
 pingstorm_plugin = lightbulb.Plugin("pingstorm", "ping deez nuts", include_datastore = True)
 
 @pingstorm_plugin.command()
-@lightbulb.add_cooldown(3600, 1, GuildBucket)
+@lightbulb.add_cooldown(3600, 2, GuildBucket)
 @lightbulb.set_max_concurrency(1, GuildBucket)
 @lightbulb.option("amount", "The amount of the pings", int, required = False, default=5, min_value=1, max_value=100)
 @lightbulb.option("user", "The target user", hikari.Member, required = True)
@@ -24,10 +24,10 @@ async def pingstorm(ctx: lightbulb.Context, amount: int, user: hikari.Member) ->
     await asyncio.sleep(3)
     await ctx.respond("Begin!", delete_after=5)
     ping = 0
-    while ping < int(amount):
+    for x in range(amount):
         await ctx.respond(f"{user.mention} - {ping + 1}/{amount}", delete_after=60, user_mentions=True)
         ping += 1
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
     await ctx.respond("Finished!", delete_after=5)
 
 
