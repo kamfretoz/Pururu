@@ -83,7 +83,6 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
         author_mention = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Mention"]
         msg = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Content"]
         attachment = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Attachment"]
-        filename = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Filename"]
         
         if isinstance(ctx, lightbulb.PrefixContext):
             await ctx.event.message.delete()
@@ -93,15 +92,14 @@ async def deletesnipe(ctx: lightbulb.Context) -> None:
         emb.add_field(name="Author:",value=f"{name} ({author_mention})", inline=False)
         emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
         if attachment:
-            emb.add_field(name="Attachments",value=f"[{name}]({attachment})")
+            filename = sniper.d.delsniped[ctx.guild_id][ctx.channel_id]["Filename"]
+            emb.add_field(name="Attachments",value=f"[{filename}]({attachment})")
             if str(filename).endswith(".png") or str(filename).endswith(".gif") or str(name).endswith(".jpg") or str(name).endswith(".jpeg"):
                 emb.set_image(attachment)
         await ctx.respond(embed=emb, delete_after=5)
-        
+        del sniper.d.delsniped[ctx.guild_id][ctx.channel_id]
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"), delete_after=3)
-    finally:
-        del sniper.d.delsniped[ctx.guild_id][ctx.channel_id]
 
 @sniper.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
@@ -124,10 +122,9 @@ async def editsnipe(ctx: lightbulb.Context) -> None:
         emb.add_field(name="After:", value=after)
         emb.set_footer(f"Sniped by: {ctx.author.username}", icon=ctx.author.avatar_url)
         await ctx.respond(embed=emb, delete_after=5)
+        del sniper.d.editsniped[ctx.guild_id][ctx.channel_id]
     except (KeyError, IndexError):
         await ctx.respond(embed=hikari.Embed(description="⚠ No Message found! Perhaps you're too slow?"), delete_after=3)
-    finally:
-        del sniper.d.editsniped[ctx.guild_id][ctx.channel_id]
 
 @tasks.task(h=1, auto_start=True)
 async def clear_sniper():
