@@ -19,6 +19,11 @@ GUILDS = (
         570976409452019722
 )
 
+PREFIX = [
+        "x!",
+        "X!"
+        ]
+
 INTENTS = (
         Intents.GUILDS                      |
         Intents.GUILD_MEMBERS               |
@@ -39,7 +44,6 @@ CACHE = CacheSettings(components=
 )
 
 TOKEN = os.getenv("BOT_TOKEN")
-PREFIX = os.environ["PREFIX"]
 
 
 #

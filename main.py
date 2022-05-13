@@ -2,7 +2,6 @@
 
 import os
 import aiohttp
-import dotenv
 import hikari
 import lightbulb
 import miru
@@ -11,8 +10,6 @@ from random import choice
 from utils.quotes import statuses
 from lightbulb.ext import tasks
 from utils.const import INTENTS, GUILDS, CACHE, TOKEN, PREFIX
-
-dotenv.load_dotenv()
 
 bot = lightbulb.BotApp(
     TOKEN,
