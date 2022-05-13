@@ -7,7 +7,7 @@ from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
 font_content = ImageFont.truetype("res/quote/NotoSansCJKjp-Regular.ttf", 20)
-font_name    = ImageFont.truetype("res/quote/NotoSansCJKjp-Thin.ttf", 24)
+font_name    = ImageFont.truetype("res/quote/NotoSansCJKjp-Medium.ttf", 24)
 
 def image_processing(pfp: BytesIO, name: str , content: str):
     with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
@@ -61,11 +61,14 @@ async def makequote(ctx: lightbulb.Context) -> None:
         
         content = message.content
 
-    name = user.nickname or user.username
+    if not user.nickname and not user.username:
+        name = "Unknown User"
+    else:
+        name = user.nickname or user.username
     pfp = user.guild_avatar_url or user.avatar_url or user.default_avatar_url   
 
     if content is None:
-        content = ""
+        content = " "
     
     user_pfp = BytesIO()
     
