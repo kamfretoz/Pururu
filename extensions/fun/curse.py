@@ -1,6 +1,7 @@
 import hikari
 import lightbulb
 import asyncio
+from lightbulb.ext import tasks
 
 curse_plugin = lightbulb.Plugin("curse", "Get this thing of off me!", include_datastore=True)
 curse_plugin.d.cursed_list = {}
@@ -95,7 +96,10 @@ async def bless(ctx: lightbulb.Context, user: hikari.Member):
             )
         )
         
-                    
+@tasks.task(h=1, auto_start=True)
+async def clear_sniper():
+    curse_plugin.d.cursed_list.clear()
+
 def load(bot):
     bot.add_plugin(curse_plugin)
 

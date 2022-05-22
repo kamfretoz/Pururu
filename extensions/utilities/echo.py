@@ -10,6 +10,9 @@ echo_plugin = lightbulb.Plugin("echo", "Is anyone there?")
 @filament.utils.pass_options
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def echo(ctx: lightbulb.Context, text) -> None:
+    if isinstance(ctx, lightbulb.PrefixContext):
+        await ctx.event.message.delete()
+
     await ctx.respond(text)
     
 @echo_plugin.command()

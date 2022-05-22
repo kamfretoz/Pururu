@@ -120,44 +120,40 @@ async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
         event.state.channel_id,
     )
 
+#Use an event listener to listen to VC events
 @music_plugin.listener(hikari.VoiceServerUpdateEvent)
 async def voice_server_update(event: hikari.VoiceServerUpdateEvent) -> None:
     await music_plugin.d.lavalink.raw_handle_event_voice_server_update(event.guild_id, event.endpoint, event.token)
-    
-#Use an event listener to listen to VC events
+
 @music_plugin.listener(hikari.VoiceStateUpdateEvent)
-async def voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
-    if not music_plugin.bot.cache.get_voice_state(event.guild_id, music_plugin.bot.application.id):
+async def ensure_voice_empty(event: hikari.VoiceStateUpdateEvent) -> None:
+    
+    if event.state.member.is_bot:
+        return # we dont care about bots
+    
+    bot_state = music_plugin.bot.cache.get_voice_state(event.guild_id, music_plugin.bot.application.id)
+    
+    if not bot_state:
         return #if the bot is not in the VC we don't care what's going on
-    member = event.state.member
-    old = event.old_state
-    new = event.state
+    
+    if event.state.channel_id != bot_state.channel_id:
+        return #if the user is not in the same voice channel as the bot. dont do anything.
 
-    #Real person did something
-    if not member.is_bot:
-        #Real person just joined
-        if not old:
-            pass
-            
-        #Person DC'd or switched VC
-        if (old and new) and old.channel_id != new.channel_id:
-            members = music_plugin.bot.cache.get_voice_states_view_for_channel(event.guild_id, old.channel_id)
-
-            #Check to see if all humans left the VC
-            if not [m for m in members if not members[m].member.is_bot]:
-                #do stuff knowing everyone has left the VC
-                guild_node = await music_plugin.d.lavalink.get_guild_node(event.guild_id)
-                chanid = guild_node.get_data().get("ChannelID")
-                
-                if event.guild_id is not None:
-                    await music_plugin.bot.update_voice_state(event.guild_id, None)
-                    await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
-                await music_plugin.d.lavalink.destroy(event.guild_id)
-                await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
-                await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
-                
-                await music_plugin.bot.rest.create_message(chanid, embed=hikari.Embed(title="**I have left from Voice channel since it is empty to save on resources.**", color=0xFFFF00))
-                
+    members = music_plugin.bot.cache.get_voice_states_view_for_channel(event.guild_id, event.state.channel_id)
+    #Check to see if all humans left the VC
+    if not [m for m in members if not members[m].member.is_bot]:
+        #do stuff knowing everyone has left the VC
+        guild_node = await music_plugin.d.lavalink.get_guild_node(event.guild_id)
+        chanid = guild_node.get_data().get("ChannelID")
+        
+        if event.guild_id is not None:
+            await music_plugin.bot.update_voice_state(event.guild_id, None)
+            await music_plugin.d.lavalink.wait_for_connection_info_remove(event.guild_id)
+        await music_plugin.d.lavalink.destroy(event.guild_id)
+        await music_plugin.d.lavalink.remove_guild_from_loops(event.guild_id)
+        await music_plugin.d.lavalink.remove_guild_node(event.guild_id)
+        
+        await music_plugin.bot.rest.create_message(chanid, embed=hikari.Embed(title="**I have left from Voice channel since it is empty to save on resources.**", color=0xFFFF00))
 
 async def _join(ctx: lightbulb.Context) -> Optional[hikari.Snowflake]:
     assert ctx.guild_id is not None

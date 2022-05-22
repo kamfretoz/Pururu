@@ -63,17 +63,17 @@ async def setbotname(ctx: lightbulb.Context, name: str):
     
 
 @tools_plugin.command()
-@lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = False, default = False)
 @lightbulb.option("guild","The ID of the target guild", hikari.Snowflake, required = True)
+@lightbulb.option("globals", "Whether or not to purge global slash commands from the bot.", bool, required = False, default = False)
 @lightbulb.command("clearcmd", "purge all slash commands from specified guild", auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
-async def purge_cmd(ctx: lightbulb.Context, guild: hikari.Snowflake, globals: bool):
+async def purge_cmd(ctx: lightbulb.Context, globals: bool, guild: hikari.Snowflake):
     await ctx.respond("Purging application commands...")
     await ctx.bot.purge_application_commands(guild, global_commands=globals)
     await ctx.edit_last_response("Task Completed Successfully!")
     
 @tools_plugin.command()
-@lightbulb.command("synccmd", "purge all slash commands from specified guild", auto_defer = True)
+@lightbulb.command("synccmd", "Sync slash commands", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def sync_cmd(ctx: lightbulb.Context):
     await ctx.respond("Sycn In Progress...")

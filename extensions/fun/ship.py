@@ -12,11 +12,11 @@ ship_plugin = lightbulb.Plugin("ship", "Will it sail or sank?", include_datastor
 def image_processing(user1: BytesIO, user2: BytesIO, love: int) -> BytesIO:
     with Image.open(user1) as pfp1:
         pfp1.convert("RGBA")
-        pfp1 = pfp1.resize((200, 200), reducing_gap=3.0, resample=Image.ANTIALIAS)
+        pfp1 = pfp1.resize((200, 200), reducing_gap=3.0, resample=Image.Resampling.ANTIALIAS)
         
     with Image.open(user2) as pfp2:
         pfp2.convert("RGBA")
-        pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0, resample=Image.ANTIALIAS)
+        pfp2 = pfp2.resize((pfp1.size), reducing_gap=3.0, resample=Image.Resampling.ANTIALIAS)
 
     mask = ellipse(pfp1.size)
     
