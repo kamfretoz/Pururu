@@ -121,7 +121,7 @@ You will need to configure the bot with the `.env` file. This is needed to store
 
 2. Create a Virtual Enviroment and activate it
     ```sh
-    python3 -m pip venv .venv
+    python3 -m venv .venv
     source .venv/bin/activate
     ```
 
