@@ -82,13 +82,15 @@ async def codeblock(ctx: lightbulb.Context, text: str):
 @filament.utils.pass_options
 async def bigtext(ctx: lightbulb.Context, text: str):
     s = ""
-    if len(text) >= 1024:
-        shorten(text, width=1024)
+    if len(text) >= 128:
+        shorten(text, width=120)
     for char in text:
         if char.isalpha():
             s += f":regional_indicator_{char.lower()}: "
         elif char.isspace():
             s += "   "
+        else:
+            s += "❓"
     await ctx.respond(s)
 
 @text_plugin.command
@@ -98,8 +100,8 @@ async def bigtext(ctx: lightbulb.Context, text: str):
 @filament.utils.pass_options
 async def charinfo(ctx: lightbulb.Context, char: str):
     """Shows you information about a number of characters."""
-    if len(char) > 15:
-        return await ctx.respond(f'Too many characters ({len(char)}/15)')
+    if len(char) > 5:
+        return await ctx.respond(f'Too many characters ({len(char)}/5)')
     
     await ctx.respond('\n'.join(map(char_format, char)))
 
