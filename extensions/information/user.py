@@ -32,7 +32,7 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     )
     emb.set_footer(
         text=f"Requested by {ctx.member.display_name}",
-        icon=ctx.member.avatar_url or ctx.member.default_avatar_url,
+        icon=ctx.member.avatar_url or ctx.member.default_avatar_url
     )
     emb.set_thumbnail(target.avatar_url or target.default_avatar_url)
     emb.add_field(

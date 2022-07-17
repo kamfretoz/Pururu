@@ -1,6 +1,7 @@
 import lightbulb
 import hikari
 from lightbulb.utils import pag, nav
+from hikari.permissions import Permissions
 
 ban_plugin = lightbulb.Plugin("ban", "Prepare the ban hammer!! (Please use it wisely")
 ban_plugin.add_checks(
@@ -9,11 +10,16 @@ ban_plugin.add_checks(
     lightbulb.guild_only
     )
 
+BAN_PERMISSIONS = (
+    Permissions.BAN_MEMBERS
+)
+
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", int, min_value = 0, max_value = 7, default = 0 ,required=False)
 @lightbulb.option("user", "the user you want to ban", hikari.User , required=True)
+@lightbulb.app_command_permissions(BAN_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("ban", "ban a member", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def ban(ctx: lightbulb.Context, user: hikari.User, delete_message: int, reason: str):
@@ -27,6 +33,7 @@ async def ban(ctx: lightbulb.Context, user: hikari.User, delete_message: int, re
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for unbanning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to unban (Please use their user ID)", hikari.Snowflake, required=True)
+@lightbulb.app_command_permissions(BAN_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("unban", "unban a member", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def unban(ctx: lightbulb.Context, user: hikari.Snowflake, reason: str):
@@ -37,6 +44,7 @@ async def unban(ctx: lightbulb.Context, user: hikari.Snowflake, reason: str):
     
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
+@lightbulb.app_command_permissions(BAN_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("banlist", "see the list of banned members in this server", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def banlist(ctx: lightbulb.Context):

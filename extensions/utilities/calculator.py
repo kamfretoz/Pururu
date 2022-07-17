@@ -31,20 +31,14 @@ def calculate(s):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def calc(ctx: lightbulb.Context, calculation: str) -> None:
-    calc_regex = "^(\d+[\+\-\*\/\//]{1})+\d+$"
-    calc_result = match(calc_regex, calculation)
-    
-    if calc_result:
-        em = hikari.Embed(color=0xD3D3D3, title="Calculator")
-        try:
-            em.add_field(name="Input:", value=calculation, inline=False,)
-            em.add_field(name="Output:", value=str(calculate(calculation.replace(
-                "**", "^").replace("x", "*").replace(" ", "").strip())), inline=False)
-        except Exception as e:
-            raise ValueError(f"An Error Occured! {e}")
-        await ctx.respond(embed=em)
-    else:
-        raise ValueError(f"Invalid Format!")
+    em = hikari.Embed(color=0xD3D3D3, title="Calculator")
+    try:
+        em.add_field(name="Input:", value=calculation, inline=False,)
+        em.add_field(name="Output:", value=str(calculate(calculation.replace(
+            "**", "^").replace("x", "*").replace(" ", "").strip())), inline=False)
+    except Exception as e:
+        raise ValueError(f"An Error Occured! {e}")
+    await ctx.respond(embed=em)
 
 def load(bot):
     bot.add_plugin(calc_plugin)

@@ -2,8 +2,18 @@ import hikari
 import lightbulb
 import miru
 from datetime import datetime, timedelta, timezone
+from hikari.permissions import Permissions
 
 purge_plugin = lightbulb.Plugin("purge", "Burn down the evidence! *evil laugh*")
+purge_plugin.add_checks(
+    lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
+    lightbulb.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
+    lightbulb.guild_only
+)
+PURGE_PERMISSIONS = (
+    Permissions.MANAGE_MESSAGES
+)
+
 
 async def purge_messages(ctx: lightbulb.Context, amount: int, channel: hikari.Snowflakeish) -> None:
     iterator = (
@@ -39,12 +49,8 @@ class CancelButton(miru.Button):
 
 @purge_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.add_checks(
-    lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
-    lightbulb.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),
-    lightbulb.guild_only
-)
 @lightbulb.option("amount", "The number of messages to purge.", type=int, required=True, max_value = 500)
+@lightbulb.app_command_permissions(PURGE_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear","prune"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand)
 async def purge(ctx: lightbulb.Context, amount: int) -> None:

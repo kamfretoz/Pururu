@@ -1,11 +1,15 @@
 import lightbulb
 import hikari
 from datetime import datetime, timedelta, timezone
+from hikari.permissions import Permissions
 
 timeout_plugin = lightbulb.Plugin("timeout", "timeout for a moment.")
 timeout_plugin.add_checks(
     lightbulb.checks.has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS),
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MODERATE_MEMBERS)
+)
+TIMEOUT_PERMISSIONS = (
+    Permissions.MODERATE_MEMBERS
 )
 
 @timeout_plugin.command()
@@ -16,6 +20,7 @@ timeout_plugin.add_checks(
 @lightbulb.option("minute", "the duration of the timeout (minute)", int, required=False, default=0)
 @lightbulb.option("second", "the duration of the timeout (second)", int, required=False, default=0)
 @lightbulb.option("user", "the user you want to be put in timeout", hikari.Member , required=True)
+@lightbulb.app_command_permissions(TIMEOUT_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("timeout", "Timeout a member", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand)
 async def timeout(ctx: lightbulb.Context, user: hikari.Member, second: int, minute: int, hour: int , days: int, reason: str):

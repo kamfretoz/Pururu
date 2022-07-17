@@ -1,5 +1,6 @@
 import hikari
 import lightbulb
+from hikari.permissions import Permissions
 
 kick_plugin = lightbulb.Plugin("kick", "DENGAN KEKUATAN SLEDING KAK SETO!")
 kick_plugin.add_checks(
@@ -7,13 +8,16 @@ kick_plugin.add_checks(
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.KICK_MEMBERS),
     lightbulb.guild_only
 )
+KICK_PERMISSIONS = (
+    Permissions.KICK_MEMBERS
+)
 
 
 @kick_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("reason", "the reason for kicking the member", str, required=False,
-                  modifier=lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("reason", "the reason for kicking the member", str, required=False, modifier=lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to kick", hikari.User, required=True)
+@lightbulb.app_command_permissions(KICK_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("kick", "kick a member", auto_defer=True, pass_options=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def kick(ctx: lightbulb.Context, user, reason):

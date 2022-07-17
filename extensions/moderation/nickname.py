@@ -1,5 +1,6 @@
 import hikari
 import lightbulb
+from hikari.permissions import Permissions
 
 nickname_plugin = lightbulb.Plugin("nickname", "*Who are you again?*")
 nickname_plugin.add_checks(
@@ -7,12 +8,17 @@ nickname_plugin.add_checks(
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MANAGE_NICKNAMES),
     lightbulb.guild_only
 )
+NICKNAME_PERMISSIONS = (
+    Permissions.MANAGE_NICKNAMES        |
+    Permissions.MODERATE_MEMBERS
+)
 
 
 @nickname_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("nick", "the new nickname you want to set (leave empty to reset!)", str, required=False)
 @lightbulb.option("member", "The member you want to change the nickname", hikari.Member, required=True)
+@lightbulb.app_command_permissions(NICKNAME_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("nickname", "Change the nickname of a member", auto_defer=True, pass_options=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def nickname(ctx: lightbulb.Context, member: hikari.Member, nick: str):

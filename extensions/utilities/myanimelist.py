@@ -190,10 +190,13 @@ async def myanimelist_chara(ctx: lightbulb.Context, name):
         emb.add_field(name="👤 Nickname", value=f"{char_nick}", inline=False)
     except IndexError:
         pass
-    about = char_about
-    if len(about) > 1024:
-        about = shorten(char_about, width=1000,placeholder="...")
-    emb.add_field(name="ℹ️ About", value=about, inline=False)
+
+    if char_about:
+        about = char_about
+        if len(about) > 1024:
+            about = shorten(char_about, width=1000,placeholder="...")
+            emb.add_field(name="ℹ️ About", value=about, inline=False)
+
     emb.add_field(name="💳 ID", value=char_id, inline=True)
     await ctx.respond(embed=emb)
 
