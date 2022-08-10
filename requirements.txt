@@ -1,10 +1,10 @@
 aiohttp[speedups] == 3.8.1
-hikari[speedups] == 2.0.0.dev109
+hikari[speedups] == 2.0.0.dev110
 hikari-lightbulb == 2.2.3
 uvloop == 0.16.0; sys_platform != "win32" 
 git+https://github.com/tandemdude/lightbulb-ext-filament
 lavasnek-rs == 0.1.0a5
-hikari-miru == 1.1.1
+hikari-miru == 1.1.2
 ciso8601 == 2.2.0
 python-dotenv == 0.20.0
 psutil == 5.9.1 
