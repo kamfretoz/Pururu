@@ -1,6 +1,11 @@
 aiohttp[speedups] == 3.8.1
+<<<<<<< HEAD
 hikari[speedups] == 2.0.0.dev110
 hikari-lightbulb == 2.2.3
+=======
+hikari[speedups] == 2.0.0.dev109
+hikari-lightbulb == 2.2.4
+>>>>>>> 2c9956c5c97628a4e053bb08938ae92a2ed3b7e9
 uvloop == 0.16.0; sys_platform != "win32" 
 git+https://github.com/tandemdude/lightbulb-ext-filament
 lavasnek-rs == 0.1.0a5
@@ -13,4 +18,4 @@ pilmoji == 2.0.1
 pytemperature == 1.1
 qrcode == 7.3.1
 spotipy == 2.20.0
-rapidfuzz == 2.0.11
+rapidfuzz == 2.4.2
