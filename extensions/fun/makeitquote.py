@@ -6,11 +6,11 @@ from utils.text_wrapper import wrap_text
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
-font_content = ImageFont.truetype("res/quote/NotoSansCJKjp-Regular.ttf", 20)
-font_name    = ImageFont.truetype("res/quote/NotoSansCJKjp-Medium.ttf", 24)
+font_content = ImageFont.truetype("res/quote/NotoSansCJKjp-Regular.ttf", 18)
+font_name    = ImageFont.truetype("res/quote/NotoSansCJKjp-Medium.ttf", 20)
 
 def image_processing(pfp: BytesIO, name: str , content: str):
-    with Image.new(mode = "RGBA", size = (700, 256), color = (21, 22 ,24)) as base:
+    with Image.new(mode = "RGBA", size = (700, 300), color = (0, 0 ,0)) as base:
         icon = Image.open(pfp)
         icon.convert("RGBA")
         icon = icon.resize((200, 200), reducing_gap=3.0, resample=Image.Resampling.LANCZOS)
@@ -19,17 +19,16 @@ def image_processing(pfp: BytesIO, name: str , content: str):
         
         base.paste(icon, (30, 30), mask)
         
-        text = wrap_text(font=font_content, text=content, max_width=425, max_height=150)
+        text = wrap_text(font=font_content, text=content, max_width=425, max_height=250)
         
         with Pilmoji(base) as final:
-            final.text((250, 20), text, font=font_content, align = "left")
-            final.text((250, 200), f" - {name}", font=font_name, align = "center")
+            final.text((250, 10), text, font=font_content, align = "left")
+            final.text((80, 250), f"{name}", font=font_name, align = "center")
     
     image = BytesIO()
     base.save(image, format="PNG", optimize=True, quality=100)
     image.seek(0)
     return image
-        
 
 aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True)
 
@@ -61,10 +60,11 @@ async def makequote(ctx: lightbulb.Context) -> None:
         
         content = message.content
 
-    if not user.nickname and not user.username:
+
+    name = user.username
+    if not name:
         name = "Unknown User"
-    else:
-        name = user.nickname or user.username
+
     pfp = user.guild_avatar_url or user.avatar_url or user.default_avatar_url   
 
     if content is None:
@@ -77,7 +77,7 @@ async def makequote(ctx: lightbulb.Context) -> None:
             user_pfp.write(chunk)
     
     loop = asyncio.get_running_loop()
-    img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, user_pfp, name, content)
+    img = await loop.run_in_executor(ctx.bot.d.process_pool, image_processing, user_pfp, name, content.strip())
 
     await ctx.respond(attachment=img, content = f"Here is the quote! {ctx.author.mention}", user_mentions=True)
 
