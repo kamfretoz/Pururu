@@ -66,7 +66,7 @@ async def stats(ctx: lightbulb.Context) -> None:
         inline=False,
     )
     em.add_field(
-        name=":gear: Library version",
+        name=":gear: Library Version",
         value=f"hikari {hikari.__version__} + Lightbulb {lightbulb.__version__}",
         inline=False,
     )
