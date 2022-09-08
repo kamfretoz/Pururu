@@ -10,7 +10,7 @@ server_plugin = lightbulb.Plugin("server", "Server info commands")
 @lightbulb.command("serverinfo", "Show's the information of the current server", aliases=["si","servinfo"], auto_defer=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def serverinfo(ctx: lightbulb.Context):
-    guild = ctx.bot.cache.get_guild(ctx.guild_id) or await ctx.bot.rest.fetch_guild(ctx.guild_id)
+    guild = await ctx.bot.rest.fetch_guild(ctx.guild_id)
     roles = await guild.fetch_roles()
     all_roles = [r.mention for r in roles]
     id = str(guild.id)
@@ -67,7 +67,7 @@ async def server_icon(ctx: lightbulb.Context):
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def inrole(ctx: lightbulb.Context, role: hikari.Role) -> None:
     lst = pag.EmbedPaginator()
-            
+    count = 0
     @lst.embed_factory()
     def build_embed(page_index,page_content):
         emb = hikari.Embed(title=f"List of members on the '{role.name}' Role.", description=page_content, color=role.color)
@@ -77,7 +77,12 @@ async def inrole(ctx: lightbulb.Context, role: hikari.Role) -> None:
         member = ctx.get_guild().get_member(member_id)
         if role.id in member.role_ids:
             lst.add_line(member)
-            
+            count += 1
+    
+    if count == 0:
+        await ctx.respond(embed=hikari.Embed(description="No Members found."))
+        return
+    
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
 

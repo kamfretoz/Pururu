@@ -7,37 +7,40 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.Member, required=False)
-@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo"], ephemeral=True, auto_defer=True)
+@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo", "ui", "userinfo"], ephemeral=True, auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def  member_info(ctx: lightbulb.Context, target) -> None:
-    target = ctx.get_guild().get_member(target or ctx.user)
+async def  member_info(ctx: lightbulb.Context, target: hikari.Member) -> None:
+    if target is None:
+        target = ctx.member
+    
+    user = ctx.get_guild().get_member(target)
 
-    if not target:
+    if not user:
         await ctx.respond("That user is not in the server, use the userinfo command instead.")
         return
 
-    created_at = int(target.created_at.timestamp())
-    joined_at = int(target.joined_at.timestamp())
+    created_at = int(user.created_at.timestamp())
+    joined_at = int(user.joined_at.timestamp())
 
-    roles = (await target.fetch_roles())[1:]  # All but @everyone
+    roles = (await user.fetch_roles())[1:]  # All but @everyone
     
     
     
     emb = hikari.Embed(
-        title=f"User Info - {target.display_name}",
-        description=f"ID: `{target.id}`",
-        colour=target.accent_color,
+        title=f"User Info - {user.display_name}",
+        description=f"ID: `{user.id}`",
+        colour=user.accent_color,
         timestamp=datetime.now().astimezone(),
     )
     emb.set_footer(
         text=f"Requested by {ctx.member.display_name}",
         icon=ctx.member.avatar_url or ctx.member.default_avatar_url
     )
-    emb.set_thumbnail(target.avatar_url or target.default_avatar_url)
+    emb.set_thumbnail(user.avatar_url or user.default_avatar_url)
     emb.add_field(
         "Bot?",
-        str(target.is_bot),
+        str(user.is_bot),
         inline=False,
     )
     emb.add_field(
@@ -57,41 +60,11 @@ async def  member_info(ctx: lightbulb.Context, target) -> None:
     )
     emb.add_field(
         "Mention", 
-        target.mention, 
+        user.mention, 
         inline=False
     )
     
     await ctx.respond(emb)
-    
-@user_plugin.command
-@lightbulb.option("user", "The member to get information about.", hikari.User, required=False)
-@lightbulb.command("userinfo", "Get info on any user", aliases=["ui","uprofile","uinfo"], ephemeral=True, auto_defer=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def  user_info(ctx: lightbulb.Context, user) -> None:
-    target = await ctx.bot.rest.fetch_user(user = user or ctx.user)
-    if not target:
-        await ctx.respond("Cannot find that user.")
-        return
-    created_at = int(target.created_at.timestamp())
-    emb = hikari.Embed(
-            title=f"User Info - {target}",
-            description=f"ID: `{target.id}`",
-            colour=target.accent_color,
-            timestamp=datetime.now().astimezone(),
-        )
-    emb.add_field(name="Is bot?", value=target.is_bot, inline=False)
-    emb.set_thumbnail(target.avatar_url or target.default_avatar_url)
-    if target.banner_url:
-        emb.set_image(target.banner_url)
-    emb.add_field(
-            "Created account on",
-            f"<t:{created_at}:d>\n(<t:{created_at}:R>)",
-            inline=False,
-    )
-    emb.add_field(name="Mention", value=target.mention, inline=False)
-    
-    await ctx.respond(embed=emb)
 
 @user_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
@@ -101,19 +74,22 @@ async def  user_info(ctx: lightbulb.Context, user) -> None:
 @filament.utils.pass_options
 async def user_banner(ctx: lightbulb.Context, target: hikari.User):
     """Show the banner of a user, if any"""
-    target = await ctx.bot.rest.fetch_user(target or ctx.user)
+    if target is None:
+        target = ctx.user
+    
+    user = await ctx.bot.rest.fetch_user(target)
 
-    if not target:
+    if not user:
         await ctx.respond("That user is not in the server.")
         return
     
-    banner = target.banner_url
+    banner = user.banner_url
     # If statement because the user may not have a banner
     if banner:
         bnr = hikari.Embed(
-                description=f"**{target.mention}**'s Banner",
+                description=f"**{user.mention}**'s Banner",
                 title="Banner Viewer",
-                color=target.accent_colour,
+                color=user.accent_colour,
                 timestamp=datetime.now().astimezone(),
             )
         bnr.set_image(banner)
@@ -123,21 +99,24 @@ async def user_banner(ctx: lightbulb.Context, target: hikari.User):
         
 @user_plugin.command
 @lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = False)
-@lightbulb.option("target", "The member to get the avatar.", hikari.User , required=False)
+@lightbulb.option("target", "The member to get the avatar.", hikari.Member , required=False)
 @lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"], ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
-async def user_avatar(ctx: lightbulb.Context, target: hikari.User, server: bool):
+async def user_avatar(ctx: lightbulb.Context, target: hikari.Member, server: bool):
     """Show avatar of a user, if any"""
-    target =  await ctx.bot.rest.fetch_user(target or ctx.user)
+    if target is None:
+        target = ctx.member
+        
+    user =  ctx.get_guild().get_member(target)
 
-    if not target:
+    if not user:
         await ctx.respond("That user is not in the server.")
         return
     
     if server:
         try:
-            pfp = target.guild_avatar_url
+            pfp = user.guild_avatar_url
         except AttributeError:
             return await ctx.respond("That user doesn't have server-specific avatar.")
     else:
@@ -145,7 +124,7 @@ async def user_avatar(ctx: lightbulb.Context, target: hikari.User, server: bool)
     # If statement because the user may not have a custom avatar
     if pfp:
         ava = hikari.Embed(
-                description=f"**{target.mention}**'s Avatar",
+                description=f"**{user.mention}**'s Avatar",
                 title="Avatar Viewer",
                 color=target.accent_colour,
                 timestamp=datetime.now().astimezone(),
