@@ -28,7 +28,7 @@ async def send_embed(name, code, event, *args):
     err = hikari.Embed(description=f"**:warning: {message}**", timestamp=datetime.datetime.now().astimezone(), color=0xFF0000)
     if code:
         err.set_image(f"https://http.cat/{code}.jpg")
-    await event.context.respond(content=random.choice(error_quotes), embed=err)
+    await event.context.respond(content=random.choice(error_quotes), embed=err, flags=hikari.MessageFlag.EPHEMERAL)
 
 async def on_error(event: lightbulb.CommandErrorEvent) -> None:
     # Unwrap the exception to get the original cause

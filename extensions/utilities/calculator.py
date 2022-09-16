@@ -1,7 +1,6 @@
 import lightbulb
 import hikari
 from operator import pow, truediv, mul, add, sub, floordiv
-from re import match
 from lightbulb.ext import filament
 
 calc_plugin = lightbulb.Plugin("calculator", "It's a simple calculator, what did you expect?")

@@ -7,17 +7,17 @@ user_plugin = lightbulb.Plugin("user", "User lookup commands")
 
 @user_plugin.command
 @lightbulb.option("target", "The member to get information about.", hikari.Member, required=False)
-@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo", "ui", "userinfo"], ephemeral=True, auto_defer=True)
+@lightbulb.command("memberinfo", "Get info on a server member.", aliases=["mi","profile","minfo", "ui", "userinfo"], auto_defer=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def  member_info(ctx: lightbulb.Context, target: hikari.Member) -> None:
     if target is None:
         target = ctx.member
     
-    user = ctx.get_guild().get_member(target)
+    user = ctx.bot.cache.get_guild(ctx.guild_id).get_member(target)
 
     if not user:
-        await ctx.respond("That user is not in the server, use the userinfo command instead.")
+        await ctx.respond("That user is not in the server")
         return
 
     created_at = int(user.created_at.timestamp())
@@ -28,7 +28,7 @@ async def  member_info(ctx: lightbulb.Context, target: hikari.Member) -> None:
     
     
     emb = hikari.Embed(
-        title=f"User Info - {user.display_name}",
+        title=f"User Info - {user.username}#{user.discriminator}",
         description=f"ID: `{user.id}`",
         colour=user.accent_color,
         timestamp=datetime.now().astimezone(),
@@ -41,16 +41,16 @@ async def  member_info(ctx: lightbulb.Context, target: hikari.Member) -> None:
     emb.add_field(
         "Bot?",
         str(user.is_bot),
-        inline=False,
+        inline=True,
     )
     emb.add_field(
         "Created account on",
-        f"<t:{created_at}:d>\n(<t:{created_at}:R>)",
+        f"<t:{created_at}:F>\n(<t:{created_at}:R>)",
         inline=False,
     )
     emb.add_field(
         "Joined server on",
-        f"<t:{joined_at}:d>\n(<t:{joined_at}:R>)",
+        f"<t:{joined_at}:F>\n(<t:{joined_at}:R>)",
         inline=False,
     )
     emb.add_field(
@@ -69,7 +69,7 @@ async def  member_info(ctx: lightbulb.Context, target: hikari.Member) -> None:
 @user_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("target", "The member to get the banner.", hikari.User, required=False)
-@lightbulb.command("banner", "Get a member's banner.", auto_defer = True, ephemeral = True)
+@lightbulb.command("banner", "Get a member's banner.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def user_banner(ctx: lightbulb.Context, target: hikari.User):
@@ -100,7 +100,7 @@ async def user_banner(ctx: lightbulb.Context, target: hikari.User):
 @user_plugin.command
 @lightbulb.option("server", "Get the server avatar instead?", bool, required = False, default = False)
 @lightbulb.option("target", "The member to get the avatar.", hikari.Member , required=False)
-@lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"], ephemeral=True)
+@lightbulb.command("avatar", "Get a member's avatar.", auto_defer=True, aliases=["pp", "pfp","ava","icon"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 @filament.utils.pass_options
 async def user_avatar(ctx: lightbulb.Context, target: hikari.Member, server: bool):
@@ -108,7 +108,7 @@ async def user_avatar(ctx: lightbulb.Context, target: hikari.Member, server: boo
     if target is None:
         target = ctx.member
         
-    user =  ctx.get_guild().get_member(target)
+    user =  ctx.bot.cache.get_guild(ctx.guild_id).get_member(target)
 
     if not user:
         await ctx.respond("That user is not in the server.")

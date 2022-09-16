@@ -32,11 +32,11 @@ async def serverinfo(ctx: lightbulb.Context):
     emb.set_image(guild.banner_url)
     emb.add_field(name="ID", value=id, inline=False)
     emb.add_field(name="Owner", value=f"{owner} ({owner.mention})", inline=False)
-    emb.add_field(name="Created At", value=f"<t:{created}:d>\n(<t:{created}:R>)", inline=False)
-    emb.add_field(name="Member Count", value=f"{members} Members", inline=False)
-    emb.add_field(name="Channel Count", value=f"{channels} Channels", inline=False)
+    emb.add_field(name="Created At", value=f"<t:{created}:F>\n(<t:{created}:R>)", inline=False)
+    emb.add_field(name="Member Count", value=f"{members} Members", inline=True)
+    emb.add_field(name="Channel Count", value=f"{channels} Channels", inline=True)
     emb.add_field(name="Verification Level", value=verif, inline=False)
-    emb.add_field(name="Server Level", value=f"Level {level} ({boost} Boosts.)", inline=False)
+    emb.add_field(name="Server Level", value=f"Level {level} ({boost} Boosts)", inline=False)
         
     if "COMMUNITY" in guild.features:
         emb.add_field(name="Rule Channel", value=f"<#{guild.rules_channel_id}>", inline=False)
@@ -55,7 +55,7 @@ async def serverinfo(ctx: lightbulb.Context):
 @lightbulb.command("servericon", "Shows the list of member on a particular role", aliases=["si_icon"], auto_defer=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def server_icon(ctx: lightbulb.Context):
-    guild = ctx.bot.cache.get_guild(ctx.guild_id) or await ctx.bot.rest.fetch_guild(ctx.guild_id)
+    guild = ctx.bot.cache.get_guild(ctx.guild_id)
     embed = hikari.Embed(title=f"Server Icon for {guild.name}")
     embed.set_image(guild.icon_url)
     await ctx.respond(embed=embed)
@@ -73,8 +73,8 @@ async def inrole(ctx: lightbulb.Context, role: hikari.Role) -> None:
         emb = hikari.Embed(title=f"List of members on the '{role.name}' Role.", description=page_content, color=role.color)
         return emb
     
-    for member_id in ctx.get_guild().get_members():
-        member = ctx.get_guild().get_member(member_id)
+    for member_id in ctx.bot.cache.get_guild(ctx.guild_id).get_members():
+        member = ctx.bot.cache.get_guild(ctx.guild_id).get_member(member_id)
         if role.id in member.role_ids:
             lst.add_line(member)
             count += 1
