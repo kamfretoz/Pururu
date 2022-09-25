@@ -63,8 +63,8 @@ ext_plugin.d.ps = {
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST, pass_options=True)
-@lightbulb.command("8ball", "Ask a question to the 8Ball!")
+@lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.command("8ball", "Ask a question to the 8Ball!",  pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def eightball(ctx: lightbulb.Context, question: str):
     choices = choice(choice(list(ext_plugin.d.ps.values())))
@@ -82,8 +82,8 @@ async def eightball(ctx: lightbulb.Context, question: str):
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST, pass_options = True)
-@lightbulb.command("f", "Press F to pay respect.")
+@lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.command("f", "Press F to pay respect.", pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def respect(ctx: lightbulb.Context, text: str):
     hearts = ['❤', '💛', '💚', '💙', '💜', '♥']
