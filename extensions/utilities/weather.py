@@ -6,7 +6,6 @@ import os
 import pytemperature
 from datetime import datetime
 from math import trunc
-from lightbulb.ext import filament
 
 weather_plugin = lightbulb.Plugin("weather", "Drip Drip Drip")
 
@@ -75,9 +74,8 @@ def wind_condition(wind_speed):
 @weather_plugin.command()
 @lightbulb.add_cooldown(3, 2, lightbulb.UserBucket)
 @lightbulb.option("city", "the city you want to check", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("weather", "See the weather of a given city", auto_defer=True)
+@lightbulb.command("weather", "See the weather of a given city", auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def weather(ctx: lightbulb.Context, city) -> None:
     # To retrieve the API KEY
     # https://stackoverflow.com/a/7490772 https://www.windfinder.com/wind/windspeed.htm

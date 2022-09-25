@@ -1,7 +1,6 @@
 import lightbulb
 import hikari
 from operator import pow, truediv, mul, add, sub, floordiv
-from lightbulb.ext import filament
 
 calc_plugin = lightbulb.Plugin("calculator", "It's a simple calculator, what did you expect?")
 
@@ -26,9 +25,8 @@ def calculate(s):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.set_help(text="Simple calculator, From ℤ to ℤ only.")
 @lightbulb.option("calculation", "The operation you want to perform", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("calculator", "Calculate the given value", aliases=["calc"], auto_defer = True)
+@lightbulb.command("calculator", "Calculate the given value", aliases=["calc"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def calc(ctx: lightbulb.Context, calculation: str) -> None:
     em = hikari.Embed(color=0xD3D3D3, title="Calculator")
     try:

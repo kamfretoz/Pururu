@@ -1,14 +1,12 @@
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 
 urban_plugin = lightbulb.Plugin("urban", "Urban Dictionary related command!")
 
 @urban_plugin.command()
 @lightbulb.option("definition", "The definition you want to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("urban", "Look up urban dictionary for the given word!", auto_defer = True)
+@lightbulb.command("urban", "Look up urban dictionary for the given word!", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def urban(ctx: lightbulb.Context, definition) -> None:
     #--First we connect to Urban Dictionary's API and get the results--#
     parameters = {

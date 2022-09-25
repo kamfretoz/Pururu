@@ -4,7 +4,6 @@ import json
 import dotenv
 import os
 from datetime import datetime
-from lightbulb.ext import filament
 
 curr_plugin = lightbulb.Plugin("currency", "money money money")
 
@@ -16,9 +15,8 @@ curr_key = os.environ["GEO_CURR_API"]
 @lightbulb.option("val", "The amount you want to convert", int, required=True)
 @lightbulb.option("to", "The currency you want to convert to", str, required=True)
 @lightbulb.option("origin", "The currency you want to convert from", str, required=True)
-@lightbulb.command("currency", "Convert value from one currency to another", aliases=["curr"], auto_defer=True)
+@lightbulb.command("currency", "Convert value from one currency to another", aliases=["curr"], auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def currency(ctx: lightbulb.Context, origin: str, to: str, val: int):
     parameters = {
         "api_key": curr_key,

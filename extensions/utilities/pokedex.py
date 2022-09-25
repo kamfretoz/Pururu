@@ -1,13 +1,11 @@
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 pokedex_plugin = lightbulb.Plugin("pokedex", "Pokeom Query Lookup tool")
 
 @pokedex_plugin.command()
 @lightbulb.option("pokemon", "The name of the pokemon you want to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("pokedex", "Access Pokédex database of Information", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def pokedex(ctx: lightbulb.Context, pokemon) -> None:
     #--Some Pokemon with several forms are named differently on the API, so if one of those Pokemon are specified, we replace the query with the correct name--#
     pkmn = {

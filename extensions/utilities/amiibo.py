@@ -1,14 +1,12 @@
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 
 amiibo_plugin = lightbulb.Plugin("amiibo", "For Nintendo's Amiibo related command")
 
 @amiibo_plugin.command()
 @lightbulb.option("query", "The amiibo you want to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("amiibo", "Look up information on Nintendo's Amiibo", auto_defer = True)
+@lightbulb.command("amiibo", "Look up information on Nintendo's Amiibo", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def amiibo(ctx: lightbulb.Context, query) -> None:
     #--First we connect to the Amiibo API and download the Amiibo information--#
     parameters = {

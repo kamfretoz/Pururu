@@ -39,7 +39,7 @@ async def timeout(ctx: lightbulb.Context, user: hikari.Member, second: int, minu
         txt = f"Timeout for {user.mention} has been removed successfully!"
     else:
         await ctx.respond(f"Attempting to timeout **{user}**")
-        txt = f"The user {user.mention} has been timed out until <t:{int(then.timestamp())}:R>"
+        txt = f"The user {user.mention} has been timed out until <t:{int(then.timestamp())}:R> for `{reason}`"
     await ctx.bot.rest.edit_member(user = user, guild = ctx.get_guild(), communication_disabled_until=then, reason=res)
     await ctx.edit_last_response(txt)
     

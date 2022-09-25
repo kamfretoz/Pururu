@@ -1,7 +1,6 @@
 import lightbulb
 import random
 import unicodedata
-from lightbulb.ext import filament
 from textwrap import shorten
 
 text_plugin = lightbulb.Plugin("texts", "Many kind of text manipulation tools!")
@@ -14,9 +13,8 @@ def char_format(c):
 
 @text_plugin.command
 @lightbulb.option("text", "The text you want to drunkify", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("mock", "iTS SpElleD sQl!!", aliases=["drunkify"])
+@lightbulb.command("mock", "iTS SpElleD sQl!!", aliases=["drunkify"], pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def mock(ctx: lightbulb.Context, text: str):
     """
     iTS SpElleD sQl!!
@@ -35,9 +33,8 @@ async def mock(ctx: lightbulb.Context, text: str):
 @text_plugin.command
 @lightbulb.option("text", "The text you want to reverse", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("gap", "The gap between each T E X T", int, min_value = 1, max_value = 5)
-@lightbulb.command("expand", "E X P A N D the T E X T", aliases=["enlarge"])
+@lightbulb.command("expand", "E X P A N D the T E X T", aliases=["enlarge"], pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def expand(ctx:lightbulb.Context, gap: int, text: str):
     spacing = ""
     if gap > 0 and gap <= 5:
@@ -53,9 +50,8 @@ async def expand(ctx:lightbulb.Context, gap: int, text: str):
 
 @text_plugin.command
 @lightbulb.option("text", "The text you want to reverse", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("reverse", "txeT eht esreveR", aliases=["rev"])
+@lightbulb.command("reverse", "txeT eht esreveR", aliases=["rev"], pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def reverse(ctx: lightbulb.Context, text: str):
     result = text[::-1]
     if len(result) <= 2000:
@@ -65,9 +61,8 @@ async def reverse(ctx: lightbulb.Context, text: str):
             
 @text_plugin.command
 @lightbulb.option("text", "the text to be put in codeblock", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("codeblock", "wrap a text inside a codeblock", aliases=["cb"])
+@lightbulb.command("codeblock", "wrap a text inside a codeblock", aliases=["cb"], pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def codeblock(ctx: lightbulb.Context, text: str):
     """Write text in code format."""
     if len(text) <= 1900:
@@ -77,9 +72,8 @@ async def codeblock(ctx: lightbulb.Context, text: str):
         
 @text_plugin.command
 @lightbulb.option("text", "the text to 🇧 🇮 🇬", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("bigtext", "Make your text 🇧 🇮 🇬", aliases=["bg"])
+@lightbulb.command("bigtext", "Make your text 🇧 🇮 🇬", aliases=["bg"], pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def bigtext(ctx: lightbulb.Context, text: str):
     s = ""
     if len(text) >= 128:
@@ -95,9 +89,8 @@ async def bigtext(ctx: lightbulb.Context, text: str):
 
 @text_plugin.command
 @lightbulb.option("char", "the character to look up", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("charinfo", "Look up information on a unicode character", aliases=["char"])
+@lightbulb.command("charinfo", "Look up information on a unicode character", aliases=["char"], pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def charinfo(ctx: lightbulb.Context, char: str):
     """Shows you information about a number of characters."""
     if len(char) > 5:

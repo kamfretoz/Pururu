@@ -1,6 +1,5 @@
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 from yarl import URL
 
 undertale_plugin = lightbulb.Plugin("undertale", "Generates custom undertale textbox!", include_datastore=True)
@@ -37,9 +36,8 @@ undertale_plugin.d.chars = [
 @lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "The text you want to write", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("character", "The character you want to pick", str, required=True, choices = undertale_plugin.d.chars)
-@lightbulb.command("undertale", "Allows you to create Undertale Textbox")
+@lightbulb.command("undertale", "Allows you to create Undertale Textbox", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def undertale(ctx: lightbulb.Context, character, text) -> None:
     parameters = {
         "message": text,

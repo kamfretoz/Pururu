@@ -1,7 +1,6 @@
 import lightbulb
 import hikari
 from random import choice
-from lightbulb.ext import filament
 
 
 ext_plugin = lightbulb.Plugin("extras", "for commands that are so random that i dont know where to put them", include_datastore=True)
@@ -64,10 +63,9 @@ ext_plugin.d.ps = {
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("question", "the question you want to ask", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST, pass_options=True)
 @lightbulb.command("8ball", "Ask a question to the 8Ball!")
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def eightball(ctx: lightbulb.Context, question: str):
     choices = choice(choice(list(ext_plugin.d.ps.values())))
     if choices in ext_plugin.d.ps["psbad"]:
@@ -84,10 +82,9 @@ async def eightball(ctx: lightbulb.Context, question: str):
 
 @ext_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("text", "what do you want to pay respect to?", required = False,  modifier = lightbulb.commands.OptionModifier.CONSUME_REST, pass_options = True)
 @lightbulb.command("f", "Press F to pay respect.")
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def respect(ctx: lightbulb.Context, text: str):
     hearts = ['❤', '💛', '💚', '💙', '💜', '♥']
     reason = f"for **{text}** " if text else ""
@@ -97,9 +94,8 @@ async def respect(ctx: lightbulb.Context, text: str):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to ban", hikari.Member , required=True)
-@lightbulb.command("fakeban", "ban a member (Or is it?)", aliases=["fban"])
+@lightbulb.command("fakeban", "ban a member (Or is it?)", aliases=["fban"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def fakeban(ctx: lightbulb.Context, user: hikari.Member, reason: str):
     await ctx.respond(f"Succesfully banned {user.mention} for `{reason}`!")
     
@@ -107,9 +103,8 @@ async def fakeban(ctx: lightbulb.Context, user: hikari.Member, reason: str):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for muting the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("user", "the user you want to mute", hikari.Member , required=True)
-@lightbulb.command("fakemute", "mute a member (Or is it?)", aliases=["fmute"])
+@lightbulb.command("fakemute", "mute a member (Or is it?)", aliases=["fmute"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand)
-@filament.utils.pass_options
 async def fakemute(ctx: lightbulb.Context, user: hikari.Member, reason: str):
     await ctx.respond(f"Succesfully muted {user.mention} for `{reason}`!")
     

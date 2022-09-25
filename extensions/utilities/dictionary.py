@@ -1,15 +1,13 @@
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 
 dict_plugin = lightbulb.Plugin("dictionary", "*turns to next page*")
 
 @dict_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("word", "The text you want to define", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("define", "Look up the definition of a word", aliases=["def", "dictionary"], auto_defer=True)
+@lightbulb.command("define", "Look up the definition of a word", aliases=["def", "dictionary"], auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def dictionary(ctx: lightbulb.Context, word) -> None:
     try:
         #--Connect to unofficial Google Dictionary API and get results--#

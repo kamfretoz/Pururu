@@ -2,7 +2,6 @@ import lightbulb
 import hikari
 import qrcode
 from io import BytesIO
-from lightbulb.ext import filament
 
 qr_plugin = lightbulb.Plugin("qr", "A QR Code Maker")
 
@@ -15,9 +14,8 @@ async def qr(ctx: lightbulb.Context) -> None:
 @qr.child
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("data", "The text you want to encode", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("create", "Encodes a text into a QR Code", aliases=["make"])
+@lightbulb.command("create", "Encodes a text into a QR Code", aliases=["qmake"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
-@filament.utils.pass_options
 async def qr_maker(ctx: lightbulb.Context, data):
     qr = qrcode.QRCode(
         version=1,
@@ -38,9 +36,8 @@ async def qr_maker(ctx: lightbulb.Context, data):
 @lightbulb.option("max_use", "The limit of the invite usage", int, required=False, default=0)
 @lightbulb.option("max_time", "The duration of the invite (in seconds, defaults to 1 day which is 86400 seconds)", int, required=False, default=86400)
 @lightbulb.option("channel", "The channel you want to pick", hikari.TextableGuildChannel, required=True)
-@lightbulb.command("invite", "Encodes an invite into a QR Code", aliases=["inv"])
+@lightbulb.command("invite", "Encodes an invite into a QR Code", aliases=["qinv"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
-@filament.utils.pass_options
 async def qr_invite(ctx: lightbulb.Context, channel, max_use, max_time, temporary):
     
     qr = qrcode.QRCode(

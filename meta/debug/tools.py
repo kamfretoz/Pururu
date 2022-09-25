@@ -2,7 +2,6 @@ import os
 import sys
 import lightbulb
 import hikari
-from lightbulb.ext import filament
 from lightbulb.utils import pag, nav
 
 tools_plugin = lightbulb.Plugin("toolbox", "Authorized Personel Only")
@@ -139,10 +138,9 @@ async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
     
 @extension_manager.child
 @lightbulb.option("name", "the extension you want to load", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
+@lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"], pass_options = True)
 @lightbulb.command("load", "Load an extension", inherit_checks=True)
 @lightbulb.implements(lightbulb.PrefixSubCommand)
-@filament.utils.pass_options
 async def extension_load(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.load_extensions(f"extensions.{category}.{name}")
     await ctx.respond(f"Successfully loaded `{name}`!")

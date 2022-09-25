@@ -2,7 +2,6 @@ import lightbulb
 import hikari
 import io
 import base64
-from lightbulb.ext import filament
 from yarl import URL
 
 
@@ -23,10 +22,9 @@ async def wink(ctx: lightbulb.Context):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to hug!", hikari.User , required = True)
-@lightbulb.command("hug", "*hugs you*", auto_defer = True)
+@lightbulb.command("hug", "*hugs you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def hugs(ctx: lightbulb.Context, user):
+async def hugs(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/hug') as hug:
         data = await hug.json()
         result = data.get('url')
@@ -38,10 +36,9 @@ async def hugs(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to snuggles!", hikari.User , required = True)
-@lightbulb.command("snuggle", "*snuggles you*", auto_defer = True)
+@lightbulb.command("snuggle", "*snuggles you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def snug(ctx: lightbulb.Context, user):
+async def snug(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/cuddle') as snuggle:
         data = await snuggle.json()
         result = data.get('url')
@@ -53,10 +50,9 @@ async def snug(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to kiss!", hikari.User , required = True)
-@lightbulb.command("kiss", "*kisses you*", auto_defer = True)
+@lightbulb.command("kiss", "*kisses you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def kiss(ctx: lightbulb.Context, user):
+async def kiss(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/kiss') as kissy:
         data = await kissy.json()
         result = data.get('url')
@@ -68,10 +64,9 @@ async def kiss(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to tickle!", hikari.User , required = True)
-@lightbulb.command("tickle", "*tickles you*", auto_defer = True)
+@lightbulb.command("tickle", "*tickles you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def tick(ctx: lightbulb.Context, user):
+async def tick(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/tickle') as tickle:
         data = await tickle.json()
         result = data.get('url')
@@ -83,10 +78,9 @@ async def tick(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to slap!", hikari.User , required = True)
-@lightbulb.command("slap", "*slaps you*", auto_defer = True)
+@lightbulb.command("slap", "*slaps you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def slapping(ctx: lightbulb.Context, user):
+async def slapping(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/slap') as slap:
         data = await slap.json()
         result = data.get('url')
@@ -98,10 +92,9 @@ async def slapping(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to poke!", hikari.User , required = True)
-@lightbulb.command("poke", "*pokes you*", auto_defer = True)
+@lightbulb.command("poke", "*pokes you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def poking(ctx: lightbulb.Context, user):
+async def poking(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/poke') as poke:
         data = await poke.json()
         result = data.get('url')
@@ -113,10 +106,9 @@ async def poking(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the one you want to cuddle!", hikari.User , required = True)
-@lightbulb.command("pat", "*pats you*", auto_defer = True)
+@lightbulb.command("pat", "*pats you*", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def pats(ctx: lightbulb.Context, user):
+async def pats(ctx: lightbulb.Context, user: hikari.User):
     async with ctx.bot.d.aio_session.get('https://nekos.life/api/v2/img/pat') as pat:
         data = await pat.json()
         result = data.get('url')
@@ -128,10 +120,9 @@ async def pats(ctx: lightbulb.Context, user):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("user", "the horny one!", hikari.User , required = True)
-@lightbulb.command("horny", "Horny card for u", auto_defer = True)
+@lightbulb.command("horny", "Horny card for u", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def horny(ctx: lightbulb.Context, user):
+async def horny(ctx: lightbulb.Context, user: hikari.User):
     parameters = {
         "avatar" : str(user.avatar_url)
     }
@@ -147,9 +138,8 @@ async def horny(ctx: lightbulb.Context, user):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "the name of the user!", hikari.Member , required = True)
-@lightbulb.command("tweet", "create a fake tweet", auto_defer = True)
+@lightbulb.command("tweet", "create a fake tweet", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def tweet(ctx: lightbulb.Context, member: hikari.Member, message: str):
     parameters = {
         "avatar" : member.avatar_url.url,
@@ -169,9 +159,8 @@ async def tweet(ctx: lightbulb.Context, member: hikari.Member, message: str):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("message", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "the name of the user!", hikari.Member , required = True)
-@lightbulb.command("ytcomment", "create a youtube comment", auto_defer = True)
+@lightbulb.command("ytcomment", "create a youtube comment", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def yt(ctx:lightbulb.Context, member: hikari.Member, message: str):
     parameters = {
         "avatar" : member.avatar_url.url,
@@ -189,10 +178,9 @@ async def yt(ctx:lightbulb.Context, member: hikari.Member, message: str):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("comrade", "☭", auto_defer = True)
+@lightbulb.command("comrade", "☭", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def comrade(ctx: lightbulb.Context, member):
+async def comrade(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
@@ -208,10 +196,9 @@ async def comrade(ctx: lightbulb.Context, member):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("gay", "the gay-laser", auto_defer = True)
+@lightbulb.command("gay", "the gay-laser", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def gay(ctx: lightbulb.Context, member):
+async def gay(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
@@ -228,10 +215,9 @@ async def gay(ctx: lightbulb.Context, member):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("text", "the text you want to write!", str , required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "the name of the user!", hikari.User , required = True)
-@lightbulb.command("stupid", "Oh no its stupid", auto_defer = True, aliases = ["sputid"])
+@lightbulb.command("stupid", "Oh no its stupid", auto_defer = True, aliases = ["sputid"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def stupid(ctx:lightbulb.Context, member, text):
+async def stupid(ctx:lightbulb.Context, member: hikari.User, text: str):
     parameters = {
         "avatar" : str(member.avatar_url),
         "dog" : text
@@ -247,10 +233,9 @@ async def stupid(ctx:lightbulb.Context, member, text):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("lolipolice", "the police coming to your house", auto_defer = True)
+@lightbulb.command("lolipolice", "the police coming to your house", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def lolipolice(ctx: lightbulb.Context, member):
+async def lolipolice(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
@@ -266,10 +251,9 @@ async def lolipolice(ctx: lightbulb.Context, member):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("simpcard", "this is certified simp moment", auto_defer = True)
+@lightbulb.command("simpcard", "this is certified simp moment", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def simpcard(ctx: lightbulb.Context, member):
+async def simpcard(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
@@ -286,10 +270,9 @@ async def simpcard(ctx: lightbulb.Context, member):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("jail", "Welcome to the Jail", auto_defer = True)
+@lightbulb.command("jail", "Welcome to the Jail", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def jail(ctx: lightbulb.Context, member):
+async def jail(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
@@ -306,10 +289,9 @@ async def jail(ctx: lightbulb.Context, member):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("kill", "You Died", auto_defer = True, aliases=["wasted"])
+@lightbulb.command("kill", "You Died", auto_defer = True, aliases=["wasted"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def wasted(ctx: lightbulb.Context, member):
+async def wasted(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar" : str(member.avatar_url)
     }
@@ -326,10 +308,9 @@ async def wasted(ctx: lightbulb.Context, member):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("missionpass", "Mission Passed! Respect++", aliases=["pass"], auto_defer = True)
+@lightbulb.command("missionpass", "Mission Passed! Respect++", aliases=["pass"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def passed(ctx: lightbulb.Context, member):
+async def passed(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar": str(member.avatar_url)
     }
@@ -347,10 +328,9 @@ async def passed(ctx: lightbulb.Context, member):
 @img_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("member", "the target user!", hikari.User , required = True)
-@lightbulb.command("triggered", "TRIGGERED", auto_defer = True)
+@lightbulb.command("triggered", "TRIGGERED", auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
-async def triggered(ctx: lightbulb.Context, member):
+async def triggered(ctx: lightbulb.Context, member: hikari.User):
     parameters = {
         "avatar": str(member.avatar_url)
     }
@@ -368,9 +348,8 @@ async def triggered(ctx: lightbulb.Context, member):
 @lightbulb.add_cooldown(60, 2, lightbulb.UserBucket)
 @lightbulb.set_max_concurrency(1, lightbulb.GuildBucket)
 @lightbulb.option("query", "the input prompt", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("dalle", "Generate Image from a Prompt using AI (DALL-E/Craiyon)", auto_defer = True, aliases=["dall_e", "craiyon"])
+@lightbulb.command("dalle", "Generate Image from a Prompt using AI (DALL-E/Craiyon)", auto_defer = True, aliases=["dall_e", "craiyon"], pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-@filament.utils.pass_options
 async def dall_e(ctx: lightbulb.Context, query: str):   
     await ctx.respond("⏳ Processing... This may take a while...")
     parameters = {
