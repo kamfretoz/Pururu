@@ -138,8 +138,8 @@ async def extension_unload(ctx:lightbulb.Context, name: str, category: str):
     
 @extension_manager.child
 @lightbulb.option("name", "the extension you want to load", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"], pass_options = True)
-@lightbulb.command("load", "Load an extension", inherit_checks=True)
+@lightbulb.option("category", "the category of the extension", str, required = True, choices=["fun", "information", "moderation", "music" ,"utilities"])
+@lightbulb.command("load", "Load an extension", inherit_checks=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixSubCommand)
 async def extension_load(ctx:lightbulb.Context, name: str, category: str):
     ctx.bot.load_extensions(f"extensions.{category}.{name}")
