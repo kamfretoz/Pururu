@@ -9,11 +9,10 @@ import concurrent.futures
 from random import choice
 from utils.quotes import statuses
 from lightbulb.ext import tasks
-from utils.const import INTENTS, GUILDS, CACHE, TOKEN, PREFIX
+from utils.const import INTENTS, CACHE, TOKEN, PREFIX
 
 bot = lightbulb.BotApp(
     TOKEN,
-    default_enabled_guilds=GUILDS,
     prefix=lightbulb.when_mentioned_or(PREFIX),
     intents=INTENTS,
     cache_settings=CACHE,
