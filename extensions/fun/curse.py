@@ -1,23 +1,11 @@
 import hikari
 import lightbulb
 import asyncio
-import typing
-import functools
 from lightbulb.ext import tasks
 
 curse_plugin = lightbulb.Plugin("curse", "Get this thing of off me!", include_datastore=True)
+curse_plugin.d.cursed_list = {}
 
-# mapping of user_id to task
-curse_tasks: typing.Mapping[int, asyncio.Task[None]] = {}
-
-async def inflict_curse(ctx: lightbulb.Context, user: hikari.Member, emoji: hikari.Emoji):
-    with ctx.bot.stream(hikari.GuildMessageCreateEvent, timeout=1800).filter(lambda e: e.author.id == user.id) as curse:
-        async for event in curse:
-            await event.message.add_reaction(emoji)
-
-
-async def cure_curse(user):
-    del curse_tasks[user]
 
 @curse_plugin.command
 @lightbulb.add_cooldown(60, 3, lightbulb.GuildBucket)
@@ -38,20 +26,36 @@ async def curse(ctx: lightbulb.Context, user: hikari.Member, emoji: hikari.Emoji
             user = ctx.author
             await ctx.respond(embed=hikari.Embed(description="HA! Nice try! But unfortunately i'm immune to the curse and so the curse goes back to sender!"))
             
-        if ctx.author.id in curse_tasks:
-            await ctx.respond(
-                embed=hikari.Embed(
-                    description=f"{user.mention} is already cursed!"
+        try:
+            cursed = curse_plugin.d.cursed_list[user.id]
+            if cursed is not None:
+                await ctx.respond(
+                    embed=hikari.Embed(
+                        description=f"{user.mention} is already cursed!"
+                    )
                 )
-            )
-            return
+                return
+        except KeyError:
+            pass
         
         if isinstance(ctx, lightbulb.PrefixCommand):
             await ctx.event.message.add_reaction(emoji)
-
-        task = asyncio.create_task(inflict_curse(ctx, user, emoji))
-        task.add_done_callback(functools.partial(cure_curse, ctx.author))
-
+            
+        async def curse_task():
+            with ctx.bot.stream(hikari.GuildMessageCreateEvent, timeout=1800).filter(lambda e: e.author.id == user.id) as curse:
+                async for event in curse:
+                    await event.message.add_reaction(emoji)
+                    
+        loop = asyncio.get_running_loop()
+        
+        curse = loop.create_task(curse_task())
+        curse_plugin.d.cursed_list.update({
+            user.id: { 
+                "task"      : curse,
+                "user_id"   : user.id
+            }
+        })
+        
         await ctx.respond(
             embed=hikari.Embed(
                 description=f":purple_heart: {user.mention} Has been cursed with {emoji}. The effect will fade away in 30 minutes.",
