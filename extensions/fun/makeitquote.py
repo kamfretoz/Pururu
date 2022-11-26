@@ -36,8 +36,8 @@ aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True
 @lightbulb.add_cooldown(2, 3, lightbulb.UserBucket)
 @lightbulb.set_max_concurrency(2, lightbulb.GuildBucket)
 @lightbulb.set_help(text="Please pick a message by replying to them whilst running this command")
-@lightbulb.command("makequote", "Create a quote from someone's message", auto_defer = True, aliases=["mq"])
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.MessageCommand)
+@lightbulb.command("Make Quote!", "Create a quote from someone's message", auto_defer = True)
+@lightbulb.implements(lightbulb.MessageCommand)
 async def makequote(ctx: lightbulb.Context) -> None:
     if isinstance(ctx, lightbulb.PrefixContext):
         if ctx.event.message.referenced_message is None:
