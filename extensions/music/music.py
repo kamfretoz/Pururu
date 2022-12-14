@@ -209,8 +209,8 @@ async def replay(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("index", "Index for the song you want to remove.", int, required = True, pass_options = True)
-@lightbulb.command("remove", "Removes a song from the queue.", auto_defer=True)
+@lightbulb.option("index", "Index for the song you want to remove.", int, required = True)
+@lightbulb.command("remove", "Removes a song from the queue.", auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def remove(ctx: lightbulb.Context, index: int) -> None:
     if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
