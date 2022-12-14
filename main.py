@@ -44,7 +44,6 @@ async def on_stopping(event: hikari.StoppingEvent) -> None:
 
 bot.load_extensions_from("./extensions/", must_exist=True, recursive=True)
 bot.load_extensions_from("./meta/", must_exist=True, recursive=True)
-bot.load_extensions("lightbulb.ext.filament.exts.superuser")
 
 
 if __name__ == "__main__":
