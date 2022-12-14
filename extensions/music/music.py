@@ -210,7 +210,7 @@ async def replay(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("index", "Index for the song you want to remove.", int, required = True)
-@lightbulb.command("remove", "Removes a song from the queue.", auto_defer=True, pass_options = True)
+@lightbulb.command("remove", "Remove a song from the queue.", auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def remove(ctx: lightbulb.Context, index: int) -> None:
     if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
@@ -240,7 +240,7 @@ async def remove(ctx: lightbulb.Context, index: int) -> None:
         pass
     node.queue = queue
     await music_plugin.d.lavalink.set_guild_node(ctx.guild_id, node)
-    embed = hikari.Embed(title=f"**Removed {song_to_be_removed.track.info.title}.**",color=0x6100FF,)
+    embed = hikari.Embed(title=f"**Removed {song_to_be_removed.track.info.title}.**",colour=ctx.author.accent_color)
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
@@ -474,8 +474,7 @@ async def queue(ctx: lightbulb.Context) -> None:
 @music_plugin.command()
 @lightbulb.option("new_position", "The songs new position in the queue.", int, required=True)
 @lightbulb.option("current_position", "The songs current position in the queue.", int, required=True)
-@lightbulb.command("move", "Move a song to a different position in the queue.", auto_defer=True, aliases=["mv"],
-                    pass_options=True)
+@lightbulb.command("move", "Move a song to a different position in the queue.", auto_defer=True, aliases=["mv"], pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
     if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
@@ -518,6 +517,7 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
     if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
         await ctx.respond("Connect to a voice channel first.")
         return
+
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
 
     if not node or not node.now_playing:
@@ -530,11 +530,12 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
         embed = hikari.Embed(title=f"**You cannot move to a song that is currently playing.**", color=0xC80000)
         await ctx.respond(embed=embed)
         return
-    if index == 1:
+    elif index == 1:
         embed = hikari.Embed(title=f"**Skipping to the next song.**", color=0xC80000)
         await ctx.respond(embed=embed)
         await music_plugin.d.lavalink.skip(ctx.guild_id)
         return
+
     try:
         queue = node.queue
         song_to_be_skipped = queue[index]
@@ -554,9 +555,7 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.add_checks(lightbulb.owner_only)  # Optional
-@lightbulb.option(
-    "args", "The arguments to write to the node data.", required=False, modifier=lightbulb.OptionModifier.CONSUME_REST
-)
+@lightbulb.option("args", "The arguments to write to the node data.", required=False, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.command("nodedata", "Load or read data from the node.")
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def data(ctx: lightbulb.Context) -> None:
