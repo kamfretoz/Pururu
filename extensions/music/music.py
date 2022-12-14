@@ -196,12 +196,10 @@ async def play_autocomplete(opt: hikari.AutocompleteInteractionOption, inter: hi
 @lightbulb.command("replay", "Replays the current song.", auto_defer=True, aliases=["rp"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def replay(ctx: lightbulb.Context) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
-        return None
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
+        return
+
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
@@ -215,14 +213,11 @@ async def replay(ctx: lightbulb.Context) -> None:
 @lightbulb.command("leave", "leaves your voice channel.", auto_defer=True, aliases=["stop"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def leave(ctx: lightbulb.Context) -> None:
-    await music_plugin.d.lavalink.destroy(ctx.guild_id)
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=ctx.author.accent_color)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
 
+    await music_plugin.d.lavalink.destroy(ctx.guild_id)
     if ctx.guild_id is not None:
         await music_plugin.bot.update_voice_state(ctx.guild_id, None)
         await music_plugin.d.lavalink.wait_for_connection_info_remove(ctx.guild_id)
@@ -238,11 +233,8 @@ async def leave(ctx: lightbulb.Context) -> None:
 @lightbulb.command("volume", "Change the volume.", auto_defer=True, aliases=["v"], pass_options=True)
 @lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def volume(ctx: lightbulb.Context, percentage: int) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
@@ -270,11 +262,8 @@ async def volume(ctx: lightbulb.Context, percentage: int) -> None:
 @lightbulb.command("seek", "Seek to a specific point in a song.", auto_defer=True, aliases=["se"], pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def seek(ctx: lightbulb.Context, time) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
@@ -306,6 +295,10 @@ async def seek(ctx: lightbulb.Context, time) -> None:
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def skip(ctx: lightbulb.Context) -> None:
     """Skips the current song."""
+    
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
+        return None
 
     skip = await music_plugin.d.lavalink.skip(ctx.guild_id)
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
@@ -328,12 +321,8 @@ async def skip(ctx: lightbulb.Context) -> None:
 @lightbulb.command("pause", "Pauses the currently playing track.", auto_defer=True, aliases=["ps"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def pause(ctx: lightbulb.Context) -> None:
-    assert (ctx.guild_id)
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
@@ -356,11 +345,8 @@ async def pause(ctx: lightbulb.Context) -> None:
 @lightbulb.command("resume", "Resumes playing the currently playing track.", auto_defer=True, aliases=["unpause", "rs"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def resume(ctx: lightbulb.Context) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
     if not node or not node.now_playing:
@@ -458,11 +444,8 @@ async def queue(ctx: lightbulb.Context) -> None:
                     pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
 
@@ -498,11 +481,8 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
                     pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def skipto(ctx: lightbulb.Context, position: int) -> None:
-    states = music_plugin.bot.cache.get_voice_states_view_for_guild(ctx.guild_id)
-    voice_state = [state async for state in states.iterator().filter(lambda i: i.user_id == ctx.author.id)]
-    if not voice_state:
-        embed = hikari.Embed(title="**You are not in a voice channel.**", colour=0xC80000)
-        await ctx.respond(embed=embed)
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
         return
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
 
