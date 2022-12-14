@@ -106,13 +106,11 @@ async def join(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("query", "The query to search for.", str,  modifier=lightbulb.OptionModifier.CONSUME_REST, autocomplete=True, required=True)
+@lightbulb.option("query", "The query to search for.", str,  modifier=lightbulb.OptionModifier.CONSUME_REST, autocomplete=True, required=True, pass_options = True)
 @lightbulb.command("play", "Searches the query on youtube, or adds the URL to the queue.", aliases=["p", "pl"], pass_options=True, auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def play(ctx: lightbulb.Context, query: str) -> None:
     """Searches the query on youtube, or adds the URL to the queue."""
-
-    query = ctx.options.query
 
     if not query:
         await ctx.respond("Please specify a query.")
@@ -207,6 +205,42 @@ async def replay(ctx: lightbulb.Context) -> None:
         return None
     await music_plugin.d.lavalink.seek_millis(ctx.guild_id, 0000)
     embed = hikari.Embed(title=f"**Replaying {node.now_playing.track.info.title}.**", colour=ctx.author.accent_color)
+    await ctx.respond(embed=embed)
+
+@music_plugin.command()
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.option("index", "Index for the song you want to remove.", int, required = True, pass_options = True)
+@lightbulb.command("remove", "Removes a song from the queue.", auto_defer=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def remove(ctx: lightbulb.Context, index: int) -> None:
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
+        return
+
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
+
+    if not node or not node.now_playing:
+        embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
+        await ctx.respond(embed=embed)
+        return
+
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
+    if index == 0:
+        embed = hikari.Embed(title=f"**You cannot remove a song that is currently playing.**",color=0xC80000)
+        return await ctx.respond(embed=embed)
+    try:
+        queue = node.queue
+        song_to_be_removed = queue[index]
+    except:
+        embed = hikari.Embed(title=f"**Incorrect position entered.**",color=0xC80000)
+        return await ctx.respond(embed=embed)
+    try:
+        queue.pop(index)
+    except:
+        pass
+    node.queue = queue
+    await music_plugin.d.lavalink.set_guild_node(ctx.guild_id, node)
+    embed = hikari.Embed(title=f"**Removed {song_to_be_removed.track.info.title}.**",color=0x6100FF,)
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
