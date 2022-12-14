@@ -106,7 +106,7 @@ async def join(ctx: lightbulb.Context) -> None:
 
 @music_plugin.command()
 @lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.option("query", "The query to search for.", str,  modifier=lightbulb.OptionModifier.CONSUME_REST, autocomplete=True, required=True, pass_options = True)
+@lightbulb.option("query", "The query to search for.", str,  modifier=lightbulb.OptionModifier.CONSUME_REST, autocomplete=True, required=True)
 @lightbulb.command("play", "Searches the query on youtube, or adds the URL to the queue.", aliases=["p", "pl"], pass_options=True, auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def play(ctx: lightbulb.Context, query: str) -> None:
