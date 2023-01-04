@@ -28,7 +28,7 @@ async def purge(ctx: lightbulb.Context, amount: int) -> None:
 
     iterator = (
                 ctx.bot.rest.fetch_messages(channel)
-                .limit(amount )
+                .limit(amount)
                 .take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
             )
     if iterator:
