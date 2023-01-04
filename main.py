@@ -29,7 +29,7 @@ bot = lightbulb.BotApp(
     },
 )
 
-miru.load(bot)
+miru.install(bot)
 tasks.load(bot)
 
 @bot.listen()

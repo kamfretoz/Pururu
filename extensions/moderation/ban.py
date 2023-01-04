@@ -53,12 +53,12 @@ async def banlist(ctx: lightbulb.Context):
     
     @lst.embed_factory()
     def build_embed(page_index,page_content):
-        emb = hikari.Embed(title="List of Banned Members", description=page_content)
-        emb.set_footer(f"{len(bans)} Members in total.")
+        emb = hikari.Embed(title=f"List of Banned Members ({len(bans)})", description=page_content)
+        emb.set_footer(f"Page {page_index}")
         return emb
     
     for n, users in enumerate(bans, start=1):
-        lst.add_line(f"**{n}. {users.user}** ({users.reason or 'No Reason Provided.'})")
+        lst.add_line(f"**{n}. {users.user}** ({users.reason or f'No Reason Provided. (by: {ctx.author.username}'})")
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
     
