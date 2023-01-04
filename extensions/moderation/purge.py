@@ -18,7 +18,7 @@ PURGE_PERMISSIONS = (
 @lightbulb.option("amount", "The number of messages to purge.", type=int, required=True, max_value = 500)
 @lightbulb.app_command_permissions(PURGE_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("purge", "Purge messages from this channel.", aliases=["clear","prune"], auto_defer = True, pass_options = True)
-@lightbulb.implements(lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand, lightbulb.PrefixCommand)
 async def purge(ctx: lightbulb.Context, amount: int) -> None:
     if amount > 500:
         await ctx.respond(":x: **You can only purge 500 messages at once, max**")
@@ -28,7 +28,7 @@ async def purge(ctx: lightbulb.Context, amount: int) -> None:
 
     iterator = (
                 ctx.bot.rest.fetch_messages(channel)
-                .limit(amount)
+                .limit(amount )
                 .take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
             )
     if iterator:
