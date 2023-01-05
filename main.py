@@ -4,7 +4,6 @@ import os
 import aiohttp
 import hikari
 import lightbulb
-import miru
 import concurrent.futures
 from random import choice
 from utils.quotes import statuses
@@ -29,7 +28,6 @@ bot = lightbulb.BotApp(
     },
 )
 
-miru.install(bot)
 tasks.load(bot)
 
 @bot.listen()
