@@ -110,6 +110,8 @@ You will need to configure the bot with the `.env` file. This is needed to store
   cp .env.example .env
   nano .env
   ```
+  
+  Further configuration can also be found at `utils/const.py`
 
 ### Installation
 
@@ -137,7 +139,6 @@ You will need to configure the bot with the `.env` file. This is needed to store
    chmod +x run.sh
    ./run.sh
    ```
-
 
 <!-- USAGE EXAMPLES -->
 ## Running the bot (continued)
