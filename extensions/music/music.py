@@ -1,7 +1,7 @@
 import logging
 import re
+import random
 from typing import Optional
-
 
 import hikari
 import lightbulb
@@ -292,10 +292,10 @@ async def volume(ctx: lightbulb.Context, percentage: int) -> None:
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
-@lightbulb.option("time", "What time you would like to seek to.", modifier=lightbulb.OptionModifier.CONSUME_REST)
+@lightbulb.option("time", "What time you would like to seek to.", modifier=lightbulb.OptionModifier.CONSUME_REST, type=str)
 @lightbulb.command("seek", "Seek to a specific point in a song.", auto_defer=True, aliases=["se"], pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def seek(ctx: lightbulb.Context, time) -> None:
+async def seek(ctx: lightbulb.Context, time: str) -> None:
     if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
         await ctx.respond("Connect to a voice channel first.")
         return
@@ -321,6 +321,30 @@ async def seek(ctx: lightbulb.Context, time) -> None:
         embed.add_field(name="Current Position", value=f"{time}/{int(length[0])}:{round(length[1] / 1000):02}")
     except:
         pass
+    await ctx.respond(embed=embed)
+
+@music_plugin.command()
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.command("shuffle", "Shuffle the current queue!", auto_defer=True, aliases=["shuf"])
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def shuffle(ctx: lightbulb.Context) -> None:
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
+        return
+
+    node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
+    if not len(node.queue) > 1:
+        await ctx.respond("Cannot shuffle, only one song in the queue!")
+        return
+
+    queue = node.queue[1:] # Because Index 0 is currently playing song and we don't wanna shuffle that!
+    random.shuffle(queue) # Randomly shuffling the queue!
+    queue.insert(0, node.queue[0]) # Inserting the now playing song back into the queue
+    node.queue = queue
+
+    await music_plugin.d.lavalink.set_guild_node(ctx.guild_id, node)
+
+    embed = hikari.Embed(title="Shuffled Queue!")
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
