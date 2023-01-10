@@ -225,7 +225,7 @@ async def remove(ctx: lightbulb.Context, index: int) -> None:
         return
 
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
-    if index == 0:
+    if index < 1:
         embed = hikari.Embed(title=f"**You cannot remove a song that is currently playing.**",color=0xC80000)
         return await ctx.respond(embed=embed)
     try:
@@ -470,7 +470,7 @@ async def queue(ctx: lightbulb.Context) -> None:
         embed = hikari.Embed(title="**There are no songs playing at the moment.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return None
-    if len(node.queue) == 1:
+    if len(node.queue) <= 1:
         embed = hikari.Embed(title="**The queue is currently empty.**", colour=0xC80000)
         await ctx.respond(embed=embed)
         return None
@@ -550,7 +550,7 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
         return
     index = position
     node = await music_plugin.d.lavalink.get_guild_node(ctx.guild_id)
-    if index == 0:
+    if index < 1:
         embed = hikari.Embed(title=f"**You cannot move to a song that is currently playing.**", color=0xC80000)
         await ctx.respond(embed=embed)
         return
