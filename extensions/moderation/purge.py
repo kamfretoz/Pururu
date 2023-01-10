@@ -24,6 +24,9 @@ async def purge(ctx: lightbulb.Context, amount: int) -> None:
         await ctx.respond(":x: **You can only purge 500 messages at once, max**")
         return
 
+    if isinstance(ctx, lightbulb.PrefixContext):
+        await ctx.event.message.delete()
+
     channel = ctx.channel_id
 
     iterator = (
@@ -32,7 +35,7 @@ async def purge(ctx: lightbulb.Context, amount: int) -> None:
                 .take_while(lambda msg: (datetime.now(timezone.utc) - msg.created_at) < timedelta(days=14))
             )
     if iterator:
-        async for messages in iterator.chunk(100):
+        async for messages in iterator.chunk(50):
             await ctx.bot.rest.delete_messages(channel, messages)
         await ctx.respond(f"**Messages has been sucessfully deleted.**", delete_after=5)
     else:
