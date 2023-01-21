@@ -94,7 +94,6 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
 
 
 @music_plugin.command()
-@lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("join", "Joins the voice channel you are in.", auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def join(ctx: lightbulb.Context) -> None:
@@ -105,7 +104,6 @@ async def join(ctx: lightbulb.Context) -> None:
         await ctx.respond(f"Joined <#{channel_id}>")
 
 @music_plugin.command()
-@lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("query", "The query to search for.", str,  modifier=lightbulb.OptionModifier.CONSUME_REST, autocomplete=True, required=True)
 @lightbulb.command("play", "Searches the query on youtube, or adds the URL to the queue.", aliases=["p", "pl"], pass_options=True, auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -208,7 +206,6 @@ async def replay(ctx: lightbulb.Context) -> None:
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
-@lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.option("index", "Index for the song you want to remove.", int, required = True)
 @lightbulb.command("remove", "Remove a song from the queue.", auto_defer=True, pass_options = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
@@ -324,7 +321,6 @@ async def seek(ctx: lightbulb.Context, time: str) -> None:
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
-@lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("shuffle", "Shuffle the current queue!", auto_defer=True, aliases=["shuf"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def shuffle(ctx: lightbulb.Context) -> None:
@@ -348,7 +344,6 @@ async def shuffle(ctx: lightbulb.Context) -> None:
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
-@lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.command("skip", "Skips the current song.", aliases=["sk"], auto_defer = True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def skip(ctx: lightbulb.Context) -> None:
@@ -577,7 +572,6 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
-@lightbulb.add_checks(lightbulb.guild_only)
 @lightbulb.add_checks(lightbulb.owner_only)  # Optional
 @lightbulb.option("args", "The arguments to write to the node data.", required=False, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.command("nodedata", "Load or read data from the node.")
