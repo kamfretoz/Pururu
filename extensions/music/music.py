@@ -91,6 +91,11 @@ async def start_lavalink(event: hikari.ShardReadyEvent) -> None:
     lava_client = await builder.build(EventHandler())
 
     music_plugin.d.lavalink = lava_client
+    
+    # also prepares spotipy
+    
+    music_plugin.d.sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID, client_secret=SPOTCLIENT_SECRET))
+    
 
 
 @music_plugin.command()
@@ -125,12 +130,10 @@ async def play(ctx: lightbulb.Context, query: str) -> None:
         return
 
     if "https://open.spotify.com/track" in query:
-        sp = spotipy.Spotify(
-            auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID, client_secret=SPOTCLIENT_SECRET))
         track_link = f"{query}"
         track_id = track_link.split("/")[-1].split("?")[0]
         track = f"spotify:track:{track_id}"
-        spotifytrack = sp.track(track)
+        spotifytrack = music_plugin.d.sp.track(track)
         trackname = spotifytrack['name'] + " " + spotifytrack["artists"][0]["name"]
         result = f"ytmsearch:{trackname}"
         query_information = await music_plugin.d.lavalink.get_tracks(result)
