@@ -44,21 +44,12 @@ async def makequote(ctx: lightbulb.Context) -> None:
             await ctx.respond("❌ You haven't picked any message to create a quote from. **Please pick a message by replying to them whilst running this command**.")
             return
 
+    message = ctx.options.target
+    author = message.author
     
-    if isinstance(ctx, lightbulb.PrefixContext):
-        reply = ctx.event.message.referenced_message
-        author = reply.author
-
-        user = ctx.bot.cache.get_member(ctx.get_guild(), author)
-        
-        content = reply.content 
-    else:
-        message = ctx.options.target
-        author = message.author
-        
-        user = ctx.bot.cache.get_member(ctx.get_guild(), author)
-        
-        content = message.content
+    user = ctx.bot.cache.get_member(ctx.get_guild(), author)
+    
+    content = message.content
 
 
     name = user.username
