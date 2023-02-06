@@ -343,26 +343,6 @@ async def triggered(ctx: lightbulb.Context, member: hikari.User):
     em.set_image(imageData)
     
     await ctx.respond(embed=em) # sending the file    
-    
-@img_plugin.command()
-@lightbulb.add_cooldown(60, 2, lightbulb.UserBucket)
-@lightbulb.set_max_concurrency(1, lightbulb.GuildBucket)
-@lightbulb.option("query", "the input prompt", str, required = True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.command("dalle", "Generate Image from a Prompt using AI (DALL-E/Craiyon)", auto_defer = True, aliases=["dall_e", "craiyon"], pass_options = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def dall_e(ctx: lightbulb.Context, query: str):   
-    await ctx.respond("⏳ Processing... This may take a while...")
-    parameters = {
-        "prompt": query
-    }
-    async with ctx.bot.d.aio_session.request("POST",'https://backend.craiyon.com/generate', json=parameters) as resp:
-        data = await resp.json()
-    
-    images = tuple(io.BytesIO(base64.decodebytes(image.encode("utf-8"))) for image in data["images"])
-    
-    # sending the file   
-    
-    await ctx.edit_last_response(f"Here are your images!\nPrompt: **{query}**", attachments=images)
 
 def load(bot):
     bot.add_plugin(img_plugin)
