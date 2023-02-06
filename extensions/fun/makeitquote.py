@@ -39,11 +39,6 @@ aquote_plugin = lightbulb.Plugin("makequote", "Say wha?", include_datastore=True
 @lightbulb.command("Make Quote!", "Create a quote from someone's message", auto_defer = True)
 @lightbulb.implements(lightbulb.MessageCommand)
 async def makequote(ctx: lightbulb.Context) -> None:
-    if isinstance(ctx, lightbulb.PrefixContext):
-        if ctx.event.message.referenced_message is None:
-            await ctx.respond("❌ You haven't picked any message to create a quote from. **Please pick a message by replying to them whilst running this command**.")
-            return
-
     message = ctx.options.target
     author = message.author
     
