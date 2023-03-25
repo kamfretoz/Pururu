@@ -10,15 +10,17 @@ mal_plugin = lightbulb.Plugin("myanimelist", "Weebs Only")
 
 @mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
+@lightbulb.option("sfw", "Filter out Adult entries", bool, required=False, default=True)
 @lightbulb.option("name", "The anime you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("anime", "Find the information of an Anime", aliases=["ani"], auto_defer = True, pass_options = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def myanimelist_anime(ctx: lightbulb.Context, name) -> None:
+@lightbulb.implements(lightbulb.SlashCommand)
+async def myanimelist_anime(ctx: lightbulb.Context, name: str, sfw: bool) -> None:
     parameters = {
         "q": name,
         "limit": 1,
         "page": 1,
-        "sort": "asc"
+        "sort": "asc",
+        "sfw" : sfw
     }
     try:
         async with ctx.bot.d.aio_session.get('https://api.jikan.moe/v4/anime', params=parameters, timeout=10) as resp:
@@ -92,15 +94,17 @@ async def myanimelist_anime(ctx: lightbulb.Context, name) -> None:
     
 @mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
+@lightbulb.option("sfw", "Filter out Adult entries", bool, required=False, default=True)
 @lightbulb.option("name", "The manga you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("manga", "Find the information of a manga", aliases=["man"], auto_defer = True, pass_options = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def myanimelist_manga(ctx: lightbulb.Context, name):
+@lightbulb.implements(lightbulb.SlashCommand)
+async def myanimelist_manga(ctx: lightbulb.Context, name: str, sfw: bool):
     parameters = {
         "q": name,
         "limit": 1,
         "page": 1,
-        "sort": "asc"
+        "sort": "asc",
+        "sfw" : sfw
     }
     try:
         async with ctx.bot.d.aio_session.get(f'https://api.jikan.moe/v4/manga', params=parameters, timeout=10) as resp:
@@ -157,7 +161,7 @@ async def myanimelist_manga(ctx: lightbulb.Context, name):
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("name", "The character name you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("character", "Find the information of an anime character", aliases=["chara"], auto_defer = True, pass_options = True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.SlashCommand)
 async def myanimelist_chara(ctx: lightbulb.Context, name):
     parameters = {
         "q": name,
