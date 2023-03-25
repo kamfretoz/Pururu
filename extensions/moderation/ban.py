@@ -17,7 +17,6 @@ BAN_PERMISSIONS = (
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
-@lightbulb.option("delete_message", "Delete the messages after the ban? (up to 7 days, leave empty or set to 0 to not delete)", int, min_value = 0, max_value = 7, default = 0 ,required=False)
 @lightbulb.option("user", "the user you want to ban", hikari.User , required=True)
 @lightbulb.app_command_permissions(BAN_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("ban", "ban a member", auto_defer = True, pass_options = True)
