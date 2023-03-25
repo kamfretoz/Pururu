@@ -26,7 +26,7 @@ async def ban(ctx: lightbulb.Context, user: hikari.User, delete_message: int, re
     res = reason or f"'No Reason Provided.' By {ctx.author.username}"
     delete = delete_message or 0
     await ctx.respond(f"Banning **{user.username}**")
-    await ctx.bot.rest.ban_member(user = user, guild = ctx.get_guild(), reason = res, delete_message_days=delete)
+    await ctx.bot.rest.ban_member(user = user, guild = ctx.get_guild(), reason = res)
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
     
 @ban_plugin.command()
