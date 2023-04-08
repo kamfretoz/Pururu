@@ -1,6 +1,7 @@
 import logging
 import re
 import random
+from datetime import date
 from typing import Optional
 
 import hikari
@@ -493,6 +494,26 @@ async def queue(ctx: lightbulb.Context) -> None:
     navigator = nav.ButtonNavigator(lst.build_pages())
     await navigator.run(ctx)
 
+
+@music_plugin.command()
+@lightbulb.command("empty", "Clears the queue.", aliases=["clr", "clearqueue"], auto_defer=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def empty(ctx: lightbulb.Context) -> None:
+    if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
+        await ctx.respond("Connect to a voice channel first.")
+        return 
+
+    await music_plugin.d.lavalink.stop(ctx.guild_id)
+    await music_plugin.d.lavalink.leave(ctx.guild_id)
+    await music_plugin.d.lavalink.remove_guild_node(ctx.guild_id)
+    await music_plugin.d.lavalink.remove_guild_from_loops(ctx.guild_id)
+    await music_plugin.bot.update_voice_state(ctx.guild_id, None)
+    await music_plugin.d.lavalink.wait_for_connection_info_remove(ctx.guild_id)
+    await _join(ctx)
+    
+    embed=hikari.Embed(title="**Cleared the queue.**",color=0x6100FF)
+    await ctx.respond(embed=embed)
+
 @music_plugin.command()
 @lightbulb.option("new_position", "The songs new position in the queue.", int, required=True)
 @lightbulb.option("current_position", "The songs current position in the queue.", int, required=True)
@@ -532,8 +553,7 @@ async def move(ctx: lightbulb.Context, current_position, new_position) -> None:
 
 @music_plugin.command()
 @lightbulb.option("position", "The song's position in the queue.", int, required=True)
-@lightbulb.command("skipto", "skip to a different song in the queue.", auto_defer=True, aliases=["skto"],
-                    pass_options=True)
+@lightbulb.command("skipto", "skip to a different song in the queue.", auto_defer=True, aliases=["skto"], pass_options=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def skipto(ctx: lightbulb.Context, position: int) -> None:
     if not (voice_state := ctx.bot.cache.get_voice_state(ctx.guild_id, ctx.author.id)):
@@ -572,6 +592,43 @@ async def skipto(ctx: lightbulb.Context, position: int) -> None:
     await music_plugin.d.lavalink.set_guild_node(ctx.guild_id, node)
     await music_plugin.d.lavalink.skip(ctx.guild_id)
     embed = hikari.Embed(title=f"**Skipped to {song_to_be_skipped.track.info.title}.**", color=ctx.author.accent_color)
+    await ctx.respond(embed=embed)
+
+@music_plugin.command()
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.command("newreleases", "See the latest releases for the day.", auto_defer=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def newreleases(ctx: lightbulb.Context) -> None:
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
+    response = sp.new_releases(limit=21)
+    albums = response['albums']
+    today = date.today()
+    embed=hikari.Embed(title=f"**New Releases - {today}**", color=0x6100FF)
+    embed.add_field(name="Latest Tracks", value=f"\n".join([f"**{i}.** {item['name']}" for i, item in enumerate(albums['items'][1:], start=1)]))
+    img = response['albums']['items'][1]['images'][0]['url']
+    try:
+      embed.set_thumbnail(img)
+    except:
+        pass
+    await ctx.respond(embed=embed)
+
+@music_plugin.command()
+@lightbulb.add_checks(lightbulb.guild_only)
+@lightbulb.command("trending", "See the latest trending tracks.", auto_defer=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def trending(ctx: lightbulb.Context) -> None:
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTCLIENT_ID,client_secret=SPOTCLIENT_SECRET))
+    playlist_URI = "37i9dQZF1DXcBWIGoYBM5M"
+    track_uris = [x["track"]["uri"] for x in sp.playlist_tracks(playlist_URI)["items"]]
+    track = sp.track(track_uris[1])
+    today = date.today()
+    embed=hikari.Embed(title=f"**Trending Tracks - {today}**", color=0x6100FF)
+    embed.add_field(name="Top 20 Tracks Of The Day", value=f"\n".join([f"**{i}.** {track['track']['name']}" for i, track in enumerate(sp.playlist_tracks(playlist_URI, limit=21)["items"][1:], start=1)]))
+    img = track['album']['images'][0]['url']
+    try:
+      embed.set_thumbnail(img)
+    except:
+        pass
     await ctx.respond(embed=embed)
 
 @music_plugin.command()
