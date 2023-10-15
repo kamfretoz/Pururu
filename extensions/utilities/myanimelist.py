@@ -20,7 +20,7 @@ async def myanimelist_anime(ctx: lightbulb.Context, name: str, sfw: bool) -> Non
         "limit": 1,
         "page": 1,
         "sort": "asc",
-        "sfw" : sfw
+        "sfw" : str(sfw)
     }
     try:
         async with ctx.bot.d.aio_session.get('https://api.jikan.moe/v4/anime', params=parameters, timeout=10) as resp:
@@ -104,7 +104,7 @@ async def myanimelist_manga(ctx: lightbulb.Context, name: str, sfw: bool):
         "limit": 1,
         "page": 1,
         "sort": "asc",
-        "sfw" : sfw
+        "sfw" : str(sfw)
     }
     try:
         async with ctx.bot.d.aio_session.get(f'https://api.jikan.moe/v4/manga', params=parameters, timeout=10) as resp:
