@@ -95,7 +95,7 @@ async def myanimelist_anime(ctx: lightbulb.Context, name: str) -> None:
 @lightbulb.option("name", "The manga you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("manga", "Find the information of a manga", aliases=["man"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand)
-async def myanimelist_manga(ctx: lightbulb.Context, name: str, sfw: bool):
+async def myanimelist_manga(ctx: lightbulb.Context, name: str):
     parameters = {
         "q": name,
         "limit": 1,
