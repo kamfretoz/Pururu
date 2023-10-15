@@ -10,7 +10,6 @@ mal_plugin = lightbulb.Plugin("myanimelist", "Weebs Only")
 
 @mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("sfw", "Filter out Adult entries", bool, required=False, default=True)
 @lightbulb.option("name", "The anime you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("anime", "Find the information of an Anime", aliases=["ani"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand)
@@ -93,7 +92,6 @@ async def myanimelist_anime(ctx: lightbulb.Context, name: str) -> None:
     
 @mal_plugin.command
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
-@lightbulb.option("sfw", "Filter out Adult entries", bool, required=False, default=True)
 @lightbulb.option("name", "The manga you want to lookup", str, required=True, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
 @lightbulb.command("manga", "Find the information of a manga", aliases=["man"], auto_defer = True, pass_options = True)
 @lightbulb.implements(lightbulb.SlashCommand)
