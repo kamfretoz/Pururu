@@ -1,7 +1,5 @@
 import lightbulb
 import hikari
-import io
-import base64
 from yarl import URL
 
 

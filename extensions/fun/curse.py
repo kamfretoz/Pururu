@@ -42,7 +42,7 @@ async def curse(ctx: lightbulb.Context, user: hikari.Member, emoji: hikari.Emoji
             await ctx.event.message.add_reaction(emoji)
             
         async def curse_task():
-            with ctx.bot.stream(hikari.GuildMessageCreateEvent, timeout=1800).filter(lambda e: e.author.id == user.id) as curse:
+            with ctx.bot.stream(hikari.GuildMessageCreateEvent, timeout=900).filter(lambda e: e.author.id == user.id) as curse:
                 async for event in curse:
                     await event.message.add_reaction(emoji)
                     
@@ -58,7 +58,7 @@ async def curse(ctx: lightbulb.Context, user: hikari.Member, emoji: hikari.Emoji
         
         await ctx.respond(
             embed=hikari.Embed(
-                description=f":purple_heart: {user.mention} Has been cursed with {emoji}. The effect will fade away in 30 minutes.",
+                description=f":purple_heart: {user.mention} Has been cursed with {emoji}. The effect will fade away in 15 minutes.",
             )
         )
             
@@ -96,7 +96,7 @@ async def bless(ctx: lightbulb.Context, user: hikari.Member):
             )
         )
         
-@tasks.task(h=1, auto_start=True)
+@tasks.task(m=30, auto_start=True)
 async def clear_sniper():
     curse_plugin.d.cursed_list.clear()
 
