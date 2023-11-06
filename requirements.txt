@@ -3,7 +3,7 @@ hikari[speedups] == 2.0.0.dev121
 hikari-lightbulb == 2.3.3
 uvloop == 0.17.0; sys_platform != "win32" 
 lavasnek-rs == 0.1.0a5
-ciso8601 == 2.3.0
+ciso8601 == 2.3.1
 python-dotenv == 1.0.0
 psutil == 5.9.5 
 pillow == 10.0.1
