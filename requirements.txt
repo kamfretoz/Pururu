@@ -1,4 +1,4 @@
-aiohttp[speedups] == 3.9.2
+aiohttp[speedups] == 3.9.3
 hikari[speedups] == 2.0.0.dev122
 hikari-lightbulb == 2.3.5
 uvloop == 0.19.0; sys_platform != "win32" 
