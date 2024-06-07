@@ -11,4 +11,4 @@ pilmoji == 2.0.4
 pytemperature == 1.1
 qrcode == 7.4.2
 rapidfuzz == 3.9.1
-spotipy == 2.23.0
+spotipy == 2.24.0
