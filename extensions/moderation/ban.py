@@ -17,6 +17,7 @@ BAN_PERMISSIONS = (
 @ban_plugin.command()
 @lightbulb.add_cooldown(3, 3, lightbulb.UserBucket)
 @lightbulb.option("reason", "the reason for banning the member", str, required=False, modifier = lightbulb.commands.OptionModifier.CONSUME_REST)
+@lightbulb.option("duration", "the duration for the ban to be applied", int , required=True)
 @lightbulb.option("user", "the user you want to ban", hikari.User , required=True)
 @lightbulb.app_command_permissions(BAN_PERMISSIONS, dm_enabled=False)
 @lightbulb.command("ban", "ban a member", auto_defer = True, pass_options = True)
@@ -24,8 +25,12 @@ BAN_PERMISSIONS = (
 async def ban(ctx: lightbulb.Context, user: hikari.User, delete_message: int, reason: str):
     res = reason or f"'No Reason Provided.' By {ctx.author.username}"
     delete = delete_message or 0
+
+    if delete > 604800:
+        delete = 604800
+
     await ctx.respond(f"Banning **{user.username}**")
-    await ctx.bot.rest.ban_member(user = user, guild = ctx.get_guild(), reason = res)
+    await ctx.bot.rest.ban_member(user = user, guild = ctx.get_guild(), delete_message_seconds=delete, reason = res)
     await ctx.edit_last_response(f"Succesfully banned `{user}` for `{res}`!")
     
 @ban_plugin.command()
