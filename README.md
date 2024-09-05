@@ -7,8 +7,6 @@
 *** Thanks again! Now go create something AMAZING! :D
 -->
 
-
-
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
@@ -23,23 +21,19 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/kamfretoz/XJ9">
-    <img src="images/logo.svg" alt="Logo" width="128" height="128">
+  <a href="https://github.com/kamfretoz/Pururu">
+    <img src="images/Logo.png" alt="Logo" style="width: 25vw; min-width: 350px;">
   </a>
 
-<h1 align="center">XJ9</h1>
+<h1 align="center">PuruBot</h1>
 
   <p align="center">
     A Multi-Purpose bot written with Hikari + Lightbulb!
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -62,25 +56,19 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
 <p>
 This is a Multi-Purpose Bot written in Python and built with Hikari and Lightbulb. 
 A project that serves as a way for me to learn Python Programming.
 Feel free to explore it by yourself!
 </p>
 
-
-
 ### Built With
 
 * [`hikari`](https://github.com/hikari-py/hikari) - An opinionated, static typed Discord microframework for Python3 and asyncio that supports Discord's V10 REST API and Gateway.
 * [`Lightbulb`](https://github.com/tandemdude/hikari-lightbulb/) - A flexible command framework designed to extend Hikari.
-
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -116,12 +104,14 @@ You will need to configure the bot with the `.env` file. This is needed to store
 ### Installation
 
 1. Clone the repository
+
    ```sh
    git clone https://github.com/kamfretoz/XJ9.git
    cd XJ9/
    ```
 
 2. Create a Virtual Enviroment and activate it
+
     ```sh
     python3 -m venv .venv
     source .venv/bin/activate
@@ -130,11 +120,13 @@ You will need to configure the bot with the `.env` file. This is needed to store
 3. Follow the steps from <a href="#prerequisites">Prerequisites</a>
 
 4. Install the required dependencies
+
    ```sh
    python3 -m pip install -r requirements.txt
    ```
 
-5. Run the bot 
+5. Run the bot
+
    ```sh
    chmod +x run.sh
    ./run.sh
@@ -144,14 +136,17 @@ You will need to configure the bot with the `.env` file. This is needed to store
 ## Running the bot (continued)
 
 There are few notes in regards to run the bot:
+
 * If you'd like to run the bot (Or when you want to restart it), you will have to re-activate the Virtual Environment if you haven't done so:
+
   ```sh
     source .venv/bin/activate
     ./run.sh
   ```
+
 * After you have successfully run the bot, you will have to Minimize the "screen" to let the bot run in the background.
-    * Press `CTRL + A, D` to Minimize the screen
-    * Type in `screen -r bot` to restore the screen
+* Press `CTRL + A, D` to Minimize the screen
+* Type in `screen -r bot` to restore the screen
 
 ### Enjoy! :D
 
@@ -167,4 +162,3 @@ There are few notes in regards to run the bot:
 [issues-url]: https://github.com/kamfretoz/XJ9/issues
 [license-shield]: https://img.shields.io/github/license/kamfretoz/XJ9.svg?style=for-the-badge
 [license-url]: https://github.com/kamfretoz/XJ9/blob/master/LICENSE
-[product-screenshot]: images/screenshot.png
