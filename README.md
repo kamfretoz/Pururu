@@ -94,7 +94,7 @@ You will need to configure the bot with the `.env` file. This is needed to store
 * Configure your `.env` as you please and put your token here.
 
   ```sh
-  cd XJ9/
+  cd Pururu/
   cp .env.example .env
   nano .env
   ```
@@ -106,8 +106,8 @@ You will need to configure the bot with the `.env` file. This is needed to store
 1. Clone the repository
 
    ```sh
-   git clone https://github.com/kamfretoz/XJ9.git
-   cd XJ9/
+   git clone https://github.com/kamfretoz/Pururu.git
+   cd Pururu/
    ```
 
 2. Create a Virtual Enviroment and activate it
@@ -152,13 +152,13 @@ There are few notes in regards to run the bot:
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/kamfretoz/XJ9.svg?style=for-the-badge
-[contributors-url]: https://github.com/kamfretoz/XJ9/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/kamfretoz/XJ9.svg?style=for-the-badge
-[forks-url]: https://github.com/kamfretoz/XJ9/network/members
-[stars-shield]: https://img.shields.io/github/stars/kamfretoz/XJ9.svg?style=for-the-badge
-[stars-url]: https://github.com/kamfretoz/XJ9/stargazers
-[issues-shield]: https://img.shields.io/github/issues/kamfretoz/XJ9.svg?style=for-the-badge
-[issues-url]: https://github.com/kamfretoz/XJ9/issues
-[license-shield]: https://img.shields.io/github/license/kamfretoz/XJ9.svg?style=for-the-badge
-[license-url]: https://github.com/kamfretoz/XJ9/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/kamfretoz/Pururu.svg?style=for-the-badge
+[contributors-url]: https://github.com/kamfretoz/Pururu/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/kamfretoz/Pururu.svg?style=for-the-badge
+[forks-url]: https://github.com/kamfretoz/Pururu/network/members
+[stars-shield]: https://img.shields.io/github/stars/kamfretoz/Pururu.svg?style=for-the-badge
+[stars-url]: https://github.com/kamfretoz/Pururu/stargazers
+[issues-shield]: https://img.shields.io/github/issues/kamfretoz/Pururu.svg?style=for-the-badge
+[issues-url]: https://github.com/kamfretoz/Pururu/issues
+[license-shield]: https://img.shields.io/github/license/kamfretoz/Pururu.svg?style=for-the-badge
+[license-url]: https://github.com/kamfretoz/Pururu/blob/master/LICENSE
