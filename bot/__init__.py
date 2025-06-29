@@ -34,6 +34,6 @@ client = lightbulb.client_from_app(bot)
 @bot.listen(hikari.StartingEvent)
 async def on_starting(_: hikari.StartingEvent) -> None:
     # Load the commands
-    await client.load_extensions_from_package(extensions, True)
+    await client.load_extensions_from_package(extensions, recursive=True)
     # Start the client - causing the commands to be synced with discord
     await client.start()
