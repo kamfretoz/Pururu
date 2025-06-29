@@ -3,3 +3,5 @@ hikari[speedups] == 2.3.5
 hikari-lightbulb == 3.0.1
 uvloop == 0.21.0; sys_platform != "win32" 
 python-dotenv == 1.1.0
+pillow == 11.2.1
+rapidfuzz == 3.13.0

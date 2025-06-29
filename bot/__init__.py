@@ -1,6 +1,8 @@
 import asyncio
+import concurrent.futures
 import aiohttp
 import os
+import concurrent
 
 import hikari
 import lightbulb
@@ -11,6 +13,7 @@ from .utils import const
 
 if os.name != "nt":
     import uvloop
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 # Read the bot token from a text file
@@ -33,15 +36,19 @@ bot = hikari.GatewayBot(
 )
 client = lightbulb.client_from_app(bot, default_enabled_guilds=const.GUILDS)
 
-
-client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
-    aiohttp.ClientSession, lambda: aiohttp.ClientSession()
-)
-
 bot.subscribe(hikari.StoppingEvent, client.stop)
+
 
 @bot.listen(hikari.StartingEvent)
 async def on_starting(_: hikari.StartingEvent) -> None:
+    client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
+        aiohttp.ClientSession, lambda: aiohttp.ClientSession()
+    )
+
+    client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
+        concurrent.futures.ProcessPoolExecutor, lambda: concurrent.futures.ProcessPoolExecutor()
+    )
+
     # Load the commands
     await client.load_extensions_from_package(extensions, recursive=True)
     # Start the client - causing the commands to be synced with discord
