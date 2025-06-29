@@ -23,7 +23,7 @@ async def timezone_autocomplete(ctx: lightbulb.AutocompleteContext[str]):
 class Clock(
     lightbulb.SlashCommand, name="clock", description="View current time and date"
 ):
-    timezone = lightbulb.string("timezone", "The timezone you want to look up!", str, autocomplete=timezone_autocomplete, default="UTC")
+    timezone = lightbulb.string("timezone", "The timezone you want to look up!", autocomplete=timezone_autocomplete, default="UTC")
 
     @lightbulb.invoke
     async def invoke(
