@@ -20,7 +20,7 @@ async def timezone_autocomplete(ctx: lightbulb.AutocompleteContext[str]):
     await ctx.respond([r[0] for r in result])
 
 @loader.command
-class OneshotGen(
+class Clock(
     lightbulb.SlashCommand, name="clock", description="View current time and date"
 ):
     timezone = lightbulb.string("timezone", "The timezone you want to look up!", str, required=False, autocomplete=timezone_autocomplete, default="UTC")
@@ -29,15 +29,13 @@ class OneshotGen(
     async def invoke(
         self, ctx: lightbulb.Context
     ) -> None:
-        if not timezone:
-            timezone = "UTC"
 
-        time = datetime.now(ZoneInfo(timezone))
+        time = datetime.now(ZoneInfo(self.timezone))
         time_fmt = time.strftime("%I:%M:%S %p")
         date_fmt = time.strftime("%A, %d %B %Y")
 
         clock = hikari.Embed(color=0xC0C0C0)
         clock.add_field(name="🕓 Current Time", value=time_fmt, inline=False)
         clock.add_field(name="📆 Current Date", value=date_fmt, inline=False)
-        clock.add_field(name="🌐 Timezone", value=timezone, inline=False)
-        await ctx.respond(embed=clock, content=f"⏰ Tick.. Tock..")
+        clock.add_field(name="🌐 Timezone", value=self.timezone, inline=False)
+        await ctx.respond(embed=clock, content="⏰ Tick.. Tock..")
