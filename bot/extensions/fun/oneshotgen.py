@@ -12,6 +12,7 @@ from rapidfuzz import fuzz, process
 
 loader = lightbulb.Loader()
 
+
 @lru_cache(maxsize=100)
 def get_expression():
     faces = []
@@ -19,7 +20,9 @@ def get_expression():
         faces.append(path.name[:-4])
     return faces
 
+
 font = ImageFont.truetype("res/oneshot/font-b.ttf", 24)
+
 
 def image_processing(expression: str, text: str):
     with Image.open("res/oneshot/template.png") as template:
@@ -41,23 +44,33 @@ def image_processing(expression: str, text: str):
                 img.seek(0)
                 return img
 
+@loader.command
 class OneshotGen(
-    lightbulb.SlashCommand, name="oneshotgen", description="OneShot TextBox Generator"
+    lightbulb.SlashCommand,
+    name="oneshotgen",
+    description="OneShot TextBox Generator"
 ):
     @lightbulb.invoke
-    async def invoke(self, ctx: lightbulb.Context, pool: concurrent.futures.ProcessPoolExecutor) -> None:
-        face = lightbulb.string("face", "The expression you want to use", autocomplete=face_autocomplete)
+    async def invoke(
+        self, ctx: lightbulb.Context, pool: concurrent.futures.ProcessPoolExecutor
+    ) -> None:
+        face = lightbulb.string(
+            "face", "The expression you want to use", autocomplete=face_autocomplete
+        )
         text = lightbulb.string("text", "The text for the dialog box")
 
         loop = asyncio.get_running_loop()
         img = await loop.run_in_executor(pool, image_processing, face, text)
 
-        await ctx.respond("Here you go!", attachment = img)
+        await ctx.respond("Here you go!", attachment=img)
+
 
 async def face_autocomplete(ctx: lightbulb.AutocompleteContext[str]):
-    result: list = process.extract(ctx.focused.value, get_expression(), scorer=fuzz.QRatio, limit=5)
-    
+    result: list = process.extract(
+        ctx.focused.value, get_expression(), scorer=fuzz.QRatio, limit=5
+    )
+
     if len(result) == 0:
         return "Could not find anything. Sorry."
-    
+
     return [r[0] for r in result]
