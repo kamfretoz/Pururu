@@ -51,9 +51,10 @@ async def face_autocomplete(ctx: lightbulb.AutocompleteContext[str]):
     )
 
     if len(result) == 0:
-        return "Could not find anything. Sorry."
+        ctx.respond("Could not find anything. Sorry.")
+        return
 
-    return [r[0] for r in result]
+    ctx.respond([r[0] for r in result])
 
 
 @loader.command
