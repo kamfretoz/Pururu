@@ -44,26 +44,6 @@ def image_processing(expression: str, text: str):
                 img.seek(0)
                 return img
 
-@loader.command
-class OneshotGen(
-    lightbulb.SlashCommand,
-    name="oneshotgen",
-    description="OneShot TextBox Generator"
-):
-    @lightbulb.invoke
-    async def invoke(
-        self, ctx: lightbulb.Context, pool: concurrent.futures.ProcessPoolExecutor
-    ) -> None:
-        face = lightbulb.string(
-            "face", "The expression you want to use", autocomplete=face_autocomplete
-        )
-        text = lightbulb.string("text", "The text for the dialog box")
-
-        loop = asyncio.get_running_loop()
-        img = await loop.run_in_executor(pool, image_processing, face, text)
-
-        await ctx.respond("Here you go!", attachment=img)
-
 
 async def face_autocomplete(ctx: lightbulb.AutocompleteContext[str]):
     result: list = process.extract(
@@ -74,3 +54,23 @@ async def face_autocomplete(ctx: lightbulb.AutocompleteContext[str]):
         return "Could not find anything. Sorry."
 
     return [r[0] for r in result]
+
+
+@loader.command
+class OneshotGen(
+    lightbulb.SlashCommand, name="oneshotgen", description="OneShot TextBox Generator"
+):
+    face = lightbulb.string(
+        "face", "The expression you want to use", autocomplete=face_autocomplete
+    )
+    text = lightbulb.string("text", "The text for the dialog box")
+
+    @lightbulb.invoke
+    async def invoke(
+        self, ctx: lightbulb.Context, pool: concurrent.futures.ProcessPoolExecutor
+    ) -> None:
+
+        loop = asyncio.get_running_loop()
+        img = await loop.run_in_executor(pool, image_processing, self.face, self.text)
+
+        await ctx.respond("Here you go!", attachment=img)
