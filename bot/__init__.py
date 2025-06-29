@@ -31,7 +31,7 @@ bot = hikari.GatewayBot(
         },
     },
 )
-client = lightbulb.client_from_app(bot, default_enabled_guilds=[875986914367385600,570976409452019722])
+client = lightbulb.client_from_app(bot, default_enabled_guilds=const.GUILDS)
 
 
 client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
