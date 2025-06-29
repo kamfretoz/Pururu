@@ -38,11 +38,11 @@ client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
     aiohttp.ClientSession, lambda: aiohttp.ClientSession()
 )
 
+bot.subscribe(hikari.StoppingEvent, client.stop)
+
 @bot.listen(hikari.StartingEvent)
 async def on_starting(_: hikari.StartingEvent) -> None:
     # Load the commands
     await client.load_extensions_from_package(extensions, recursive=True)
     # Start the client - causing the commands to be synced with discord
     await client.start()
-
-bot.subscribe(hikari.StoppingEvent, client.stop)
