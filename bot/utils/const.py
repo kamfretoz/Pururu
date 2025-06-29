@@ -1,6 +1,3 @@
-import os
-import dotenv
-from hikari import Intents
 from hikari.impl.config import CacheSettings
 from hikari.api.config import CacheComponents
 
