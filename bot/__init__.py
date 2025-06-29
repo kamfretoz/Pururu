@@ -34,7 +34,7 @@ bot = hikari.GatewayBot(
 client = lightbulb.client_from_app(bot, default_enabled_guilds=const.GUILDS)
 
 
-client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
+client.di.registry_for(lightbulb.di.Contexts.COMMAND).register_factory(
     aiohttp.ClientSession, lambda: aiohttp.ClientSession()
 )
 
