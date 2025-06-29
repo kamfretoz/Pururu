@@ -10,6 +10,7 @@ from io import BytesIO
 from pathlib import Path
 from rapidfuzz import fuzz, process
 
+loader = lightbulb.Loader()
 
 @lru_cache(maxsize=100)
 def get_expression():
@@ -18,9 +19,7 @@ def get_expression():
         faces.append(path.name[:-4])
     return faces
 
-
 font = ImageFont.truetype("res/oneshot/font-b.ttf", 24)
-
 
 def image_processing(expression: str, text: str):
     with Image.open("res/oneshot/template.png") as template:
@@ -41,7 +40,6 @@ def image_processing(expression: str, text: str):
                 template.save(img, format="PNG", quality=100, optimize=True)
                 img.seek(0)
                 return img
-
 
 class OneshotGen(
     lightbulb.SlashCommand, name="oneshotgen", description="OneShot TextBox Generator"
