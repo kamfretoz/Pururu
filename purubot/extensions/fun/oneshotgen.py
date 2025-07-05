@@ -1,9 +1,7 @@
-import concurrent.futures
 from functools import lru_cache
 import lightbulb
 import concurrent
 import asyncio
-import hikari
 from PIL import Image, ImageFont, ImageDraw
 from textwrap import fill
 from io import BytesIO
@@ -74,4 +72,4 @@ class OneshotGen(
         loop = asyncio.get_running_loop()
         img = await loop.run_in_executor(pool, image_processing, self.face, self.text)
 
-        await ctx.respond("Here you go!", attachment=img)
+        await ctx.respond(attachment=img)

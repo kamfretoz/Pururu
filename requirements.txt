@@ -5,3 +5,4 @@ uvloop == 0.21.0; sys_platform != "win32"
 python-dotenv == 1.1.1
 pillow == 11.3.0
 rapidfuzz == 3.13.0
+pilmoji @ git+https://github.com/jay3332/pilmoji

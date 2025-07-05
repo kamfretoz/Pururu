@@ -8,7 +8,7 @@ import hikari
 import lightbulb
 
 from purubot import extensions
-from .utils import const
+from utils import const
 
 
 if os.name != "nt":
