@@ -10,5 +10,5 @@ pillow == 11.2.1
 pilmoji == 2.0.4
 pytemperature == 1.1
 qrcode == 8.0
-rapidfuzz == 3.10.1
+rapidfuzz == 3.13.0
 spotipy == 2.24.0
