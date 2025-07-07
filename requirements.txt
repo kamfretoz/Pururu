@@ -9,6 +9,6 @@ psutil == 7.0.0
 pillow == 11.3.0
 pilmoji == 2.0.4
 pytemperature == 1.1
-qrcode == 8.0
+qrcode == 8.2
 rapidfuzz == 3.13.0
 spotipy == 2.25.1
