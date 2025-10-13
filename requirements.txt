@@ -1,6 +1,6 @@
 aiohttp[speedups] == 3.12.15
 hikari[speedups] == 2.4.1
-hikari-lightbulb == 2.3.5.post1
+hikari-lightbulb == 3.2.1
 uvloop == 0.21.0; sys_platform != "win32" 
 lavasnek-rs == 0.11.1
 ciso8601 == 2.3.3
