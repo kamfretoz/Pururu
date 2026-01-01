@@ -1,8 +1,8 @@
-aiohttp[speedups] == 3.12.3
-hikari[speedups] == 2.3.5
-hikari-lightbulb == 3.0.1
-uvloop == 0.21.0; sys_platform != "win32" 
-python-dotenv == 1.1.1
-pillow == 11.3.0
-rapidfuzz == 3.13.0
+aiohttp[speedups] == 3.13.2
+hikari[speedups] == 2.5.0
+hikari-lightbulb == 3.2.3
+uvloop == 0.22.1; sys_platform != "win32"
+python-dotenv == 1.2.1
+pillow == 12.0.0
+rapidfuzz == 3.14.3
 pilmoji @ git+https://github.com/jay3332/pilmoji
