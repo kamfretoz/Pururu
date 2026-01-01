@@ -1,7 +1,8 @@
-import lightbulb
+import json
+
 import aiohttp
 import hikari
-import json
+import lightbulb
 
 loader = lightbulb.Loader()
 
@@ -12,7 +13,6 @@ class Advice(
     name="advice",
     description="Some advices that might aid you in your journey of life! :)",
 ):
-
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context, cs: aiohttp.ClientSession) -> None:
         async with cs.get("https://api.adviceslip.com/advice") as resp:
