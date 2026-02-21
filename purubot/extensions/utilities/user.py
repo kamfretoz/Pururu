@@ -18,6 +18,5 @@ class UserInfo(
             self.target: User = ctx.user
 
         created_at = int(self.target.created_at.timestamp())
-        joined_at = int(self.target.)
 
-        await ctx.respond(self.user)
+        await ctx.respond()
